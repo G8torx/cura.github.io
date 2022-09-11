@@ -107,18 +107,8 @@ h2{
   font-size: 80px;
   font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
   position: relative;
-  top: 15.5rem;
+  top: 23vh;
   right: 9rem auto;
-}
-
-.home-background h3{
-  color: black;
-  font-size: 24px;
-  font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-  font-weight: lighter;
-  position: relative;
-  top: 20.7rem;
-  right: 17rem auto;
 }
 
 @keyframes fade {
@@ -139,7 +129,7 @@ h2{
     font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     transition-duration: 0.3s;
     position: relative;
-    top: 15rem;
+    top: 18vh;
     right: 18.2rem auto;
 }
 
@@ -147,20 +137,17 @@ h2{
     opacity: 0.3;
 }
 
-.easy-check-bg{
+.list-bg{
     background-color: white;
-    width: 100%;
-    display: flex;
-    flex: 1;
-    border-radius: 20px;
 }
 
 .easy-check-bg h1{
     color: black;
 }
 
-.easy-bg-2{
-    background: linear-gradient(45deg, #38b6ff, #92c5ff);
+.easy-check-bg p{
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 20px;
 }
 
 /* Include the padding and border in an element's total width and height */
@@ -185,10 +172,11 @@ ul li {
   list-style-type: none;
   background: white;
   font-size: 18px;
-  font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   transition: 0.2s;
   color: black;
-  border-radius: 7px;
+  border-bottom: 2px solid #6c757d;
+
   
   /* make the list items unselectable */
   -webkit-user-select: none;
@@ -196,12 +184,6 @@ ul li {
   -ms-user-select: none;
   user-select: none;
 }
-
-/* Set all odd list items to a different color (zebra-stripes) */
-ul li:nth-child(odd) {
-  background: white;
-}
-
 /* Darker background-color on hover */
 ul li:hover {
   background: #ddd;
@@ -209,9 +191,10 @@ ul li:hover {
 
 /* When clicked on, add a background color and strike out text */
 ul li.checked {
-  background: #888;
+  background: #6c757d;
   color: #fff;
   text-decoration: line-through;
+  border-bottom: 2px solid #ffffff;
 }
 
 /* Add a "checked" mark when clicked on */
@@ -221,7 +204,7 @@ ul li.checked::before {
   border-color: #fff;
   border-style: solid;
   border-width: 0 2px 2px 0;
-  top: 10px;
+  top: 1;
   left: 16px;
   transform: rotate(45deg);
   height: 15px;
@@ -232,21 +215,34 @@ ul li.checked::before {
 .close {
   position: absolute;
   transition: 0.2s;
+  scale: 1;
   right: 0;
   top: 0;
   padding: 12px 16px 12px 16px;
 }
 
 .close:hover {
-  background-color: #f44336;
-  border-bottom-right-radius: 7px;
-  border-top-right-radius: 7px;
-  color: white;
+  scale: .7;
 }
+
+/* Style the edit button */
+.edit {
+  position: absolute;
+  transition: 0.2s;
+  scale: 1;
+  right: 2rem;
+  top: 0;
+  padding: 12px 16px 12px 16px;
+}
+
+.edit:hover {
+  scale: .7;
+}
+
 
 /* Style the header */
 .header {
-  background-color: #4c7afc;
+  background-color: none;
   padding: 30px 40px;
   color: white;
   text-align: center;
@@ -262,15 +258,28 @@ ul li.checked::before {
 }
 
 /* Style the input */
-input {
-  margin: 0;
-  border: none;
-  border-bottom-left-radius: 7px;
-  border-top-left-radius: 7px;
+.listInput {
+  border: 2px solid #38b6ff;
   width: 85%;
-  padding: 15px;
+  padding: 9.5px;
   float: left;
-  font-size: 16px;
+  font-size: 18px;
+  border-top-left-radius: 7px;
+  border-bottom-left-radius: 7px;
+}
+
+.title{
+  border: none;
+  outline: 0;
+  text-align: center;
+  padding: 1rem;
+  font-size: 45px;
+  font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.title::placeholder{
+  font-size: 45px;
+  font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
 /* Style the "Add" button */
@@ -278,9 +287,10 @@ input {
   padding: 9.5px;
   width: 15%;
   background-color: #38b6ff;
+  border: 2px solid #38b6ff;
   float: left;
   text-align: center;
-  font-size: 25px;
+  font-size: 18px;
   cursor: pointer;
   transition: 0.3s;
   border-bottom-right-radius: 7px;
@@ -294,4 +304,20 @@ input {
 .list{
   float: left;
   width: 100%;
+}
+
+.toggleButton{
+  position: fixed;
+  padding: 10px;
+  bottom: 0;
+  right: 0;
+  background: none;
+  border: none;
+  transition: 0.3s;
+  font-size: 25px;
+  cursor: pointer;
+}
+
+.toggleButton:hover{
+  opacity: .5;
 }
