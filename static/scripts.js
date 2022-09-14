@@ -4,9 +4,8 @@ let num = 1000
 let id = 0
 
 
-var myNodelist = document.getElementsByTagName("LI");
-var i;
-for (i = 0; i < myNodelist.length; i++) {
+let myNodelist = document.getElementsByTagName("LI");
+for (let i = 0; i < myNodelist.length; i++) {
   var editButton = document.createElement("button");
   var pencil = document.createTextNode("✏️");
   var priorityButton = document.createElement('button');
@@ -23,7 +22,7 @@ for (i = 0; i < myNodelist.length; i++) {
   closeButton.className = "close";
   closeButton.appendChild(cross);
   li.appendChild(priorityButton);
-  li.appendChild(editBUtton);
+  li.appendChild(editButton);
   li.appendChild(closeButton);
 
   myNodelist[i].appendChild(priorityButton);
@@ -32,9 +31,8 @@ for (i = 0; i < myNodelist.length; i++) {
 }
 
 // Click on a close button to hide the current list item
-var close = document.getElementsByClassName("close");
-var i;
-for (i = 0; i < close.length; i++) {
+let close = document.getElementsByClassName("close");
+for (let i = 0; i < close.length; i++) {
   close[i].onclick = function() {
     var div = this.parentElement;
     let item = (div.id);
@@ -43,26 +41,28 @@ for (i = 0; i < close.length; i++) {
   }
 }
 
-var editItem = document.getElementsByClassName('edit');
+let editItem = document.getElementsByClassName('edit');
 for (let z = 0; z < editItem.length; z++) {
   editItem[z].onclick = function() {
     let div = this.parentElement;
-    let input = div.lastElementChild;
-    let storedId = li.id;
+    let input = div.lastChild;
+    let storedId = div.id;
     let storedValue = localStorage.getItem(storedId);
     let newValue = JSON.parse(storedValue);
     let priority = newValue.priority;
     let checked = newValue.checked;
-    t.nodeValue = ''
-    t.nodeValue = input.value;
+    let text = newValue.text;
+    let newText = input.value;
+    input.value = text;
     let value = {
-      text: input.value,
+      text: newText,
       checked: checked,
       priority: priority
     }
-    localStorage.setItem(storedId, JSON.stringify(value));
 
     if (input.style.display === 'block'){
+      localStorage.setItem(storedId, JSON.stringify(value));
+      div.nodeValue = newText;
       input.style.display = 'none';
       input.readOnly = true;
     }
@@ -73,9 +73,8 @@ for (let z = 0; z < editItem.length; z++) {
   }
 }
 
-var icon = document.getElementsByClassName("priority");
-let j;
-for (j = 0; j < icon.length; j++){
+let icon = document.getElementsByClassName("priority");
+for (let j = 0; j < icon.length; j++){
   icon[j].onclick = function(){
     let li = this.parentElement;
     let button = li.firstChild;
@@ -86,7 +85,7 @@ for (j = 0; j < icon.length; j++){
       let textValue = JSON.parse(storedValue);
       let text = textValue.text;
       let value = {
-        text: inputValue,
+        text: text,
         checked: 'false',
         priority: '🟡'
       }
@@ -99,7 +98,7 @@ for (j = 0; j < icon.length; j++){
       let textValue = JSON.parse(storedValue);
       let text = textValue.text;
       let value = {
-        text: inputValue,
+        text: text,
         checked: 'false',
         priority: '🔴'
       }
@@ -112,7 +111,7 @@ for (j = 0; j < icon.length; j++){
       let textValue = JSON.parse(storedValue);
       let text = textValue.text;
       let value = {
-        text: inputValue,
+        text: text,
         checked: 'false',
         priority: '🟢'
       }
@@ -122,7 +121,7 @@ for (j = 0; j < icon.length; j++){
 }
 
 // Add a "checked" symbol when clicking on a list item
-var list = document.querySelector('ul');
+let list = document.querySelector('ul');
 list.addEventListener('click', function(ev) {
   if (ev.target.tagName === 'LI') {
     if (ev.target.className === 'checked'){
@@ -160,12 +159,11 @@ list.addEventListener('click', function(ev) {
 function newElement() {
   id = Math.floor(Math.random() * num);
   let inputValue = document.getElementById("myInput").value;
-  var t = document.createTextNode(inputValue);
-  var li = document.createElement("li");
-  var input = document.createElement('input');
+  let t = document.createTextNode(inputValue);
+  let li = document.createElement("li");
+  let input = document.createElement('input');
   input.setAttribute('readonly', 'true');
   input.setAttribute('style', 'display: none;');
-  input.setAttribute('id', 'editInput');
   li.setAttribute('id', id);
 
   if (localStorage.getItem(id) !== null){
@@ -173,27 +171,27 @@ function newElement() {
   }
 
   else{
-    var li = document.createElement("li");
+    let li = document.createElement("li");
     li.setAttribute('id', id);
     let item = {
       text: inputValue,
       checked: 'false',
       priority: '🟢'
     };
-    localStorage.setItem(id, JSON.stringify(item));
     if (inputValue === '') {
       alert("You must write something!");
     } 
     else {
+      localStorage.setItem(id, JSON.stringify(item));
       document.getElementById("myUL").appendChild(li);
       document.getElementById("myInput").value = "";
 
-      var editButton = document.createElement("button");
-      var pencil = document.createTextNode("✏️");
-      var closeButton = document.createElement("button");
-      var cross = document.createTextNode("❌");
-      var priorityButton = document.createElement("button");
-      var priorityIcon = document.createTextNode('🟢');
+      let editButton = document.createElement("button");
+      let pencil = document.createTextNode("✏️");
+      let closeButton = document.createElement("button");
+      let cross = document.createTextNode("❌");
+      let priorityButton = document.createElement("button");
+      let priorityIcon = document.createTextNode('🟢');
       priorityButton.setAttribute('title', 'Change priority');
       editButton.setAttribute('title', 'Edit');
       closeButton.setAttribute('title', 'Delete');
@@ -221,27 +219,34 @@ function newElement() {
       for (let z = 0; z < editItem.length; z++) {
         editItem[z].onclick = function() {
           let div = this.parentElement;
-          let input = div.lastElementChild;
-          let storedId = li.id;
+          let input = div.lastChild;
+          let storedId = div.id;
           let storedValue = localStorage.getItem(storedId);
           let newValue = JSON.parse(storedValue);
           let priority = newValue.priority;
           let checked = newValue.checked;
           let text = newValue.text;
           let newText = input.value;
-          let oldText = text;
-          input.value = oldText;
+          input.value = text;
           let value = {
             text: newText,
             checked: checked,
             priority: priority
           }
-          localStorage.setItem(storedId, JSON.stringify(value));
-          t.nodeValue = newText;
+
+          input.addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+              event.preventDefault();
+              editItem[z].click();
+            }
+          });
   
           if (input.style.display === 'block'){
+            localStorage.setItem(storedId, JSON.stringify(value));
+            div.nodeValue = newText;
             input.style.display = 'none';
             input.readOnly = true;
+            location.reload();
           }
           else if (input.style.display === 'none'){
             input.style.display = "block";
@@ -300,7 +305,7 @@ function newElement() {
 }
   
 
-var input = document.getElementById("myInput");
+let input = document.getElementById("myInput");
 input.addEventListener("keypress", function(event) {
   if (event.key === "Enter") {
     event.preventDefault();
@@ -309,7 +314,7 @@ input.addEventListener("keypress", function(event) {
 });
 
 function loadList(){
-  for (var i = 0; i < localStorage.length; i++){
+  for (let i = 0; i < localStorage.length; i++){
     let id = localStorage.key(i);
     let storedValue = localStorage.getItem(id);
     if (id === "Title"){
@@ -328,8 +333,8 @@ function loadList(){
     let text = (item.text);
     let checked = (item.checked);
 
-    var li = document.createElement("li");
-    var input = document.createElement('input');
+    let li = document.createElement("li");
+    let input = document.createElement('input');
     input.setAttribute('readonly', 'true');
     input.setAttribute('style', 'display: none;');
     input.setAttribute('id', 'editInput');
@@ -337,8 +342,8 @@ function loadList(){
     if (checked === 'true'){
       li.setAttribute('class', 'checked');
     }
-    var inputValue = text;
-    var t = document.createTextNode(inputValue);
+    let inputValue = text;
+    let t = document.createTextNode(inputValue);
     document.getElementById("myUL").appendChild(li);
 
     document.getElementById("myInput").value = "";
@@ -346,12 +351,12 @@ function loadList(){
     let textValue = JSON.parse(storedValue);
     let priorityValue = textValue.priority;
 
-    var editButton = document.createElement("button");
-    var pencil = document.createTextNode("✏️");
-    var closeButton = document.createElement("button");
-    var cross = document.createTextNode("❌");
-    var priorityButton = document.createElement("button");
-    var priorityIcon = document.createTextNode(priorityValue);
+    let editButton = document.createElement("button");
+    let pencil = document.createTextNode("✏️");
+    let closeButton = document.createElement("button");
+    let cross = document.createTextNode("❌");
+    let priorityButton = document.createElement("button");
+    let priorityIcon = document.createTextNode(priorityValue);
     priorityButton.className = "priority";
     priorityButton.appendChild(priorityIcon);
     priorityButton.setAttribute('title', 'Change priority');
@@ -369,7 +374,7 @@ function loadList(){
 
     for (let j = 0; j < close.length; j++) {
       close[j].onclick = function() {
-        var div = this.parentElement;
+        let div = this.parentElement;
         let item = (div.id);
         localStorage.removeItem(item)
         div.style.display = "none";
@@ -377,9 +382,9 @@ function loadList(){
     }
 
     for (let z = 0; z < editItem.length; z++) {
-      editItem[z].onclick = function() {
+      editItem[z].onclick = function vroom() {
         let div = this.parentElement;
-        let input = div.lastElementChild;
+        let input = div.lastChild;
         let storedId = div.id;
         let storedValue = localStorage.getItem(storedId);
         let newValue = JSON.parse(storedValue);
@@ -387,19 +392,26 @@ function loadList(){
         let checked = newValue.checked;
         let text = newValue.text;
         let newText = input.value;
-        let oldText = text;
-        input.value = oldText;
+        input.value = text;
         let value = {
           text: newText,
           checked: checked,
           priority: priority
         }
-        localStorage.setItem(storedId, JSON.stringify(value));
-        t.nodeValue = newText;
+
+        input.addEventListener("keypress", function(event) {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            editItem[z].click();
+          }
+        });
 
         if (input.style.display === 'block'){
+          localStorage.setItem(storedId, JSON.stringify(value));
+          div.nodeValue = newText;
           input.style.display = 'none';
           input.readOnly = true;
+          location.reload();
         }
         else if (input.style.display === 'none'){
           input.style.display = "block";
@@ -457,7 +469,7 @@ function loadList(){
 }
 
 function loadTheme(){
-  for (var i = 0; i < localStorage.length; i++){
+  for (let i = 0; i < localStorage.length; i++){
     let value = localStorage.getItem(localStorage.key(i));
     let theme = document.getElementById('theme');
     let icon = document.getElementById('toggleButton');
