@@ -214,6 +214,8 @@ ul li.checked::before {
 /* Style the close button */
 .close {
   position: absolute;
+  background: none;
+  border: none;
   transition: 0.2s;
   scale: 1;
   right: 0;
@@ -228,6 +230,8 @@ ul li.checked::before {
 /* Style the edit button */
 .edit {
   position: absolute;
+  background: none;
+  border: none;
   transition: 0.2s;
   scale: 1;
   right: 2rem;
@@ -239,6 +243,21 @@ ul li.checked::before {
   scale: .7;
 }
 
+/* Style the priority button */
+.priority {
+  position: absolute;
+  background: none;
+  border: none;
+  transition: 0.2s;
+  scale: 1;
+  right: 4rem;
+  top: 0;
+  padding: 12px 16px 12px 16px;
+}
+
+.priority:hover {
+  scale: .7;
+}
 
 /* Style the header */
 .header {

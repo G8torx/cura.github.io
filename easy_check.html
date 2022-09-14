@@ -13,7 +13,7 @@
         <meta name="author" content="G8torx" />
         <title>Easy Check</title>
     </head>
-    <body class="list-bg" onload="load(); loadTitle();">
+    <body class="list-bg" onload="loadList(); loadTitle(); loadTheme();">
         <section>
             <button id="toggleButton" class="toggleButton" title="Switch to dark mode" onclick="toggleTheme();">🌓</button>
             <div>
@@ -21,9 +21,19 @@
                     <input type="text" class="title" id="title" placeholder="Title...">
                     <div id="myDIV" class="header">
                         <input type="text" class="listInput" id="myInput" placeholder="To Do...">
-                        <a target="_blank" onclick="newElement();" id="addButton" class="addBtn" style="text-decoration: none;">
-                            <i class="fa-solid fa-plus"></i>
-                        </a>
+                        <div>
+                            <span target="_blank" onclick="newElement();" id="addButton" class="addBtn" style="text-decoration: none;">
+                                <i class="fa-solid fa-plus"></i>
+                            </span>
+                            <div class="dropdown">
+                                <button class="optionsBtn"><i class="fa-solid fa-bars"></i></button>
+                                <div class="dropdown-content">
+                                  <a href="#">Link 1</a>
+                                  <a href="#">Link 2</a>
+                                  <a href="#">Link 3</a>
+                                </div>
+                              </div>
+                        </div>
                         <div class="list">
                             <ul id="myUL">
                             </ul>
