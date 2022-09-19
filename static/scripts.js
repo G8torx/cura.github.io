@@ -37,7 +37,7 @@ for (let i = 0; i < close.length; i++) {
     var div = this.parentElement;
     let item = (div.id);
     localStorage.removeItem(item)
-    div.style.display = "none";
+    div.remove();
   }
 }
 
@@ -159,12 +159,13 @@ list.addEventListener('click', function(ev) {
 function newElement() {
   id = Math.floor(Math.random() * num);
   let inputValue = document.getElementById("myInput").value;
+  let div = document.createElement('div');
+  div.setAttribute('id', 'itemText');
   let t = document.createTextNode(inputValue);
-  let li = document.createElement("li");
   let input = document.createElement('input');
   input.setAttribute('readonly', 'true');
   input.setAttribute('style', 'display: none;');
-  li.setAttribute('id', id);
+  input.className = 'editInput';
 
   if (localStorage.getItem(id) !== null){
     alert('Id has already been used');
@@ -176,7 +177,7 @@ function newElement() {
     let item = {
       text: inputValue,
       checked: 'false',
-      priority: '🟢'
+      priority: 'low'
     };
     if (inputValue === '') {
       alert("You must write something!");
@@ -191,11 +192,12 @@ function newElement() {
       let closeButton = document.createElement("button");
       let cross = document.createTextNode("❌");
       let priorityButton = document.createElement("button");
-      let priorityIcon = document.createTextNode('🟢');
+      let priorityIcon = document.createTextNode('low');
       priorityButton.setAttribute('title', 'Change priority');
       editButton.setAttribute('title', 'Edit');
       closeButton.setAttribute('title', 'Delete');
       priorityButton.className = "priority";
+      priorityButton.classList.add('priorityText');
       priorityButton.appendChild(priorityIcon);
       editButton.className = "edit";
       editButton.appendChild(pencil);
@@ -204,7 +206,8 @@ function newElement() {
       li.appendChild(priorityButton);
       li.appendChild(editButton);
       li.appendChild(closeButton);
-      li.appendChild(t);
+      li.appendChild(div);
+      div.appendChild(t);
       li.appendChild(input);
   
       for (let j = 0; j < close.length; j++) {
@@ -212,15 +215,17 @@ function newElement() {
           let div = this.parentElement;
           let item = (div.id);
           localStorage.removeItem(item)
-          div.style.display = "none";
+          div.remove();
         }
       }
 
       for (let z = 0; z < editItem.length; z++) {
         editItem[z].onclick = function() {
-          let div = this.parentElement;
-          let input = div.lastChild;
-          let storedId = div.id;
+          let li = this.parentElement;
+          let div = li.children[3];
+          div.style.display = 'none';
+          let input = li.lastChild;
+          let storedId = li.id;
           let storedValue = localStorage.getItem(storedId);
           let newValue = JSON.parse(storedValue);
           let priority = newValue.priority;
@@ -243,14 +248,15 @@ function newElement() {
   
           if (input.style.display === 'block'){
             localStorage.setItem(storedId, JSON.stringify(value));
-            div.nodeValue = newText;
+            div.textContent = newText;
             input.style.display = 'none';
+            div.style.display = 'block';
             input.readOnly = true;
-            location.reload();
           }
           else if (input.style.display === 'none'){
             input.style.display = "block";
             input.readOnly = false;
+            div.style.display = 'none';
           }
         }
       }
@@ -259,8 +265,9 @@ function newElement() {
         icon[c].onclick = function(){
           let li = this.parentElement;
           let button = li.firstChild;
-          if (button.textContent === '🟢'){
-            button.textContent = '🟡';
+          if (button.textContent === 'low'){
+            button.textContent = 'medium';
+            button.style.backgroundColor = '#FFB81C';
             let storedId = li.id;
             let storedValue = localStorage.getItem(storedId);
             let textValue = JSON.parse(storedValue);
@@ -268,12 +275,13 @@ function newElement() {
             let value = {
               text: text,
               checked: 'false',
-              priority: '🟡'
+              priority: 'medium'
             }
             localStorage.setItem(storedId, JSON.stringify(value));
           }
-          else if (button.textContent === '🟡'){
-            button.textContent = '🔴';
+          else if (button.textContent === 'medium'){
+            button.textContent = 'high';
+            button.style.backgroundColor = '#F06A6A';
             let storedId = li.id;
             let storedValue = localStorage.getItem(storedId);
             let textValue = JSON.parse(storedValue);
@@ -281,12 +289,13 @@ function newElement() {
             let value = {
               text: text,
               checked: 'false',
-              priority: '🔴'
+              priority: 'high'
             }
             localStorage.setItem(storedId, JSON.stringify(value));
           }
-          else if (button.textContent === '🔴'){
-            button.textContent = '🟢';
+          else if (button.textContent === 'high'){
+            button.textContent = 'low';
+            button.style.backgroundColor = '#21b972';
             let storedId = li.id;
             let storedValue = localStorage.getItem(storedId);
             let textValue = JSON.parse(storedValue);
@@ -294,7 +303,7 @@ function newElement() {
             let value = {
               text: text,
               checked: 'false',
-              priority: '🟢'
+              priority: 'low'
             }
             localStorage.setItem(storedId, JSON.stringify(value));
           }
@@ -329,15 +338,24 @@ function loadList(){
     if (storedValue === 'Theme'){
       continue;
     }
+    if (id === "Sort"){
+      continue;
+    }
+    if (storedValue === 'Sort'){
+      continue;
+    }
     let item = JSON.parse(storedValue);
     let text = (item.text);
     let checked = (item.checked);
 
     let li = document.createElement("li");
     let input = document.createElement('input');
+    let div = document.createElement('div');
+    div.setAttribute('id', 'itemText')
     input.setAttribute('readonly', 'true');
     input.setAttribute('style', 'display: none;');
     input.setAttribute('id', 'editInput');
+    input.className = 'editInput';
     li.setAttribute('id', id);
     if (checked === 'true'){
       li.setAttribute('class', 'checked');
@@ -358,6 +376,16 @@ function loadList(){
     let priorityButton = document.createElement("button");
     let priorityIcon = document.createTextNode(priorityValue);
     priorityButton.className = "priority";
+    priorityButton.classList.add('priorityText');
+    if (priorityValue === 'low'){
+      priorityButton.style.backgroundColor = '#21b972';
+    }
+    else if (priorityValue === 'medium'){
+      priorityButton.style.backgroundColor = '#FFB81C';
+    }
+    else if (priorityValue === 'high'){
+      priorityButton.style.backgroundColor = '#F06A6A';
+    }
     priorityButton.appendChild(priorityIcon);
     priorityButton.setAttribute('title', 'Change priority');
     editButton.setAttribute('title', 'Edit');
@@ -369,7 +397,8 @@ function loadList(){
     li.appendChild(priorityButton);
     li.appendChild(editButton);
     li.appendChild(closeButton);
-    li.appendChild(t);
+    li.appendChild(div);
+    div.append(t);
     li.appendChild(input);
 
     for (let j = 0; j < close.length; j++) {
@@ -377,15 +406,17 @@ function loadList(){
         let div = this.parentElement;
         let item = (div.id);
         localStorage.removeItem(item)
-        div.style.display = "none";
+        div.remove();
       }
     }
 
     for (let z = 0; z < editItem.length; z++) {
-      editItem[z].onclick = function vroom() {
-        let div = this.parentElement;
-        let input = div.lastChild;
-        let storedId = div.id;
+      editItem[z].onclick = function() {
+        let li = this.parentElement;
+        let div = li.children[3];
+        div.style.display = 'none';
+        let input = li.lastChild;
+        let storedId = li.id;
         let storedValue = localStorage.getItem(storedId);
         let newValue = JSON.parse(storedValue);
         let priority = newValue.priority;
@@ -408,14 +439,15 @@ function loadList(){
 
         if (input.style.display === 'block'){
           localStorage.setItem(storedId, JSON.stringify(value));
-          div.nodeValue = newText;
+          div.textContent = newText;
           input.style.display = 'none';
+          div.style.display = 'block';
           input.readOnly = true;
-          location.reload();
         }
         else if (input.style.display === 'none'){
           input.style.display = "block";
           input.readOnly = false;
+          div.style.display = 'none';
         }
       }
     }
@@ -424,8 +456,9 @@ function loadList(){
       icon[c].onclick = function(){
         let li = this.parentElement;
         let button = li.firstChild;
-        if (button.textContent === '🟢'){
-          button.textContent = '🟡';
+        if (button.textContent === 'low'){
+          button.textContent = 'medium';
+          button.style.backgroundColor = '#FFB81C';
           let storedId = li.id;
           let storedValue = localStorage.getItem(storedId);
           let textValue = JSON.parse(storedValue);
@@ -433,12 +466,13 @@ function loadList(){
           let value = {
             text: text,
             checked: 'false',
-            priority: '🟡'
+            priority: 'medium'
           }
           localStorage.setItem(storedId, JSON.stringify(value));
         }
-        else if (button.textContent === '🟡'){
-          button.textContent = '🔴';
+        else if (button.textContent === 'medium'){
+          button.textContent = 'high';
+          button.style.backgroundColor = '#F06A6A';
           let storedId = li.id;
           let storedValue = localStorage.getItem(storedId);
           let textValue = JSON.parse(storedValue);
@@ -446,20 +480,21 @@ function loadList(){
           let value = {
             text: text,
             checked: 'false',
-            priority: '🔴'
+            priority: 'high'
           }
           localStorage.setItem(storedId, JSON.stringify(value));
         }
-        else if (button.textContent === '🔴'){
-          button.textContent = '🟢';
+        else if (button.textContent === 'high'){
+          button.textContent = 'low';
           let storedId = li.id;
+          button.style.backgroundColor = '#21b972';
           let storedValue = localStorage.getItem(storedId);
           let textValue = JSON.parse(storedValue);
           let text = textValue.text;
           let value = {
             text: text,
             checked: 'false',
-            priority: '🟢'
+            priority: 'low'
           }
           localStorage.setItem(storedId, JSON.stringify(value));
         }
@@ -515,4 +550,120 @@ function toggleTheme(){
     icon.textContent = '🌓';
     icon.setAttribute('title', 'Switch to dark mode');
   }
+}
+
+function sortPriority(){
+  let optionsList = document.getElementById('options');
+  let value = optionsList.options[optionsList.selectedIndex].value;
+  let ul = document.getElementById('myUL');
+  let li = ul.getElementsByTagName('li');
+  for (let i = 0; i < localStorage.length; i++){
+    let id = localStorage.key(i);
+    let storedValue = localStorage.getItem(id);
+    if (id === "Title"){
+      continue;
+    }
+    if (id === "Theme"){
+      continue;
+    }
+    if (storedValue === 'Title'){
+      continue;
+    }
+    if (storedValue === 'Theme'){
+      continue;
+    }
+    if (storedValue === 'Sort'){
+      continue;
+    }
+    if (storedValue === 'Sort'){
+      continue;
+    }
+
+    let newValue = JSON.parse(storedValue);
+    if (newValue.priority === 'low' && value === 'low'){
+      for (let i = 0; i < li.length; i++){
+        let button = li[i].firstChild;
+        let parent = button.parentElement;
+        if (parent.style.display === 'none'){
+          parent.style= null;
+        }
+        if (button.textContent === 'medium' || button.textContent === 'high'){
+          parent.style.display = 'none';
+          localStorage.setItem('Sort', 'low');
+        }
+      }
+    }
+    else if (newValue.priority === 'medium' && value === 'medium'){
+      for (let i = 0; i < li.length; i++){
+        let button = li[i].firstChild;
+        let parent = button.parentElement;
+        if (parent.style.display === 'none'){
+          parent.style= null;
+        }
+        if (button.textContent === 'high' || button.textContent === 'low'){
+          parent.style.display = 'none';
+          localStorage.setItem('Sort', 'medium');
+        }
+      }
+    }
+    else if (newValue.priority === 'high' && value === 'high'){
+      for (let i = 0; i < li.length; i++){
+        let button = li[i].firstChild;
+        let parent = button.parentElement;
+        if (parent.style.display === 'none'){
+          parent.style= null;
+        }
+        if (button.textContent === 'low' || button.textContent === 'medium'){
+          parent.style.display = 'none';
+          localStorage.setItem('Sort', 'high');
+        }
+      }
+    }
+    else if (value === 'all'){
+      for (let i = 0; i < li.length; i++){
+        let button = li[i].firstChild;
+        let parent = button.parentElement;
+        parent.style = null;
+        localStorage.setItem('Sort', 'all');
+      }
+    }
+  }
+}
+
+function loadPriority(){
+  for (let i = 0; i < localStorage.length; i++){
+
+    let id = localStorage.key(i);
+    let storedValue = localStorage.getItem(id);
+    if (id === 'Sort'){
+      let optionsList = document.getElementById('options');
+      optionsList.value = storedValue;
+      optionsList.click();
+    }
+  }
+}
+
+function loadTitle(){
+  let titleText = localStorage.getItem("Title");
+  document.getElementById("title").value = titleText;
+}
+
+function calculatePercent(){
+  let amountChecked = 0
+  let total = 0;
+  let percentText = document.getElementById('percent');
+  for (let i = 0; i < localStorage.length; i++){
+    let id = localStorage.key(i);
+    let storedValue = localStorage.getItem(id);
+    if (id === 'Sort' || id === 'Title' || id === 'Theme'){
+      continue;
+    }
+    let newValue = JSON.parse(storedValue);
+    total += 1;
+    if (newValue.checked === 'true'){
+      amountChecked += 1;
+    }
+  }
+  let percent = amountChecked / total * 100;
+  percentText.textContent = `%${percent}`;
 }

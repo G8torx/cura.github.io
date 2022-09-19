@@ -81,12 +81,19 @@ html{
 h1{
     color: white;
     font-size: 45px;
-    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-family: 'Varela Round';
 }
 
 h2{
-  font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  font-family: 'Varela Round';
   font-weight: lighter;
+}
+
+p{
+  color: white;
+  font-family: 'Varela Round';
+  padding: 0px 100px;
+  font-size: 18px;
 }
 
 .container{
@@ -94,21 +101,20 @@ h2{
     text-align: center;
 }
 
-.home-background{
-    background-image: url(assets/img/background.png);
-    background-repeat: no-repeat; 
-    background-size: cover;
-    background-position: right;
-    animation: 0.9s ease-out 0s 1 fade;
+.home-title{
+  color: white;
+  font-size: 80px;
+  font-family: 'Varela Round';
+  position: relative;
+  top: 10rem;
 }
 
-.home-background h1{
-  color: black;
-  font-size: 80px;
-  font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+.beta-text{
+  color: #38b6ff;
+  font-size: 30px;
+  font-family: 'Varela Round';
   position: relative;
-  top: 23vh;
-  right: 9rem auto;
+  top: 7rem;
 }
 
 @keyframes fade {
@@ -120,21 +126,22 @@ h2{
   }
 }
 
-.home-button{
-    background: #38b6ff;
-    border-radius: 7px;
-    text-decoration: none;
-    color: white;
-    padding: 16px 32px;
-    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-    transition-duration: 0.3s;
-    position: relative;
-    top: 18vh;
-    right: 18.2rem auto;
+.button{
+  position: relative;
+  top: 2rem;
+  cursor: pointer;
+  color: white;
+  border: none;
+  border-radius: 7px;
+  text-decoration: none;
+  padding: 16px 34px;
+  font-family: 'Varela Round';
+  font-size: 20px;
+  transition-duration: 0.3s;
 }
 
-.home-button:hover{
-    opacity: 0.3;
+.button:hover{
+    opacity: 0.2;
 }
 
 .list-bg{
@@ -172,7 +179,7 @@ ul li {
   list-style-type: none;
   background: #34393d;
   font-size: 18px;
-  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Varela Round';
   transition: 0.2s;
   color: white;
   border-bottom: 2px solid white;
@@ -184,6 +191,7 @@ ul li {
   -ms-user-select: none;
   user-select: none;
 }
+
 /* Darker background-color on hover */
 ul li:hover {
   background: #87919b;
@@ -194,7 +202,6 @@ ul li.checked {
   background: #6c757d;
   color: #fff;
   text-decoration: line-through;
-  border-bottom: 2px solid #6c757d;
 }
 
 /* Add a "checked" mark when clicked on */
@@ -250,8 +257,7 @@ ul li.checked::before {
   border: none;
   transition: 0.2s;
   scale: 1;
-  right: 4rem;
-  top: 0;
+  right: 5rem;
   padding: 12px 16px 12px 16px;
 }
 
@@ -262,11 +268,12 @@ ul li.checked::before {
 /* Style the header */
 .header {
   background-color: none;
-  padding: 30px 40px;
+  padding-right: 40px;
+  padding-left: 40px;
+  position: relative;
+  top: -1rem;
   color: white;
   text-align: center;
-  border-bottom-left-radius: 20px;
-  border-bottom-right-radius: 20px;
 }
 
 /* Clear floats after the header */
@@ -281,7 +288,7 @@ ul li.checked::before {
   border: 2px solid #38b6ff;
   background: none;
   color: white;
-  width: 80%;
+  width: 78%;
   padding: 9.5px;
   float: left;
   font-size: 18px;
@@ -299,22 +306,22 @@ ul li.checked::before {
   background: none;
   outline: 0;
   text-align: center;
-  padding: 1rem;
+  padding: 3rem;
   font-size: 45px;
-  font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  font-family: 'Varela Round';
 }
 
 .title::placeholder{
   font-size: 45px;
   color: rgb(202, 202, 202);
-  font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  font-family: 'Varela Round';
 }
 
 /* Style the "Add" button */
 .addBtn {
   padding: 9.5px;
   color: white;
-  width: 10%;
+  width: 11%;
   background-color: #38b6ff;
   border: 2px solid #38b6ff;
   float: left;
@@ -332,14 +339,14 @@ ul li.checked::before {
 .optionsBtn {
   padding: 9.5px;
   color: white;
-  width: 10%;
+  width: 11%;
   background-color: #38b6ff;
   border: 2px solid #38b6ff;
   border-bottom-right-radius: 7px;
   border-top-right-radius: 7px;
   float: right;
   text-align: center;
-  font-size: 18px;
+  font-size: 17px;
   cursor: pointer;
   transition: 0.3s;
 }
@@ -348,16 +355,42 @@ ul li.checked::before {
   opacity: 0.7;
 }
 
+.optionsBtn option{
+  background-color: rgb(48, 54, 82);
+}
+
+
+.priorityText{
+  font-family: 'M PLUS Rounded 1c';
+  color: white;
+  background-color: #21b972;
+  border-radius: 50px;
+  width: 4.5rem;
+  padding: 5px 10px 5px 10px;
+  margin: -.25rem;
+  font-size: 12px;
+  font-weight: bolder;
+}
+
+.editInput{
+  border: 2px solid #38b6ff;
+  width: 80%;
+  border-radius: 7px;
+  background: none;
+  font-size: 18px;
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: white;
+}
+
 .list{
   float: left;
   width: 100%;
 }
 
 .toggleButton{
-  position: fixed;
-  padding: 10px;
-  bottom: 0;
-  right: 0;
+  position: relative;
+  padding: 16px 34px;
+  top: 2.2rem;
   background: none;
   border: none;
   transition: 0.3s;
@@ -369,30 +402,103 @@ ul li.checked::before {
   opacity: .5;
 }
 
-.dropdown {
-  position: relative;
+.dark-bg{
+  background-color: #34393d;
 }
 
-.dropdown-content {
-  display: none;
+.selectedButton{
+  text-decoration: underline;
+  text-decoration-color: #38b6ff;
+}
+
+.bottom-wave {
   position: absolute;
-  right: 0;
-  top: 2.7rem;
-  background-color: #f1f1f1;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  transform: rotate(180deg);
 }
 
-.dropdown-content a {
-  color: black;
-  padding: 12px 16px;
-  text-decoration: none;
+.bottom-wave svg {
+  position: relative;
   display: block;
+  width: calc(100% + 1.3px);
+  height: 112px;
+  transform: rotateY(180deg);
 }
 
-.dropdown-content a:hover {background-color: #ddd;}
+.bottom-wave .shape-fill {
+  fill: #4A90E2;
+}
 
-.dropdown:hover .dropdown-content {display: block;}
+.contact{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
 
-.dropdown:hover .optionsBtn {border-bottom-right-radius: 0px;}
+.send-button{
+  align-self: center;
+  border-radius: 7px;
+  border: none;
+  background-color: #38b6ff;
+  color: white;
+  font-size: 20px;
+  padding: 12px;
+  margin: 4px 3px;
+  width: 6.5%;
+  font-family: 'Varela Round';
+  transition: 0.3s;
+  margin: 3px 4px;
+}
+
+.send-button:hover{
+  opacity: .5;
+}
+
+.message-input{
+  align-self: center;
+  color: white;
+  background: none;
+  border: 2px solid white;
+  border-radius: 4px;
+  width: 50rem;
+  resize: none;
+  font-size: 20px;
+  font-family: 'Varela Round';
+  margin: 3px 4px;
+}
+
+.email-input{
+  border: 2px solid white;
+  color: white;
+  background: none;
+  border-radius: 4px;
+  width: 25rem;
+  height: 2rem;
+  resize: none;
+  font-size: 15px;
+  font-family: 'Varela Round';
+  align-self: center;
+  margin: 3px 4px;
+}
+
+.name-input{
+  color: white;
+  border: 2px solid white;
+  background: none;
+  border-radius: 4px;
+  width: 25rem;
+  height: 2rem;
+  resize: none;
+  font-size: 15px;
+  font-family: 'Varela Round';
+  align-self: center;
+  margin: 3px 4px;
+}
+
+.name-input::placeholder, .email-input::placeholder, .message-input::placeholder{
+  color: rgb(202, 202, 202);
+}
