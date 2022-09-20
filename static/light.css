@@ -485,41 +485,62 @@ ul li.checked::before {
 }
 
 .message-input{
-  border: 2px solid #34393d;
-  background: none;
   align-self: center;
+  color: black;
+  background: none;
+  border: 2px solid #ced4da;
   border-radius: 4px;
   width: 50rem;
   resize: none;
   font-size: 20px;
   font-family: 'Varela Round';
   margin: 3px 4px;
+  padding: 15px 12px;
+  transition: 0.2s;
 }
 
 .email-input{
-  border: 2px solid #34393d;
+  border: 2px solid #ced4da;
+  color: black;
   background: none;
   border-radius: 4px;
-  width: 25rem;
+  width: 50rem;
   height: 2rem;
   resize: none;
   font-size: 15px;
   font-family: 'Varela Round';
   align-self: center;
   margin: 3px 4px;
+  padding: 15px 12px;
+  transition: 0.2s;
 }
 
 .name-input{
-  border: 2px solid #34393d;
+  color: black;
+  border: 2px solid #ced4da;
   background: none;
   border-radius: 4px;
-  width: 25rem;
+  width: 50rem;
   height: 2rem;
   resize: none;
   font-size: 15px;
   font-family: 'Varela Round';
   align-self: center;
   margin: 3px 4px;
+  padding: 15px 12px;
+  transition: 0.2s;
+}
+
+.name-input:hover{
+  border: 2px solid #3060c7a2;
+}
+
+.email-input:hover{
+  border: 2px solid #3060c7a2;
+}
+
+.message-input:hover{
+  border: 2px solid #3060c7a2;
 }
 
 .aboutText{
