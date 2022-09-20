@@ -92,7 +92,6 @@ h2{
 p{
   color: white;
   font-family: 'Varela Round';
-  padding: 0px 100px;
   font-size: 18px;
 }
 
@@ -129,6 +128,7 @@ p{
 .button{
   position: relative;
   top: 2rem;
+  scale: 1;
   cursor: pointer;
   color: white;
   border: none;
@@ -141,7 +141,7 @@ p{
 }
 
 .button:hover{
-    opacity: 0.2;
+    color: #38b6ff;
 }
 
 .list-bg{
@@ -221,6 +221,7 @@ ul li.checked::before {
 /* Style the close button */
 .close {
   position: absolute;
+  cursor: pointer;
   background: none;
   border: none;
   transition: 0.2s;
@@ -237,6 +238,7 @@ ul li.checked::before {
 /* Style the edit button */
 .edit {
   position: absolute;
+  cursor: pointer;
   background: none;
   border: none;
   transition: 0.2s;
@@ -253,6 +255,7 @@ ul li.checked::before {
 /* Style the priority button */
 .priority {
   position: absolute;
+  cursor: pointer;
   background: none;
   border: none;
   transition: 0.2s;
@@ -323,7 +326,11 @@ ul li.checked::before {
   color: white;
   width: 11%;
   background-color: #38b6ff;
-  border: 2px solid #38b6ff;
+  border-right: 1px solid white;
+  background-color: #38b6ff;
+  border-bottom: 2px solid #38b6ff;
+  border-top: 2px solid #38b6ff;
+  border-left: 2px solid #38b6ff;
   float: left;
   text-align: center;
   font-size: 18px;
@@ -340,8 +347,11 @@ ul li.checked::before {
   padding: 9.5px;
   color: white;
   width: 11%;
+  border-left: 1px solid white;
   background-color: #38b6ff;
-  border: 2px solid #38b6ff;
+  border-bottom: 2px solid #38b6ff;
+  border-top: 2px solid #38b6ff;
+  border-right: 2px solid #38b6ff;
   border-bottom-right-radius: 7px;
   border-top-right-radius: 7px;
   float: right;
@@ -452,6 +462,7 @@ ul li.checked::before {
   font-family: 'Varela Round';
   transition: 0.3s;
   margin: 3px 4px;
+  cursor: pointer;
 }
 
 .send-button:hover{
@@ -469,6 +480,7 @@ ul li.checked::before {
   font-size: 20px;
   font-family: 'Varela Round';
   margin: 3px 4px;
+  padding: 15px 12px
 }
 
 .email-input{
@@ -476,13 +488,14 @@ ul li.checked::before {
   color: white;
   background: none;
   border-radius: 4px;
-  width: 25rem;
+  width: 50rem;
   height: 2rem;
   resize: none;
   font-size: 15px;
   font-family: 'Varela Round';
   align-self: center;
   margin: 3px 4px;
+  padding: 15px 12px
 }
 
 .name-input{
@@ -490,15 +503,24 @@ ul li.checked::before {
   border: 2px solid white;
   background: none;
   border-radius: 4px;
-  width: 25rem;
+  width: 50rem;
   height: 2rem;
   resize: none;
   font-size: 15px;
   font-family: 'Varela Round';
   align-self: center;
   margin: 3px 4px;
+  padding: 15px 12px
 }
+
 
 .name-input::placeholder, .email-input::placeholder, .message-input::placeholder{
   color: rgb(202, 202, 202);
+}
+
+
+.aboutText{
+  margin: 0 auto;
+  text-align: center;
+  width: 55%;
 }
