@@ -648,6 +648,11 @@ function loadTitle(){
   document.getElementById("title").value = titleText;
 }
 
+function sendingMessage(){
+  let button = document.getElementById('send-button');
+  button.textContent = "Sending";
+}
+
 function calculatePercent(){
   let amountChecked = 0
   let total = 0;
