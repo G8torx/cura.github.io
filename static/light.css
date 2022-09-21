@@ -532,15 +532,30 @@ ul li.checked::before {
 }
 
 .name-input:hover{
-  border: 2px solid #3060c7a2;
+  border: 2px solid #00688B;
 }
 
 .email-input:hover{
-  border: 2px solid #3060c7a2;
+  border: 2px solid #00688B;
 }
 
 .message-input:hover{
-  border: 2px solid #3060c7a2;
+  border: 2px solid #00688B;
+}
+
+.name-input:focus{
+  outline: none !important;
+  border: 2px solid #38b6ff;
+}
+
+.email-input:focus{
+  outline: none !important;
+  border: 2px solid #38b6ff;
+}
+
+.message-input:focus{
+  outline: none !important;
+  border: 2px solid #38b6ff;
 }
 
 .aboutText{

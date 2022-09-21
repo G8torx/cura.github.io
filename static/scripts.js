@@ -274,7 +274,7 @@ function newElement() {
             let text = textValue.text;
             let value = {
               text: text,
-              checked: 'false',
+              checked: textValue.checked,
               priority: 'medium'
             }
             localStorage.setItem(storedId, JSON.stringify(value));
@@ -288,7 +288,7 @@ function newElement() {
             let text = textValue.text;
             let value = {
               text: text,
-              checked: 'false',
+              checked: textValue.checked,
               priority: 'high'
             }
             localStorage.setItem(storedId, JSON.stringify(value));
@@ -302,7 +302,7 @@ function newElement() {
             let text = textValue.text;
             let value = {
               text: text,
-              checked: 'false',
+              checked: textValue.checked,
               priority: 'low'
             }
             localStorage.setItem(storedId, JSON.stringify(value));
@@ -465,7 +465,7 @@ function loadList(){
           let text = textValue.text;
           let value = {
             text: text,
-            checked: 'false',
+            checked: textValue.checked,
             priority: 'medium'
           }
           localStorage.setItem(storedId, JSON.stringify(value));
@@ -479,7 +479,7 @@ function loadList(){
           let text = textValue.text;
           let value = {
             text: text,
-            checked: 'false',
+            checked: textValue.checked,
             priority: 'high'
           }
           localStorage.setItem(storedId, JSON.stringify(value));
@@ -493,7 +493,7 @@ function loadList(){
           let text = textValue.text;
           let value = {
             text: text,
-            checked: 'false',
+            checked: textValue.checked,
             priority: 'low'
           }
           localStorage.setItem(storedId, JSON.stringify(value));

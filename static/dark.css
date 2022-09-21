@@ -174,8 +174,7 @@ ul li {
   position: relative;
   display: flex;
   flex-wrap: nowrap;
-  margin-top: 10px;
-  padding: 12px 8px 12px 40px;
+  padding: 16.5px 8px 16.5px 40px;
   list-style-type: none;
   background: #34393d;
   font-size: 18px;
@@ -259,13 +258,13 @@ ul li.checked::before {
   background: none;
   border: none;
   transition: 0.2s;
-  scale: 1;
+  scale: 0.7;
   right: 5rem;
   padding: 12px 16px 12px 16px;
 }
 
 .priority:hover {
-  scale: .7;
+  scale: 1.1;
 }
 
 /* Style the header */
@@ -290,6 +289,7 @@ ul li.checked::before {
 .listInput {
   border: 2px solid #38b6ff;
   background: none;
+  margin-bottom: 1rem;
   color: white;
   width: 78%;
   padding: 9.5px;
@@ -383,13 +383,24 @@ ul li.checked::before {
 }
 
 .editInput{
-  border: 2px solid #38b6ff;
+  border: 2px solid #495057;
   width: 80%;
   border-radius: 7px;
   background: none;
   font-size: 18px;
+  padding: 5px;
   font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: white;
+  transition: 0.2s;
+}
+
+.editInput:hover{
+  border: 2px solid #00688B;
+}
+
+.editInput:focus{
+  outline: none !important;
+  border: 2px solid #38b6ff;
 }
 
 .list{
@@ -517,15 +528,30 @@ ul li.checked::before {
 }
 
 .name-input:hover{
-  border: 2px solid #3060c7a2;
+  border: 2px solid #00688B;
 }
 
 .email-input:hover{
-  border: 2px solid #3060c7a2;
+  border: 2px solid #00688B;
 }
 
 .message-input:hover{
-  border: 2px solid #3060c7a2;
+  border: 2px solid #00688B;
+}
+
+.name-input:focus{
+  outline: none !important;
+  border: 2px solid #38b6ff;
+}
+
+.email-input:focus{
+  outline: none !important;
+  border: 2px solid #38b6ff;
+}
+
+.message-input:focus{
+  outline: none !important;
+  border: 2px solid #38b6ff;
 }
 
 .name-input::placeholder, .email-input::placeholder, .message-input::placeholder{
