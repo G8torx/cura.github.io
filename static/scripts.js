@@ -575,7 +575,7 @@ function sortPriority(){
     if (storedValue === 'Sort'){
       continue;
     }
-    if (storedValue === 'Sort'){
+    if (id === 'Sort'){
       continue;
     }
 
