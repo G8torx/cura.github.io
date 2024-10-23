@@ -1,3 +1,4 @@
+
 //Chosing a random number for id
 let num = 1000
 let id = 0
@@ -669,5 +670,5 @@ function calculatePercent(){
     }
   }
   let percent = amountChecked / total * 100;
-  percentText.textContent = %${percent};
+  percentText.textContent = `%${percent}`;
 }
