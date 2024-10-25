@@ -1,5 +1,3 @@
-
-//Chosing a random number for id
 let num = 1000
 let id = 0
 
@@ -177,7 +175,7 @@ function newElement() {
     let item = {
       text: inputValue,
       checked: 'false',
-      priority: 'low'
+      priority: 'history'
     };
     if (inputValue === '') {
       alert("You must write something!");
@@ -192,7 +190,7 @@ function newElement() {
       let closeButton = document.createElement("button");
       let cross = document.createTextNode("❌");
       let priorityButton = document.createElement("button");
-      let priorityIcon = document.createTextNode('low');
+      let priorityIcon = document.createTextNode('history');
       priorityButton.setAttribute('title', 'Change priority');
       editButton.setAttribute('title', 'Edit');
       closeButton.setAttribute('title', 'Delete');
@@ -265,8 +263,8 @@ function newElement() {
         icon[c].onclick = function(){
           let li = this.parentElement;
           let button = li.firstChild;
-          if (button.textContent === 'low'){
-            button.textContent = 'medium';
+          if (button.textContent === 'history'){
+            button.textContent = 'math';
             button.style.backgroundColor = '#FFB81C';
             let storedId = li.id;
             let storedValue = localStorage.getItem(storedId);
@@ -275,12 +273,12 @@ function newElement() {
             let value = {
               text: text,
               checked: textValue.checked,
-              priority: 'medium'
+              priority: 'math'
             }
             localStorage.setItem(storedId, JSON.stringify(value));
           }
-          else if (button.textContent === 'medium'){
-            button.textContent = 'high';
+          else if (button.textContent === 'math'){
+            button.textContent = 'english';
             button.style.backgroundColor = '#F06A6A';
             let storedId = li.id;
             let storedValue = localStorage.getItem(storedId);
@@ -289,12 +287,12 @@ function newElement() {
             let value = {
               text: text,
               checked: textValue.checked,
-              priority: 'high'
+              priority: 'english'
             }
             localStorage.setItem(storedId, JSON.stringify(value));
           }
-          else if (button.textContent === 'high'){
-            button.textContent = 'low';
+          else if (button.textContent === 'english'){
+            button.textContent = 'history';
             button.style.backgroundColor = '#21b972';
             let storedId = li.id;
             let storedValue = localStorage.getItem(storedId);
@@ -303,7 +301,7 @@ function newElement() {
             let value = {
               text: text,
               checked: textValue.checked,
-              priority: 'low'
+              priority: 'history'
             }
             localStorage.setItem(storedId, JSON.stringify(value));
           }
@@ -377,13 +375,13 @@ function loadList(){
     let priorityIcon = document.createTextNode(priorityValue);
     priorityButton.className = "priority";
     priorityButton.classList.add('priorityText');
-    if (priorityValue === 'low'){
+    if (priorityValue === 'history'){
       priorityButton.style.backgroundColor = '#21b972';
     }
-    else if (priorityValue === 'medium'){
+    else if (priorityValue === 'math'){
       priorityButton.style.backgroundColor = '#FFB81C';
     }
-    else if (priorityValue === 'high'){
+    else if (priorityValue === 'english'){
       priorityButton.style.backgroundColor = '#F06A6A';
     }
     priorityButton.appendChild(priorityIcon);
@@ -456,22 +454,8 @@ function loadList(){
       icon[c].onclick = function(){
         let li = this.parentElement;
         let button = li.firstChild;
-        if (button.textContent === 'low'){
-          button.textContent = 'medium';
-          button.style.backgroundColor = '#FFB81C';
-          let storedId = li.id;
-          let storedValue = localStorage.getItem(storedId);
-          let textValue = JSON.parse(storedValue);
-          let text = textValue.text;
-          let value = {
-            text: text,
-            checked: textValue.checked,
-            priority: 'medium'
-          }
-          localStorage.setItem(storedId, JSON.stringify(value));
-        }
-        else if (button.textContent === 'medium'){
-          button.textContent = 'high';
+        if (button.textContent === 'history'){
+          button.textContent = 'math';
           button.style.backgroundColor = '#F06A6A';
           let storedId = li.id;
           let storedValue = localStorage.getItem(storedId);
@@ -480,21 +464,35 @@ function loadList(){
           let value = {
             text: text,
             checked: textValue.checked,
-            priority: 'high'
+            priority: 'math'
           }
           localStorage.setItem(storedId, JSON.stringify(value));
         }
-        else if (button.textContent === 'high'){
-          button.textContent = 'low';
+        else if (button.textContent === 'math'){
+          button.textContent = 'english';
+          button.style.backgroundColor = '#38b6ff';
           let storedId = li.id;
-          button.style.backgroundColor = '#21b972';
           let storedValue = localStorage.getItem(storedId);
           let textValue = JSON.parse(storedValue);
           let text = textValue.text;
           let value = {
             text: text,
             checked: textValue.checked,
-            priority: 'low'
+            priority: 'english'
+          }
+          localStorage.setItem(storedId, JSON.stringify(value));
+        }
+        else if (button.textContent === 'english'){
+          button.textContent = 'history';
+          let storedId = li.id;
+          button.style.backgroundColor = '#FFB81C';
+          let storedValue = localStorage.getItem(storedId);
+          let textValue = JSON.parse(storedValue);
+          let text = textValue.text;
+          let value = {
+            text: text,
+            checked: textValue.checked,
+            priority: 'history'
           }
           localStorage.setItem(storedId, JSON.stringify(value));
         }
@@ -580,42 +578,42 @@ function sortPriority(){
     }
 
     let newValue = JSON.parse(storedValue);
-    if (newValue.priority === 'low' && value === 'low'){
+    if (newValue.priority === 'history' && value === 'history'){
       for (let i = 0; i < li.length; i++){
         let button = li[i].firstChild;
         let parent = button.parentElement;
         if (parent.style.display === 'none'){
           parent.style= null;
         }
-        if (button.textContent === 'medium' || button.textContent === 'high'){
+        if (button.textContent === 'math' || button.textContent === 'english'){
           parent.style.display = 'none';
-          localStorage.setItem('Sort', 'low');
+          localStorage.setItem('Sort', 'history');
         }
       }
     }
-    else if (newValue.priority === 'medium' && value === 'medium'){
+    else if (newValue.priority === 'math' && value === 'math'){
       for (let i = 0; i < li.length; i++){
         let button = li[i].firstChild;
         let parent = button.parentElement;
         if (parent.style.display === 'none'){
           parent.style= null;
         }
-        if (button.textContent === 'high' || button.textContent === 'low'){
+        if (button.textContent === 'english' || button.textContent === 'history'){
           parent.style.display = 'none';
-          localStorage.setItem('Sort', 'medium');
+          localStorage.setItem('Sort', 'math');
         }
       }
     }
-    else if (newValue.priority === 'high' && value === 'high'){
+    else if (newValue.priority === 'english' && value === 'english'){
       for (let i = 0; i < li.length; i++){
         let button = li[i].firstChild;
         let parent = button.parentElement;
         if (parent.style.display === 'none'){
           parent.style= null;
         }
-        if (button.textContent === 'low' || button.textContent === 'medium'){
+        if (button.textContent === 'history' || button.textContent === 'math'){
           parent.style.display = 'none';
-          localStorage.setItem('Sort', 'high');
+          localStorage.setItem('Sort', 'english');
         }
       }
     }
@@ -670,5 +668,5 @@ function calculatePercent(){
     }
   }
   let percent = amountChecked / total * 100;
-  percentText.textContent = `%${percent}`;
+  percentText.textContent = %${percent};
 }
