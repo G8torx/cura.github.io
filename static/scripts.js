@@ -1,3 +1,4 @@
+
 //Chosing a random number for id
 let num = 1000
 let id = 0
@@ -74,45 +75,51 @@ for (let z = 0; z < editItem.length; z++) {
 
 let icon = document.getElementsByClassName("priority");
 for (let j = 0; j < icon.length; j++){
-  icon[j].onclick = function(){
+  icon[c].onclick = function(){
     let li = this.parentElement;
     let button = li.firstChild;
-    if (button.textContent === '🟢'){
-      button.textContent = '🟡';
+    if (button.textContent === 'low'){
+      button.textContent = 'medium';
+      button.style.backgroundColor = '#FFB81C';
       let storedId = li.id;
       let storedValue = localStorage.getItem(storedId);
       let textValue = JSON.parse(storedValue);
       let text = textValue.text;
       let value = {
         text: text,
-        checked: 'false',
-        priority: '🟡'
+        checked: textValue.checked,
+        priority: 'medium',
+        group: title.value
       }
       localStorage.setItem(storedId, JSON.stringify(value));
     }
-    else if (button.textContent === '🟡'){
-      button.textContent = '🔴';
+    else if (button.textContent === 'medium'){
+      button.textContent = 'high';
+      button.style.backgroundColor = '#F06A6A';
       let storedId = li.id;
       let storedValue = localStorage.getItem(storedId);
       let textValue = JSON.parse(storedValue);
       let text = textValue.text;
       let value = {
         text: text,
-        checked: 'false',
-        priority: '🔴'
+        checked: textValue.checked,
+        priority: 'high',
+        group: title.value
       }
       localStorage.setItem(storedId, JSON.stringify(value));
     }
-    else if (button.textContent === '🔴'){
-      button.textContent = '🟢';
+    else if (button.textContent === 'high'){
+      button.textContent = 'low';
+      button.style.backgroundColor = '#21b972';
       let storedId = li.id;
       let storedValue = localStorage.getItem(storedId);
       let textValue = JSON.parse(storedValue);
       let text = textValue.text;
       let value = {
         text: text,
-        checked: 'false',
-        priority: '🟢'
+        checked: textValue.checked,
+        priority: 'low',
+        group: title.value
       }
       localStorage.setItem(storedId, JSON.stringify(value));
     }
@@ -121,41 +128,44 @@ for (let j = 0; j < icon.length; j++){
 
 // Add a "checked" symbol when clicking on a list item
 let list = document.querySelector('ul');
-list.addEventListener('click', function(ev) {
-  if (ev.target.tagName === 'LI') {
-    if (ev.target.className === 'checked'){
-      ev.target.classList.remove('checked');
-      let storedId = ev.target.id;
-      let storedValue = localStorage.getItem(storedId);
-      let textValue = JSON.parse(storedValue);
-      let text = textValue.text;
-      let priorityValue = textValue.priority;
-      let value = {
-        text: text,
-        checked: 'false',
-        priority: priorityValue
+if (list){
+  list.addEventListener('click', function(ev) {
+    if (ev.target.tagName === 'LI') {
+      if (ev.target.className === 'checked'){
+        ev.target.classList.remove('checked');
+        let storedId = ev.target.id;
+        let storedValue = localStorage.getItem(storedId);
+        let textValue = JSON.parse(storedValue);
+        let text = textValue.text;
+        let priorityValue = textValue.priority;
+        let value = {
+          text: text,
+          checked: 'false',
+          priority: priorityValue
+        }
+        localStorage.setItem(storedId, JSON.stringify(value));
       }
-      localStorage.setItem(storedId, JSON.stringify(value));
-    }
-    else{
-      ev.target.classList.toggle('checked');
-      let storedId = ev.target.id;
-      let storedValue = localStorage.getItem(storedId);
-      let textValue = JSON.parse(storedValue);
-      let text = textValue.text;
-      let priorityValue = textValue.priority;
-      let value = {
-        text: text,
-        checked: 'true',
-        priority: priorityValue
+      else{
+        ev.target.classList.toggle('checked');
+        let storedId = ev.target.id;
+        let storedValue = localStorage.getItem(storedId);
+        let textValue = JSON.parse(storedValue);
+        let text = textValue.text;
+        let priorityValue = textValue.priority;
+        let value = {
+          text: text,
+          checked: 'true',
+          priority: priorityValue
+        }
+        localStorage.setItem(storedId, JSON.stringify(value));
       }
-      localStorage.setItem(storedId, JSON.stringify(value));
     }
-  }
-}, false);
+  }, false);
+}
 
 // Create a new list item when clicking on the "Add" button
 function newElement() {
+  let title = document.getElementById('title');
   id = Math.floor(Math.random() * num);
   let inputValue = document.getElementById("myInput").value;
   let div = document.createElement('div');
@@ -176,7 +186,8 @@ function newElement() {
     let item = {
       text: inputValue,
       checked: 'false',
-      priority: 'low'
+      priority: 'low',
+      group: title.value
     };
     if (inputValue === '') {
       alert("You must write something!");
@@ -235,7 +246,8 @@ function newElement() {
           let value = {
             text: newText,
             checked: checked,
-            priority: priority
+            priority: priority,
+            group: title.value
           }
 
           input.addEventListener("keypress", function(event) {
@@ -274,7 +286,8 @@ function newElement() {
             let value = {
               text: text,
               checked: textValue.checked,
-              priority: 'medium'
+              priority: 'medium',
+              group: title.value
             }
             localStorage.setItem(storedId, JSON.stringify(value));
           }
@@ -288,7 +301,8 @@ function newElement() {
             let value = {
               text: text,
               checked: textValue.checked,
-              priority: 'high'
+              priority: 'high',
+              group: title.value
             }
             localStorage.setItem(storedId, JSON.stringify(value));
           }
@@ -302,7 +316,8 @@ function newElement() {
             let value = {
               text: text,
               checked: textValue.checked,
-              priority: 'low'
+              priority: 'low',
+              group: title.value
             }
             localStorage.setItem(storedId, JSON.stringify(value));
           }
@@ -314,14 +329,17 @@ function newElement() {
   
 
 let input = document.getElementById("myInput");
-input.addEventListener("keypress", function(event) {
-  if (event.key === "Enter") {
-    event.preventDefault();
-    document.getElementById("addButton").click();
-  }
-});
+if (input){
+  input.addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      document.getElementById("addButton").click();
+    }
+  });
+}
 
 function loadList(){
+  let title = document.getElementById('title');
   for (let i = 0; i < localStorage.length; i++){
     let id = localStorage.key(i);
     let storedValue = localStorage.getItem(id);
@@ -426,7 +444,8 @@ function loadList(){
         let value = {
           text: newText,
           checked: checked,
-          priority: priority
+          priority: priority,
+          group: title.value
         }
 
         input.addEventListener("keypress", function(event) {
@@ -465,7 +484,8 @@ function loadList(){
           let value = {
             text: text,
             checked: textValue.checked,
-            priority: 'medium'
+            priority: 'medium',
+            group: title.value
           }
           localStorage.setItem(storedId, JSON.stringify(value));
         }
@@ -479,7 +499,8 @@ function loadList(){
           let value = {
             text: text,
             checked: textValue.checked,
-            priority: 'high'
+            priority: 'high',
+            group: title.value
           }
           localStorage.setItem(storedId, JSON.stringify(value));
         }
@@ -493,7 +514,8 @@ function loadList(){
           let value = {
             text: text,
             checked: textValue.checked,
-            priority: 'low'
+            priority: 'low',
+            group: title.value
           }
           localStorage.setItem(storedId, JSON.stringify(value));
         }
@@ -523,14 +545,10 @@ function loadTheme(){
 }
 
 let title = document.getElementById("title");
-
-title.addEventListener('input', function handleChange(event) {
-  localStorage.setItem("Title", event.target.value);
-});
-
-function loadTitle(){
-  let titleText = localStorage.getItem("Title");
-  document.getElementById("title").value = titleText;
+if (title){
+  title.addEventListener('input', function handleChange(event) {
+    localStorage.setItem("Title", event.target.value);
+  });
 }
 
 function toggleTheme(){
@@ -642,11 +660,6 @@ function loadPriority(){
   }
 }
 
-function loadTitle(){
-  let titleText = localStorage.getItem("Title");
-  document.getElementById("title").value = titleText;
-}
-
 function sendingMessage(){
   let button = document.getElementById('send-button');
   button.textContent = "Sending";
@@ -669,5 +682,126 @@ function calculatePercent(){
     }
   }
   let percent = amountChecked / total * 100;
-  percentText.textContent = %${percent};
+  percentText.textContent = `%${percent}`;
+}
+
+function openCreate(){
+  let createButton = document.getElementById('createButton');
+  let buttonParent =  document.getElementById('listButtons');
+  let toolBar = document.getElementById('toolBar');
+  let page = document.getElementById('newTitlePage');
+  page.style.display = null;
+  createButton.style.display = 'none';
+  buttonParent.style.display = 'none';
+  toolBar.style.display = 'none';
+}
+
+function closeCreate(){
+  let page = document.getElementById('newTitlePage');
+  let buttonParent =  document.getElementById('listButtons');
+  let createButton = document.getElementById('createButton');
+  page.style.display = 'none';
+  createButton.style.display = null;
+  buttonParent.style.display = null;
+}
+
+let color_picker = document.getElementById("colorPicker");
+let hex_code = document.getElementById("hexCode");
+if (color_picker){
+  color_picker.addEventListener("input", function () {
+    let code = color_picker.value;
+    hex_code.textContent = code;
+  }, false);
+}
+
+function newList(){
+  let textInput = document.getElementById('newTitle');
+  let color_picker = document.getElementById("colorPicker");
+  let newItem = document.createElement('button');
+  let aTag = document.createElement('a');
+  let buttonParent =  document.getElementById('listButtons');
+  let title = document.getElementById('newTitle').value;
+  let text = textInput.value;
+  let buttonColor = color_picker.value;
+  newItem.textContent = text;
+  newItem.className = 'buttonItem';
+  newItem.setAttribute('id', 'listButton');
+  aTag.setAttribute('href', 'list');
+  buttonParent.style.display = 'none';
+  buttonParent.appendChild(aTag);
+  aTag.appendChild(newItem);
+  newItem.style.backgroundColor = buttonColor;
+  textInput.value = '';
+  let value = {
+    group: title,
+    buttonColor: buttonColor
+  }
+  localStorage.setItem(JSON.stringify(value), 'Title');
+  localStorage.setItem('Title', title);
+}
+
+function loadButtons(){
+  for (let i = 0; i < localStorage.length; i++){
+    let key = localStorage.key(i);
+    let value = localStorage.getItem(key);
+    if (value === 'Title'){
+      let storedValue = localStorage.key(i); //Json value
+      let textValue = JSON.parse(storedValue);
+      console.log(textValue);
+      let color = textValue.buttonColor;
+      let title = textValue.group;
+      let div = document.getElementById('listButtons');
+      let button = document.createElement('button');
+      let aTag = document.createElement('a');
+      button.className = 'buttonItem';
+      button.setAttribute('id', 'listButton');
+      aTag.setAttribute('href', '#');
+      button.style.backgroundColor = color;
+      button.textContent = title;
+      div.appendChild(aTag);
+      aTag.appendChild(button);
+      let json = {
+        group: title,
+        buttonColor: color
+      }
+      localStorage.setItem(JSON.stringify(json), 'Title');
+      localStorage.setItem('Title', title);
+    }
+  }
+}
+
+function loadTitle(){
+  let titleText = localStorage.getItem("Title");
+  document.getElementById("title").value = titleText;
+}
+
+const parentButton = document.getElementById('listButtons');
+if (parentButton){
+  parentButton.addEventListener('click', (event) => {
+    let buttonTitle = event.target.textContent;
+    localStorage.setItem('Title', buttonTitle);
+    console.log(buttonTitle);
+  });
+}
+
+function deleteList(){
+  let checkButton = document.getElementById('checkButton');
+  let listParent = document.getElementById('listButtons');
+  let listButton = listParent.getElementsByTagName('button');
+  for (let i = 0; i < listButton.length; i++){
+    listButton[i].classList.add('buttonSelect');
+    listButton[i].style.backgroundColor = '#34393d';
+  }
+  checkButton.style.display = null;
+}
+
+if (parentButton){
+  parentButton.addEventListener('click', (event) => {
+    let button = event.target;
+    console.log(button.style.backgroundColor);
+    if (button.style.backgroundColor === 'rgb(52, 57, 61)'){
+      button.remove();
+      console.log(button.textContent);
+    }
+  });
 }
