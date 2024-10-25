@@ -1,3 +1,4 @@
+//Chosing a random number for id
 let num = 1000
 let id = 0
 
@@ -175,7 +176,7 @@ function newElement() {
     let item = {
       text: inputValue,
       checked: 'false',
-      priority: 'history'
+      priority: 'low'
     };
     if (inputValue === '') {
       alert("You must write something!");
@@ -190,7 +191,7 @@ function newElement() {
       let closeButton = document.createElement("button");
       let cross = document.createTextNode("❌");
       let priorityButton = document.createElement("button");
-      let priorityIcon = document.createTextNode('history');
+      let priorityIcon = document.createTextNode('low');
       priorityButton.setAttribute('title', 'Change priority');
       editButton.setAttribute('title', 'Edit');
       closeButton.setAttribute('title', 'Delete');
@@ -263,8 +264,8 @@ function newElement() {
         icon[c].onclick = function(){
           let li = this.parentElement;
           let button = li.firstChild;
-          if (button.textContent === 'history'){
-            button.textContent = 'math';
+          if (button.textContent === 'low'){
+            button.textContent = 'medium';
             button.style.backgroundColor = '#FFB81C';
             let storedId = li.id;
             let storedValue = localStorage.getItem(storedId);
@@ -273,12 +274,12 @@ function newElement() {
             let value = {
               text: text,
               checked: textValue.checked,
-              priority: 'math'
+              priority: 'medium'
             }
             localStorage.setItem(storedId, JSON.stringify(value));
           }
-          else if (button.textContent === 'math'){
-            button.textContent = 'english';
+          else if (button.textContent === 'medium'){
+            button.textContent = 'high';
             button.style.backgroundColor = '#F06A6A';
             let storedId = li.id;
             let storedValue = localStorage.getItem(storedId);
@@ -287,12 +288,12 @@ function newElement() {
             let value = {
               text: text,
               checked: textValue.checked,
-              priority: 'english'
+              priority: 'high'
             }
             localStorage.setItem(storedId, JSON.stringify(value));
           }
-          else if (button.textContent === 'english'){
-            button.textContent = 'history';
+          else if (button.textContent === 'high'){
+            button.textContent = 'low';
             button.style.backgroundColor = '#21b972';
             let storedId = li.id;
             let storedValue = localStorage.getItem(storedId);
@@ -301,7 +302,7 @@ function newElement() {
             let value = {
               text: text,
               checked: textValue.checked,
-              priority: 'history'
+              priority: 'low'
             }
             localStorage.setItem(storedId, JSON.stringify(value));
           }
@@ -375,13 +376,13 @@ function loadList(){
     let priorityIcon = document.createTextNode(priorityValue);
     priorityButton.className = "priority";
     priorityButton.classList.add('priorityText');
-    if (priorityValue === 'history'){
+    if (priorityValue === 'low'){
       priorityButton.style.backgroundColor = '#21b972';
     }
-    else if (priorityValue === 'math'){
+    else if (priorityValue === 'medium'){
       priorityButton.style.backgroundColor = '#FFB81C';
     }
-    else if (priorityValue === 'english'){
+    else if (priorityValue === 'high'){
       priorityButton.style.backgroundColor = '#F06A6A';
     }
     priorityButton.appendChild(priorityIcon);
@@ -454,8 +455,22 @@ function loadList(){
       icon[c].onclick = function(){
         let li = this.parentElement;
         let button = li.firstChild;
-        if (button.textContent === 'history'){
-          button.textContent = 'math';
+        if (button.textContent === 'low'){
+          button.textContent = 'medium';
+          button.style.backgroundColor = '#FFB81C';
+          let storedId = li.id;
+          let storedValue = localStorage.getItem(storedId);
+          let textValue = JSON.parse(storedValue);
+          let text = textValue.text;
+          let value = {
+            text: text,
+            checked: textValue.checked,
+            priority: 'medium'
+          }
+          localStorage.setItem(storedId, JSON.stringify(value));
+        }
+        else if (button.textContent === 'medium'){
+          button.textContent = 'high';
           button.style.backgroundColor = '#F06A6A';
           let storedId = li.id;
           let storedValue = localStorage.getItem(storedId);
@@ -464,35 +479,21 @@ function loadList(){
           let value = {
             text: text,
             checked: textValue.checked,
-            priority: 'math'
+            priority: 'high'
           }
           localStorage.setItem(storedId, JSON.stringify(value));
         }
-        else if (button.textContent === 'math'){
-          button.textContent = 'english';
-          button.style.backgroundColor = '#38b6ff';
+        else if (button.textContent === 'high'){
+          button.textContent = 'low';
           let storedId = li.id;
+          button.style.backgroundColor = '#21b972';
           let storedValue = localStorage.getItem(storedId);
           let textValue = JSON.parse(storedValue);
           let text = textValue.text;
           let value = {
             text: text,
             checked: textValue.checked,
-            priority: 'english'
-          }
-          localStorage.setItem(storedId, JSON.stringify(value));
-        }
-        else if (button.textContent === 'english'){
-          button.textContent = 'history';
-          let storedId = li.id;
-          button.style.backgroundColor = '#FFB81C';
-          let storedValue = localStorage.getItem(storedId);
-          let textValue = JSON.parse(storedValue);
-          let text = textValue.text;
-          let value = {
-            text: text,
-            checked: textValue.checked,
-            priority: 'history'
+            priority: 'low'
           }
           localStorage.setItem(storedId, JSON.stringify(value));
         }
@@ -578,42 +579,42 @@ function sortPriority(){
     }
 
     let newValue = JSON.parse(storedValue);
-    if (newValue.priority === 'history' && value === 'history'){
+    if (newValue.priority === 'low' && value === 'low'){
       for (let i = 0; i < li.length; i++){
         let button = li[i].firstChild;
         let parent = button.parentElement;
         if (parent.style.display === 'none'){
           parent.style= null;
         }
-        if (button.textContent === 'math' || button.textContent === 'english'){
+        if (button.textContent === 'medium' || button.textContent === 'high'){
           parent.style.display = 'none';
-          localStorage.setItem('Sort', 'history');
+          localStorage.setItem('Sort', 'low');
         }
       }
     }
-    else if (newValue.priority === 'math' && value === 'math'){
+    else if (newValue.priority === 'medium' && value === 'medium'){
       for (let i = 0; i < li.length; i++){
         let button = li[i].firstChild;
         let parent = button.parentElement;
         if (parent.style.display === 'none'){
           parent.style= null;
         }
-        if (button.textContent === 'english' || button.textContent === 'history'){
+        if (button.textContent === 'high' || button.textContent === 'low'){
           parent.style.display = 'none';
-          localStorage.setItem('Sort', 'math');
+          localStorage.setItem('Sort', 'medium');
         }
       }
     }
-    else if (newValue.priority === 'english' && value === 'english'){
+    else if (newValue.priority === 'high' && value === 'high'){
       for (let i = 0; i < li.length; i++){
         let button = li[i].firstChild;
         let parent = button.parentElement;
         if (parent.style.display === 'none'){
           parent.style= null;
         }
-        if (button.textContent === 'history' || button.textContent === 'math'){
+        if (button.textContent === 'low' || button.textContent === 'medium'){
           parent.style.display = 'none';
-          localStorage.setItem('Sort', 'english');
+          localStorage.setItem('Sort', 'high');
         }
       }
     }
