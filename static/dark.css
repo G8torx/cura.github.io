@@ -105,7 +105,7 @@ p{
   font-size: 80px;
   font-family: 'Varela Round';
   position: relative;
-  top: 10rem;
+  top: 22rem;
 }
 
 .beta-text{
@@ -442,9 +442,10 @@ ul li.checked::before {
 }
 
 .bottom-wave {
-  position: absolute;
+  position: fixed;
   bottom: 0;
   left: 0;
+  margin-top: 10rem;
   width: 100%;
   overflow: hidden;
   line-height: 0;
@@ -572,4 +573,159 @@ ul li.checked::before {
   margin: 0 auto;
   text-align: center;
   width: 55%;
+}
+
+.listItems{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.toolButton{
+  width: 5rem;
+  height: 5rem;
+  border: none;
+  border-radius: 7px;
+  background-color: #38b6ff;
+  color: white;
+  font-size: 40px;
+  cursor: pointer;
+  transition: 0.3s;
+  margin: 1rem;
+}
+
+.toolButton:hover{
+  scale: 0.8;
+}
+
+.listButtons{
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.buttonItem{
+  position: relative;
+  min-width: 22rem;
+  height: 7rem;
+  border: none;
+  border-radius: 7px;
+  background-color: #38b6ff;
+  color: rgb(255, 255, 255);
+  font-size: 40px;
+  cursor: pointer;
+  transition: 0.3s;
+  font-family: 'Varela Round';
+  font-size: 25px;
+  word-wrap: break-word;
+  margin: 10px;
+}
+
+.buttonItem:hover{
+  scale: 0.8;
+}
+
+.continueButton{
+  align-self: center;
+  position: relative;
+  top: 1.5rem;
+  width: 8rem;
+  height: 4rem;
+  border: none;
+  border-radius: 7px;
+  background-color: #38b6ff;
+  color: white;
+  font-size: 40px;
+  cursor: pointer;
+  transition: 0.3s;
+  margin: 0.5rem;
+}
+
+.continueButton:hover{
+  scale: 0.8;
+}
+
+.newTitlePage{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  flex: 1;
+  flex-direction: column;
+  margin: auto;
+  background-color: #92c8fab0;
+  min-width: none;
+  height: 35rem;
+  border-radius: 7px;
+}
+
+.closeButton{
+  position: relative;
+  width: 5rem;
+  height: 5rem;
+  border: none;
+  border-radius: 7px;
+  background: none;
+  color: #ffffff;
+  font-size: 40px;
+  cursor: pointer;
+  transition: 0.3s;
+  align-self: flex-end;
+  top: -11.5rem;
+}
+
+.closeButton:hover{
+  scale: 1.2;
+  color: #ff6a6a;
+}
+
+.colorPicker{
+  position: relative;
+  top: 6rem;
+  width: 16rem;
+  height: 6rem;
+  border-radius: 7px;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+  background-color: white;
+}
+
+.colorPicker:hover{
+  scale: 1.1;
+}
+
+.newTitle{
+  position: relative;
+  top: 0rem;
+  color: black;
+  border: 2px solid #ced4da;
+  background: white;
+  border-radius: 4px;
+  min-width: 50rem;
+  height: 3rem;
+  resize: none;
+  font-size: 20px;
+  font-family: 'Varela Round';
+  margin: 3px 4px;
+  padding: 15px 12px;
+  transition: 0.3s;
+}
+
+.newTitle:hover{
+  border: 2px solid #00688B;
+}
+
+.newTitle:focus{
+  outline: none !important;
+  border: 2px solid #38b6ff;
+}
+
+.toolBar{
+  background-color: #0d6efd;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  border-radius: 14px;
+  float: left;
 }
