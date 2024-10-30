@@ -334,11 +334,10 @@ ul li.checked::before {
   padding: 9.5px;
   color: white;
   width: 10%;
-  background-color: #38b6ff;
-  background-color: #38b6ff;
-  border-bottom: 2px solid #38b6ff;
-  border-top: 2px solid #38b6ff;
-  border-left: 2px solid #38b6ff;
+  background-color: #3086b8;
+  border-bottom: 2px solid #3086b8;
+  border-top: 2px solid #3086b8;
+  border-left: 2px solid #3086b8;
   float: left;
   text-align: center;
   font-size: 18px;
@@ -437,7 +436,7 @@ ul li.checked::before {
 
 
 .dark-bg{
-  background-color: #34393d;
+  background-color: #2d3032;
 }
 
 .selectedButton{
