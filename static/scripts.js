@@ -7,7 +7,7 @@ for (let i = 0; i < myNodelist.length; i++) {
   var editButton = document.createElement("button");
   var pencil = document.createTextNode("✏️");
   var closeButton = document.createElement("button");
-  var cross = document.createTextNode("❌");
+  var cross = document.createTextNode("✅");
   editButton.setAttribute('title', 'Edit');
   closeButton.setAttribute('title', 'Delete');
   editButton.className = "edit";
