@@ -4,18 +4,12 @@ let id = 0;
 
 let myNodelist = document.getElementsByTagName("LI");
 for (let i = 0; i < myNodelist.length; i++) {
-  var editButton = document.createElement("button");
-  var pencil = document.createTextNode("✏️");
   var closeButton = document.createElement("button");
   var cross = document.createTextNode("❌");
-  editButton.setAttribute('title', 'Edit');
   closeButton.setAttribute('title', 'Delete');
-  editButton.className = "edit";
-  editButton.appendChild(pencil);
   closeButton.className = "close";
   closeButton.appendChild(cross);
 
-  myNodelist[i].appendChild(editButton);
   myNodelist[i].appendChild(closeButton);
 }
 
@@ -27,36 +21,6 @@ for (let i = 0; i < close.length; i++) {
     let item = (div.id);
     localStorage.removeItem(item);
     div.remove();
-  };
-}
-
-let editItem = document.getElementsByClassName('edit');
-for (let z = 0; z < editItem.length; z++) {
-  editItem[z].onclick = function() {
-    let div = this.parentElement;
-    let input = div.lastChild;
-    let storedId = div.id;
-    let storedValue = localStorage.getItem(storedId);
-    let newValue = JSON.parse(storedValue);
-    let checked = newValue.checked;
-    let text = newValue.text;
-    let newText = input.value;
-    input.value = text;
-    let value = {
-      text: newText,
-      checked: checked
-    };
-
-    if (input.style.display === 'block'){
-      localStorage.setItem(storedId, JSON.stringify(value));
-      div.nodeValue = newText;
-      input.style.display = 'none';
-      input.readOnly = true;
-    }
-    else if (input.style.display === 'none'){
-      input.style.display = "block";
-      input.readOnly = false;
-    }
   };
 }
 
@@ -101,10 +65,6 @@ function newElement() {
   let div = document.createElement('div');
   div.setAttribute('id', 'itemText');
   let t = document.createTextNode(inputValue);
-  let input = document.createElement('input');
-  input.setAttribute('readonly', 'true');
-  input.setAttribute('style', 'display: none;');
-  input.className = 'editInput';
 
   if (localStorage.getItem(id) !== null){
     alert('Id has already been used');
@@ -125,21 +85,14 @@ function newElement() {
       document.getElementById("myUL").appendChild(li);
       document.getElementById("myInput").value = "";
 
-      let editButton = document.createElement("button");
-      let pencil = document.createTextNode("✏️");
       let closeButton = document.createElement("button");
       let cross = document.createTextNode("❌");
-      editButton.setAttribute('title', 'Edit');
       closeButton.setAttribute('title', 'Delete');
-      editButton.className = "edit";
-      editButton.appendChild(pencil);
       closeButton.className = "close";
       closeButton.appendChild(cross);
-      li.appendChild(editButton);
       li.appendChild(closeButton);
       li.appendChild(div);
       div.appendChild(t);
-      li.appendChild(input);
 
       for (let j = 0; j < close.length; j++) {
         close[j].onclick = function() {
@@ -147,47 +100,6 @@ function newElement() {
           let item = (div.id);
           localStorage.removeItem(item);
           div.remove();
-        };
-      }
-
-      for (let z = 0; z < editItem.length; z++) {
-        editItem[z].onclick = function() {
-          let li = this.parentElement;
-          let div = li.children[3];
-          div.style.display = 'none';
-          let input = li.lastChild;
-          let storedId = li.id;
-          let storedValue = localStorage.getItem(storedId);
-          let newValue = JSON.parse(storedValue);
-          let checked = newValue.checked;
-          let text = newValue.text;
-          let newText = input.value;
-          input.value = text;
-          let value = {
-            text: newText,
-            checked: checked,
-            group: title.value
-          };
-
-          input.addEventListener("keypress", function(event) {
-            if (event.key === "Enter") {
-              event.preventDefault();
-              editItem[z].click();
-            }
-          });
-
-          if (input.style.display === 'block'){
-            localStorage.setItem(storedId, JSON.stringify(value));
-            div.textContent = newText;
-            input.style.display = 'none';
-            div.style.display = 'block';
-            input.readOnly = true;
-          }
-          else if (input.style.display === 'none'){
-            input.style.display = "block";
-            input.readOnly = false;
-            div.style.display = 'none';
-          }
         };
       }
     }
@@ -216,13 +128,8 @@ function loadList(){
     let checked = item.checked;
 
     let li = document.createElement("li");
-    let input = document.createElement('input');
     let div = document.createElement('div');
     div.setAttribute('id', 'itemText');
-    input.setAttribute('readonly', 'true');
-    input.setAttribute('style', 'display: none;');
-    input.setAttribute('id', 'editInput');
-    input.className = 'editInput';
     li.setAttribute('id', id);
     if (checked === 'true'){
       li.setAttribute('class', 'checked');
@@ -233,21 +140,14 @@ function loadList(){
 
     document.getElementById("myInput").value = "";
 
-    let editButton = document.createElement("button");
-    let pencil = document.createTextNode("✏️");
     let closeButton = document.createElement("button");
     let cross = document.createTextNode("❌");
-    editButton.setAttribute('title', 'Edit');
     closeButton.setAttribute('title', 'Delete');
-    editButton.className = "edit";
-    editButton.appendChild(pencil);
     closeButton.className = "close";
     closeButton.appendChild(cross);
-    li.appendChild(editButton);
     li.appendChild(closeButton);
     li.appendChild(div);
     div.appendChild(t);
-    li.appendChild(input);
 
     for (let j = 0; j < close.length; j++) {
       close[j].onclick = function() {
@@ -255,47 +155,6 @@ function loadList(){
         let item = (div.id);
         localStorage.removeItem(item);
         div.remove();
-      };
-    }
-
-    for (let z = 0; z < editItem.length; z++) {
-      editItem[z].onclick = function() {
-        let li = this.parentElement;
-        let div = li.children[3];
-        div.style.display = 'none';
-        let input = li.lastChild;
-        let storedId = li.id;
-        let storedValue = localStorage.getItem(storedId);
-        let newValue = JSON.parse(storedValue);
-        let checked = newValue.checked;
-        let text = newValue.text;
-        let newText = input.value;
-        input.value = text;
-        let value = {
-          text: newText,
-          checked: checked,
-          group: title.value
-        };
-
-        input.addEventListener("keypress", function(event) {
-          if (event.key === "Enter") {
-            event.preventDefault();
-            editItem[z].click();
-          }
-        });
-
-        if (input.style.display === 'block'){
-          localStorage.setItem(storedId, JSON.stringify(value));
-          div.textContent = newText;
-          input.style.display = 'none';
-          div.style.display = 'block';
-          input.readOnly = true;
-        }
-        else if (input.style.display === 'none'){
-          input.style.display = "block";
-          input.readOnly = false;
-          div.style.display = 'none';
-        }
       };
     }
   }
