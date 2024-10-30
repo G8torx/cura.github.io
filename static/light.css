@@ -81,17 +81,17 @@ html{
 h1{
     color: black;
     font-size: 45px;
-    font-family: 'Varela Round';
+    font-family: 'Poppins';
 }
 
 h2{
-  font-family: 'Varela Round';
+  font-family: 'Poppins';
   font-weight: lighter;
 }
 
 p{
   color: black;
-  font-family: 'Varela Round';
+  font-family: 'Poppins';
   padding: 0px 100px;
   font-size: 18px;
 }
@@ -105,7 +105,7 @@ p{
 .home-title{
   color: black;
   font-size: 80px;
-  font-family: 'Varela Round';
+  font-family: 'Poppins';
   position: relative;
   top: 22rem;
 }
@@ -113,7 +113,7 @@ p{
 .beta-text{
   color: #38b6ff;
   font-size: 30px;
-  font-family: 'Varela Round';
+  font-family: 'Poppins';
   position: relative;
   top: 7rem;
 }
@@ -136,7 +136,7 @@ p{
   border-radius: 7px;
   text-decoration: none;
   padding: 16px 34px;
-  font-family: 'Varela Round';
+  font-family: 'Poppins';
   font-size: 20px;
   transition-duration: 0.3s;
 }
@@ -179,7 +179,7 @@ ul li {
   list-style-type: none;
   background: white;
   font-size: 18px;
-  font-family: 'Varela Round';
+  font-family: 'Poppins';
   transition: 0.2s;
   color: black;
   border-bottom: 2px solid #34393d;
@@ -288,7 +288,7 @@ ul li.checked::before {
 .listInput {
   border: 2px solid #ced4da;
   margin-bottom: 1rem;
-  width: 78%;
+  width: 90%;
   padding: 9.5px;
   float: left;
   font-size: 18px;
@@ -312,21 +312,20 @@ ul li.checked::before {
   text-align: center;
   padding: 3rem;
   font-size: 45px;
-  font-family: 'Varela Round';
+  font-family: 'Poppins';
 }
 
 .title::placeholder{
   font-size: 45px;
-  font-family: 'Varela Round';
+  font-family: 'Poppins';
 }
 
 /* Style the "Add" button */
 .addBtn {
   padding: 9.5px;
   color: white;
-  width: 11%;
+  width: 10%;
   background-color: #38b6ff;
-  border-right: 1px solid white;
   background-color: #38b6ff;
   border-bottom: 2px solid #38b6ff;
   border-top: 2px solid #38b6ff;
@@ -334,6 +333,8 @@ ul li.checked::before {
   float: left;
   text-align: center;
   font-size: 18px;
+  border-top-right-radius: 7px;
+  border-bottom-right-radius: 7px;
   cursor: pointer;
   transition: 0.3s;
 }
@@ -398,9 +399,10 @@ ul li.checked::before {
 }
 
 .toggleButton{
-  position: relative;
+  position: absolute;
+  right: 10%;
+  top: 1rem;
   padding: 16px 34px;
-  top: 2.2rem;
   background: none;
   border: none;
   transition: 0.3s;
@@ -409,8 +411,9 @@ ul li.checked::before {
 }
 
 .toggleButton:hover{
-  opacity: .5;
+  opacity: 0.5;
 }
+
 
 .dropdown {
   position: relative;
@@ -483,7 +486,7 @@ ul li.checked::before {
   padding: 12px;
   margin: 4px 3px;
   width: 6.5%;
-  font-family: 'Varela Round';
+  font-family: 'Poppins';
   transition: 0.3s;
   margin: 3px 4px;
   cursor: pointer;
@@ -502,7 +505,7 @@ ul li.checked::before {
   width: 50rem;
   resize: none;
   font-size: 20px;
-  font-family: 'Varela Round';
+  font-family: 'Poppins';
   margin: 3px 4px;
   padding: 15px 12px;
   transition: 3s;
@@ -517,7 +520,7 @@ ul li.checked::before {
   height: 2rem;
   resize: none;
   font-size: 15px;
-  font-family: 'Varela Round';
+  font-family: 'Poppins';
   align-self: center;
   margin: 3px 4px;
   padding: 15px 12px;
@@ -533,7 +536,7 @@ ul li.checked::before {
   height: 2rem;
   resize: none;
   font-size: 15px;
-  font-family: 'Varela Round';
+  font-family: 'Poppins';
   align-self: center;
   margin: 3px 4px;
   padding: 15px 12px;
@@ -614,7 +617,7 @@ ul li.checked::before {
   font-size: 40px;
   cursor: pointer;
   transition: 0.3s;
-  font-family: 'Varela Round';
+  font-family: 'Poppins';
   font-size: 25px;
   word-wrap: break-word;
   margin: 1rem;
@@ -632,7 +635,7 @@ ul li.checked::before {
   border-radius: 7px;
   cursor: pointer;
   transition: 0.4s;
-  font-family: 'Varela Round';
+  font-family: 'Poppins';
   font-size: 25px;
   word-wrap: break-word;
   margin: 1rem;
@@ -725,7 +728,7 @@ ul li.checked::before {
   height: 3rem;
   resize: none;
   font-size: 20px;
-  font-family: 'Varela Round';
+  font-family: 'Poppins';
   margin: 3px 4px;
   padding: 15px 12px;
   transition: 0.3s;
