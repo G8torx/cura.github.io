@@ -532,13 +532,15 @@ function loadTheme(){
     if (value === "dark"){
       theme.setAttribute('href', 'static/dark.css');
       localStorage.setItem('Theme', 'dark');
-      icon.textContent = '☀️';
+      icon.textContent = 'Light';
+      toggleButton.style.color = '#fff';
       icon.setAttribute('title', 'Switch to light mode');
     }
     else if (value === 'light'){
       theme.setAttribute('href', 'static/light.css');
       localStorage.setItem('Theme', 'light');
-      icon.textContent = '🌓';
+      icon.textContent = 'Dark';
+      toggleButton.style.color = '';
       icon.setAttribute('title', 'Switch to dark mode');
     }
   }
@@ -551,23 +553,26 @@ if (title){
   });
 }
 
-function toggleTheme(){
+function toggleTheme() {
   let theme = document.getElementById('theme');
-  let icon = document.getElementById('toggleButton');
+  let toggleButton = document.getElementById('toggleButton');
 
-  if (theme.getAttribute('href') == 'static/light.css'){
+  if (theme.getAttribute('href') === 'static/light.css') {
     theme.setAttribute('href', 'static/dark.css');
     localStorage.setItem('Theme', 'dark');
-    icon.textContent = '☀️';
-    icon.setAttribute('title', 'Switch to light mode');
-  }
-  else{
+    toggleButton.textContent = 'Light';
+    toggleButton.style.color = '#fff';
+    toggleButton.setAttribute('title', 'Switch to light mode');
+  } else {
     theme.setAttribute('href', 'static/light.css');
     localStorage.setItem('Theme', 'light');
-    icon.textContent = '🌓';
-    icon.setAttribute('title', 'Switch to dark mode');
+    toggleButton.textContent = 'Dark';
+    toggleButton.style.color = ''; // Resets to default color for "Dark"
+    toggleButton.setAttribute('title', 'Switch to dark mode');
   }
 }
+
+
 
 function sortPriority(){
   let optionsList = document.getElementById('options');
@@ -805,3 +810,33 @@ if (parentButton){
     }
   });
 }
+
+
+
+
+let intro = document.querySelector('.intro');
+let logo = document.querySelector('.logo-header');
+let logoSpan = document.querySelectorAll('.logo');
+
+window.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+        logoSpan.forEach((span, idx) => {
+            setTimeout(() => {
+                span.classList.add('active');
+            }, (idx + 1) * 400);
+        });
+
+        setTimeout(() => {
+            logoSpan.forEach((span, idx) => {
+                setTimeout(() => {
+                    span.classList.remove('active');
+                    span.classList.add('fade');
+                }, (idx + 1) * 50);
+            });
+        }, 2000);
+
+        setTimeout(() => {
+            intro.style.top = '-100vh';
+        }, 2500); // Ensure this waits until fade animation finishes
+    }, 500); // Initial delay to start the animation
+});
