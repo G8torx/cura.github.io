@@ -78,8 +78,8 @@ document.getElementById("confirmDateButton").onclick = function() {
     li.setAttribute('id', id);
     li.appendChild(document.createTextNode(inputValue));
 
-    // Append due date info with Unicode space around |
-    let dueDateText = document.createTextNode(`\u00A0|\u00A0${formatDate(dueDateValue)}`);
+    // Append due date info and manage overdue styling
+    let dueDateText = document.createTextNode(`. -  ${formatDate(dueDateValue)}`);
     li.appendChild(dueDateText);
     if (isOverdue(dueDateValue)) {
         li.classList.add("overdue");
@@ -161,7 +161,7 @@ function loadList() {
 
         // Display formatted due date if set
         if (dueDate) {
-            let dueDateText = document.createTextNode(`\u00A0|\u00A0${formatDate(dueDate)}`);
+            let dueDateText = document.createTextNode(`. -  ${formatDate(dueDate)}`);
             li.appendChild(dueDateText);
             // Highlight if overdue using the new check
             if (isOverdue(dueDate)) {
