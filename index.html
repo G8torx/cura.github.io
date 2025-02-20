@@ -6,6 +6,7 @@
   <title>Assignment Tracker</title>
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  
   <style>
     /* CSS Variables for themes */
     :root {
@@ -71,12 +72,11 @@
       font-size: 1em;
       color: var(--bg-color);
       cursor: pointer;
-      transition: background 0.3s, box-shadow 0.3s;
+      transition: background 0.3s;
       margin-left: 10px;
     }
     .theme-toggle:hover, .add-class-btn:hover {
       background: #ffdb4d;
-      box-shadow: 0 0 0 2px var(--accent-color);
     }
     
     /* Container & Box Styles */
@@ -98,12 +98,11 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      transition: transform 0.3s;
+      /* Removed hover transform on the class box */
+      transition: none;
       position: relative;
     }
-    .box:hover {
-      transform: translateY(-5px);
-    }
+    
     .box-header {
       display: flex;
       flex-direction: column;
@@ -142,31 +141,34 @@
       margin: 8px 0;
       border-radius: 12px;
       font-size: 1em;
-      transition: transform 0.3s, background 0.3s, opacity 0.3s;
+      /* Removed constant transition; apply transition only on hover */
       display: flex;
       justify-content: space-between;
       align-items: center;
       cursor: pointer;
     }
     li:hover {
+      transition: transform 0.3s, background 0.3s, opacity 0.3s;
       transform: scale(1.03);
     }
     li.completed {
       text-decoration: line-through;
       opacity: 0.6;
     }
-    /* Instead of two buttons for edit and delete, we use one three-dots options button */
+    /* Options button (three dots) styling with a rounded square effect */
     .options-btn {
       background: transparent;
       border: none;
-      font-size: 1.5em;
+      font-size: 1.2em;
       cursor: pointer;
       margin-left: 5px;
-      color: var(--text-color);
-      transition: box-shadow 0.3s;
+      padding: 6px;
+      border-radius: 8px;
+      transition: background 0.3s, transform 0.2s;
     }
     .options-btn:hover {
-      box-shadow: 0 0 0 2px var(--accent-color);
+      background: rgba(0, 0, 0, 0.15);
+      transform: scale(1.05);
     }
     
     /* Footer with smaller, cleaner buttons */
@@ -211,13 +213,14 @@
     }
     .modal-content {
       background: var(--bg-color);
-      padding: 20px;
+      padding: 20px 30px;
       border-radius: 10px;
       width: 90%;
       max-width: 400px;
       text-align: center;
       color: var(--text-color);
       position: relative;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
       animation: popIn 0.3s ease-out;
     }
     @keyframes popIn {
@@ -246,33 +249,50 @@
       font-size: 1.5em;
       cursor: pointer;
     }
-    .confirm-btn,
-    .cancel-btn {
-      padding: 10px 20px;
-      font-size: 1em;
+    /* Assignment Options Modal Buttons */
+    .edit-btn-modal {
+      background: var(--accent-color);
+      color: var(--bg-color);
       border: none;
       border-radius: 10px;
+      padding: 10px 20px;
       cursor: pointer;
       margin: 5px;
+      transition: background 0.3s;
     }
-    .confirm-btn {
+    .edit-btn-modal:hover {
+      background: #ffdb4d;
+    }
+    .delete-btn-modal {
       background: red;
       color: var(--bg-color);
+      border: none;
+      border-radius: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+      margin: 5px;
+      transition: background 0.3s;
     }
-    .confirm-btn:hover {
+    .delete-btn-modal:hover {
       background: #ff6f6f;
     }
     .cancel-btn {
       background: var(--accent-color);
       color: var(--bg-color);
+      border: none;
+      border-radius: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+      margin: 5px;
+      transition: background 0.3s;
     }
     .cancel-btn:hover {
       background: #ffdb4d;
     }
   </style>
 </head>
-<body onload="initApp()">
-  <!-- Header -->
+<body>
+  <!-- Header (Reverted to original style) -->
   <header>
     <h1>📅 Assignment Tracker</h1>
     <div>
@@ -319,22 +339,7 @@
     </div>
   </div>
 
-  <!-- Modal for Assignment Options (Edit or Delete) -->
-  <div class="modal" id="assignmentOptionsModal">
-    <div class="modal-content">
-      <span class="close-button" onclick="closeAssignmentOptionsModal(event)">&times;</span>
-      <h2>Assignment Options</h2>
-      <div>
-        <button type="button" class="confirm-btn" onclick="openEditAssignmentModal()">Edit Assignment</button>
-        <button type="button" class="confirm-btn" onclick="openConfirmModal('Are you sure you want to delete this assignment?', function(){ classesData[currentClassIndex].assignments.splice(currentAssignmentIndex, 1); saveData(); renderClasses(); })">Delete Assignment</button>
-      </div>
-      <div>
-        <button type="button" class="cancel-btn" onclick="closeAssignmentOptionsModal(event)">Cancel</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal for Editing Assignment -->
+  <!-- Modal for Editing an Assignment -->
   <div class="modal" id="editAssignmentModal">
     <div class="modal-content">
       <span class="close-button" onclick="closeEditAssignmentModal(event)">&times;</span>
@@ -343,8 +348,18 @@
       <br />
       <input type="date" id="edit-assignment-date" />
       <br />
-      <button type="button" class="confirm-btn" onclick="saveEditedAssignment()">Save</button>
-      <button type="button" class="cancel-btn" onclick="closeEditAssignmentModal(event)">Cancel</button>
+      <button type="button" class="add-class-btn" onclick="saveEditedAssignment(event)">Save Changes</button>
+    </div>
+  </div>
+
+  <!-- Modal for Assignment Options (Edit/Delete) -->
+  <div class="modal" id="assignmentOptionsModal">
+    <div class="modal-content">
+      <span class="close-button" onclick="closeAssignmentOptionsModal(event)">&times;</span>
+      <h2>Assignment Options</h2>
+      <button type="button" class="edit-btn-modal" onclick="openEditAssignmentModal()">Edit Assignment</button>
+      <button type="button" class="delete-btn-modal" onclick="confirmDeleteAssignment()">Delete Assignment</button>
+      <button type="button" class="cancel-btn" onclick="closeAssignmentOptionsModal(event)">Cancel</button>
     </div>
   </div>
 
@@ -355,7 +370,7 @@
       <h2>Confirm Deletion</h2>
       <p id="confirmMessage">Are you sure?</p>
       <div>
-        <button type="button" class="confirm-btn" onclick="confirmAction()">Yes, Delete</button>
+        <button type="button" class="delete-btn-modal" onclick="confirmAction()">Yes, Delete</button>
         <button type="button" class="cancel-btn" onclick="closeConfirmModal(event)">Cancel</button>
       </div>
     </div>
@@ -365,63 +380,84 @@
   <div class="container" id="class-container"></div>
 
   <script>
-    // In-memory data with local storage persistence
-    let classesData = [];
-    let currentClassIndex = null;     // Which class we're working with
-    let currentAssignmentIndex = null;  // Which assignment is selected for options/editing
-    let confirmCallback = null;         // For custom confirmation modal
+    // In-memory data (loaded from localStorage if available)
+    let classesData = [
+      {
+        icon: "✝️",
+        name: "Religion",
+        assignments: [
+          { text: "✝️ EdPuzzle: The Big Bang Theory", dueDate: "2024-01-17", completed: false },
+          { text: "✝️ Jesus’ Teachings Activity PDF", dueDate: "2024-01-21", completed: false },
+          { text: "✝️ Ruhani Bustamante Prison Letters", dueDate: "2024-01-28", completed: false },
+          { text: "✝️ Quiz: JMTs + Corporal Works of Mercy", dueDate: "2024-01-30", completed: false },
+          { text: "✝️ EdPuzzle: First 300 Years", dueDate: "2024-01-31", completed: false },
+          { text: "✝️ History of the Catholic Church Chapter 3", dueDate: "2024-02-09", completed: false },
+          { text: "✝️ Timeline of Early Church Fathers", dueDate: "2024-02-28", completed: false },
+          { text: "✝️ Nicene Creed EdPuzzle", dueDate: "2024-02-14", completed: false }
+        ]
+      },
+      {
+        icon: "📜",
+        name: "History",
+        assignments: [
+          { text: "📌 EdPuzzle - American Imperialism", dueDate: "2024-02-12", completed: false },
+          { text: "📌 Yellow Journalism Assignment", dueDate: "2024-02-11", completed: false },
+          { text: "📌 The Birth of an American Empire", dueDate: "2024-02-17", completed: false },
+          { text: "📌 SHE RESISTED Women’s Rights Simulation", dueDate: "2024-02-18", completed: false },
+          { text: "📌 Flint Activity (Red Summer of 1919)", dueDate: "2024-02-18", completed: false },
+          { text: "📌 WWI Over the Top Simulation", dueDate: "2024-02-25", completed: false },
+          { text: "📌 WWI Western Front Simulation", dueDate: "2024-02-25", completed: false },
+          { text: "📌 Unit 7 Study Guide", dueDate: "2024-02-28", completed: false },
+          { text: "📌 Unit #7 Test", dueDate: "2024-03-03", completed: false }
+        ]
+      }
+    ];
+    let currentClassIndex = null;   // Which class we're working on
+    let currentAssignmentIndex = null;  // Which assignment is selected
+    let confirmCallback = null;     // For custom confirmation modal
 
-    // Save data to localStorage
+    // Helper: Save the classesData to localStorage
     function saveData() {
-      localStorage.setItem('classesData', JSON.stringify(classesData));
-      localStorage.setItem('theme', document.documentElement.classList.contains('light') ? 'light' : 'dark');
+      localStorage.setItem("classesData", JSON.stringify(classesData));
     }
 
-    // Load data from localStorage (or use defaults if not present)
+    // Helper: Load classesData from localStorage if available
     function loadData() {
-      const stored = localStorage.getItem('classesData');
-      if (stored) {
-        classesData = JSON.parse(stored);
-      } else {
-        classesData = [
-          {
-            icon: "✝️",
-            name: "Religion",
-            assignments: [
-              { text: "✝️ EdPuzzle: The Big Bang Theory", dueDate: "2024-01-17", completed: false },
-              { text: "✝️ Jesus’ Teachings Activity PDF", dueDate: "2024-01-21", completed: false },
-              { text: "✝️ Ruhani Bustamante Prison Letters", dueDate: "2024-01-28", completed: false },
-              { text: "✝️ Quiz: JMTs + Corporal Works of Mercy", dueDate: "2024-01-30", completed: false },
-              { text: "✝️ EdPuzzle: First 300 Years", dueDate: "2024-01-31", completed: false },
-              { text: "✝️ History of the Catholic Church Chapter 3", dueDate: "2024-02-09", completed: false },
-              { text: "✝️ Timeline of Early Church Fathers", dueDate: "2024-02-28", completed: false },
-              { text: "✝️ Nicene Creed EdPuzzle", dueDate: "2024-02-14", completed: false }
-            ]
-          },
-          {
-            icon: "📜",
-            name: "History",
-            assignments: [
-              { text: "📌 EdPuzzle - American Imperialism", dueDate: "2024-02-12", completed: false },
-              { text: "📌 Yellow Journalism Assignment", dueDate: "2024-02-11", completed: false },
-              { text: "📌 The Birth of an American Empire", dueDate: "2024-02-17", completed: false },
-              { text: "📌 SHE RESISTED Women’s Rights Simulation", dueDate: "2024-02-18", completed: false },
-              { text: "📌 Flint Activity (Red Summer of 1919)", dueDate: "2024-02-18", completed: false },
-              { text: "📌 WWI Over the Top Simulation", dueDate: "2024-02-25", completed: false },
-              { text: "📌 WWI Western Front Simulation", dueDate: "2024-02-25", completed: false },
-              { text: "📌 Unit 7 Study Guide", dueDate: "2024-02-28", completed: false },
-              { text: "📌 Unit #7 Test", dueDate: "2024-03-03", completed: false }
-            ]
-          }
-        ];
-        saveData();
+      const storedData = localStorage.getItem("classesData");
+      if (storedData) {
+        classesData = JSON.parse(storedData);
       }
-      const theme = localStorage.getItem('theme');
-      if (theme === 'light') {
-        document.documentElement.classList.add('light');
+    }
+
+    // Helper: Save the current theme to localStorage
+    function saveTheme(theme) {
+      localStorage.setItem("theme", theme);
+    }
+
+    // Load saved theme
+    function loadTheme() {
+      const savedTheme = localStorage.getItem("theme");
+      if (savedTheme === "light") {
+        document.documentElement.classList.add("light");
       } else {
-        document.documentElement.classList.remove('light');
+        document.documentElement.classList.remove("light");
       }
+    }
+
+    // Helper: Format date (e.g., "Mon, 5/8")
+    function formatDate(dateString) {
+      const [year, month, day] = dateString.split('-');
+      const localDate = new Date(year, month - 1, day);
+      const options = { weekday: 'short', month: 'numeric', day: 'numeric' };
+      return localDate.toLocaleDateString('en-US', options);
+    }
+
+    // Helper: Check if a due date is overdue (end-of-day)
+    function isOverdue(dueDateValue) {
+      if (!dueDateValue) return false;
+      let dueDate = new Date(dueDateValue);
+      dueDate.setHours(23, 59, 59, 999);
+      return dueDate < new Date();
     }
 
     // Render all classes and assignments
@@ -484,6 +520,7 @@
           if (assignment.dueDate && isOverdue(assignment.dueDate)) li.classList.add('overdue');
 
           li.addEventListener('click', function(e) {
+            // Toggle complete when not clicking on a button
             if (e.target.tagName !== 'BUTTON') {
               assignment.completed = !assignment.completed;
               saveData();
@@ -491,19 +528,21 @@
             }
           });
 
+          const btnContainer = document.createElement('div');
+
           // Options button (three dots)
           const optionsBtn = document.createElement('button');
           optionsBtn.type = "button";
           optionsBtn.classList.add('options-btn');
           optionsBtn.textContent = "⋮";
-          optionsBtn.title = "Assignment Options";
+          optionsBtn.title = "Options";
           optionsBtn.addEventListener('click', function(e) {
             e.stopPropagation();
-            currentClassIndex = classIndex;
-            currentAssignmentIndex = assignmentIndex;
-            openAssignmentOptionsModal();
+            openAssignmentOptionsModal(classIndex, assignmentIndex);
           });
-          li.appendChild(optionsBtn);
+
+          btnContainer.appendChild(optionsBtn);
+          li.appendChild(btnContainer);
           ul.appendChild(li);
         });
         box.appendChild(ul);
@@ -558,11 +597,12 @@
       });
     }
 
-    // Theme toggle (with local storage)
+    // Theme toggle with persistence
     function toggleTheme(e) {
       if (e) e.preventDefault();
       document.documentElement.classList.toggle("light");
-      saveData();
+      const theme = document.documentElement.classList.contains("light") ? "light" : "dark";
+      saveTheme(theme);
     }
 
     // Class Modal Controls
@@ -617,15 +657,19 @@
     }
 
     // Assignment Options Modal Controls
-    function openAssignmentOptionsModal() {
+    function openAssignmentOptionsModal(classIndex, assignmentIndex) {
+      currentClassIndex = classIndex;
+      currentAssignmentIndex = assignmentIndex;
       document.getElementById("assignmentOptionsModal").style.display = "flex";
     }
     function closeAssignmentOptionsModal(e) {
       if (e) e.preventDefault();
       document.getElementById("assignmentOptionsModal").style.display = "none";
     }
+
+    // Open Edit Assignment Modal (prepopulate fields)
     function openEditAssignmentModal() {
-      closeAssignmentOptionsModal();
+      closeAssignmentOptionsModal(null);
       const assignment = classesData[currentClassIndex].assignments[currentAssignmentIndex];
       document.getElementById("edit-assignment-text").value = assignment.text;
       document.getElementById("edit-assignment-date").value = assignment.dueDate;
@@ -635,17 +679,27 @@
       if (e) e.preventDefault();
       document.getElementById("editAssignmentModal").style.display = "none";
     }
-    function saveEditedAssignment() {
+    function saveEditedAssignment(e) {
+      if (e) e.preventDefault();
       const newText = document.getElementById("edit-assignment-text").value.trim();
       const newDate = document.getElementById("edit-assignment-date").value;
       if (newText !== "") {
-        const assignment = classesData[currentClassIndex].assignments[currentAssignmentIndex];
-        assignment.text = newText;
-        assignment.dueDate = newDate;
+        classesData[currentClassIndex].assignments[currentAssignmentIndex].text = newText;
+        classesData[currentClassIndex].assignments[currentAssignmentIndex].dueDate = newDate;
         saveData();
         renderClasses();
         closeEditAssignmentModal();
       }
+    }
+
+    // Delete Assignment via Options Modal
+    function confirmDeleteAssignment() {
+      closeAssignmentOptionsModal(null);
+      openConfirmModal("Are you sure you want to delete this assignment?", function() {
+        classesData[currentClassIndex].assignments.splice(currentAssignmentIndex, 1);
+        saveData();
+        renderClasses();
+      });
     }
 
     // Custom Confirmation Modal Controls
@@ -666,13 +720,10 @@
       closeConfirmModal(null);
     }
 
-    // Initialize app on load
-    function initApp() {
-      loadData();
-      renderClasses();
-    }
-
-    window.onload = initApp;
+    // Load data and theme on startup, then render
+    loadData();
+    loadTheme();
+    renderClasses();
   </script>
 </body>
 </html>
