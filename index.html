@@ -1,68 +1,612 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Easily make a to-do list with Cura." />
-    <meta name="author" content="G8torx" />
-    <title>Cura</title>
-
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css?family=M PLUS Rounded 1c" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet" />
-
-    <!-- Favicon and Stylesheets -->
-    <link rel="shortcut icon" type="image/png" href="static/assets/easy-check.png">
-    <link rel="stylesheet" href="static/style.css">
-    <link id="theme" rel="stylesheet" href="static/light.css">
-
-    <!-- Font Awesome Icons -->
-    <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Assignment Tracker</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  
+  <style>
+    /* CSS Variables for themes */
+    :root {
+      --bg-color: #121212;
+      --text-color: #fff;
+      --accent-color: #ffcc00;
+      --box-bg: rgba(255, 255, 255, 0.1);
+      --box-bg-hover: rgba(255, 255, 255, 0.3);
+    }
+    html.light {
+      --bg-color: #f0f0f0;
+      --text-color: #333;
+      --accent-color: #ffcc00;
+      --box-bg: #fff;
+      --box-bg-hover: #f9f9f9;
+    }
+    /* Overdue indicator */
+    .overdue {
+      border-left: 4px solid red;
+    }
+    /* Progress indicator styling */
+    .progress-indicator {
+      font-size: 0.9em;
+      margin-top: 5px;
+      color: var(--accent-color);
+    }
+    
+    /* Global Styles */
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      transition: background 0.3s, color 0.3s;
+    }
+    header {
+      width: 100%;
+      padding: 20px 80px;
+      background: var(--box-bg);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2em;
+      color: var(--accent-color);
+    }
+    .theme-toggle, .add-class-btn {
+      background: var(--accent-color);
+      border: none;
+      border-radius: 5px;
+      padding: 10px 15px;
+      font-size: 1em;
+      color: var(--bg-color);
+      cursor: pointer;
+      transition: background 0.3s;
+      margin-left: 10px;
+    }
+    .theme-toggle:hover, .add-class-btn:hover {
+      background: #ffdb4d;
+    }
+    
+    /* Container & Box Styles */
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      max-width: 1200px;
+      margin: 20px;
+    }
+    .box {
+      background: var(--box-bg);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 0 25px rgba(255,255,255,0.2);
+      width: 450px;
+      min-height: 450px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.3s;
+      position: relative;
+    }
+    .box:hover {
+      transform: translateY(-5px);
+    }
+    .box-header {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+    .box-header .header-top {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .box-header h2 {
+      font-size: 1.5em;
+      border-bottom: 3px solid var(--accent-color);
+      padding-bottom: 5px;
+      margin: 0;
+    }
+    .box-header .delete-class-btn {
+      background: transparent;
+      border: none;
+      font-size: 1.2em;
+      color: red;
+      cursor: pointer;
+    }
+    
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      flex-grow: 1;
+    }
+    li {
+      background: var(--box-bg-hover);
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 12px;
+      font-size: 1em;
+      transition: transform 0.3s, background 0.3s, opacity 0.3s;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+    li:hover {
+      transform: scale(1.03);
+    }
+    li.completed {
+      text-decoration: line-through;
+      opacity: 0.6;
+    }
+    .delete-btn, .edit-btn {
+      background: transparent;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      margin-left: 5px;
+    }
+    .delete-btn { color: red; }
+    .edit-btn { color: #00bfff; }
+    
+    /* Footer with smaller, cleaner buttons */
+    .box-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .add-assignment-btn,
+    .clear-completed-btn,
+    .sort-btn {
+      padding: 8px 14px;
+      font-size: 0.9em;
+      border-radius: 6px;
+      background: var(--accent-color);
+      color: var(--bg-color);
+      border: none;
+      cursor: pointer;
+      transition: transform 0.3s, background 0.3s;
+    }
+    .add-assignment-btn:hover,
+    .clear-completed-btn:hover,
+    .sort-btn:hover {
+      background: #ffdb4d;
+      transform: scale(1.05);
+    }
+    
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 200;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.7);
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-content {
+      background: var(--bg-color);
+      padding: 20px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      color: var(--text-color);
+      position: relative;
+      animation: popIn 0.3s ease-out;
+    }
+    @keyframes popIn {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .modal-content h2 {
+      margin-top: 0;
+      color: var(--accent-color);
+    }
+    .modal-content p {
+      margin: 20px 0;
+    }
+    .modal-content input,
+    .modal-content select {
+      width: 80%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: none;
+    }
+    .close-button {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 1.5em;
+      cursor: pointer;
+    }
+    .confirm-btn,
+    .cancel-btn {
+      padding: 10px 20px;
+      font-size: 1em;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    .confirm-btn {
+      background: red;
+      color: var(--bg-color);
+    }
+    .confirm-btn:hover {
+      background: #ff6f6f;
+    }
+    .cancel-btn {
+      background: var(--accent-color);
+      color: var(--bg-color);
+    }
+    .cancel-btn:hover {
+      background: #ffdb4d;
+    }
+  </style>
 </head>
-<body class="dark-bg" onload="loadTitle(); loadTheme(); loadList(); loadPriority();">
-    <!-- Intro Section -->
-    <div class="intro">
-        <h1 class="logo-header">
-            <span class="logo">Cu</span><span class="logo">ra.</span>
-        </h1>
+<body>
+  <!-- Header -->
+  <header>
+    <h1>📅 Assignment Tracker</h1>
+    <div>
+      <button type="button" class="theme-toggle" onclick="toggleTheme(event)">Toggle Theme</button>
+      <button type="button" class="add-class-btn" onclick="openClassModal(event)">➕ Add Class</button>
     </div>
-    <header>
-        <h4>Cura.</h4>
-    </header>
+  </header>
 
-    <!-- Navigation and To-Do List Section -->
-    <section>
-        <button id="toggleButton" class="toggleButton" title="Switch to dark mode" onclick="toggleTheme();">Dark</button>
-        <div>
-            <div class="container">
-                <input type="text" class="title" id="title" placeholder="Title...">
-
-                <div id="myDIV" class="header">
-                    <input type="text" class="listInput" id="myInput" placeholder="To Do...">
-                    <div>
-                        <span target="_blank" onclick="newElement();" id="addButton" class="addBtn" style="text-decoration: none;">
-                            <i class="fa-solid fa-plus"></i>
-                        </span>
-                    </div>
-                    <div class="list">
-                        <ul id="myUL"></ul>
-                    </div>
-                </div>                      
-            </div>
-        </div>
-    </section>
-
-    <!-- Modal for Date Input -->
-    <div id="dateModal" class="modal">
-        <div class="modal-content">
-            <h3>Select a Due Date</h3>
-            <input type="date" id="modalDueDate">
-            <button id="confirmDateButton">Confirm</button>
-        </div>
+  <!-- Modal for Adding a New Class -->
+  <div class="modal" id="classModal">
+    <div class="modal-content">
+      <span class="close-button" onclick="closeClassModal(event)">&times;</span>
+      <h2>Add New Class</h2>
+      <input type="text" id="class-name" placeholder="Enter class name..." />
+      <br />
+      <select id="class-icon">
+        <option value="📚">📚 General</option>
+        <option value="📜">📜 History</option>
+        <option value="📖">📖 English</option>
+        <option value="✝️">✝️ Religion</option>
+        <option value="🔬">🔬 Science</option>
+        <option value="🎨">🎨 Art</option>
+        <option value="🎵">🎵 Music</option>
+        <option value="💻">💻 Computer Science</option>
+        <option value="📊">📊 Math</option>
+        <option value="🗣️">🗣️ Spanish</option>
+        <option value="🏀">🏀 PE</option>
+      </select>
+      <br />
+      <button type="button" class="add-class-btn" onclick="addClass(event)">Add Class</button>
     </div>
+  </div>
 
-    <script src="static/scripts.js"></script>
+  <!-- Modal for Adding a New Assignment -->
+  <div class="modal" id="assignmentModal">
+    <div class="modal-content">
+      <span class="close-button" onclick="closeAssignmentModal(event)">&times;</span>
+      <h2>Add New Assignment</h2>
+      <input type="text" id="assignment-text" placeholder="Enter assignment details..." />
+      <br />
+      <input type="date" id="assignment-date" />
+      <br />
+      <button type="button" class="add-class-btn" onclick="addAssignmentFromModal(event)">Add Assignment</button>
+    </div>
+  </div>
+
+  <!-- Custom Confirmation Modal -->
+  <div class="modal" id="confirmModal">
+    <div class="modal-content">
+      <span class="close-button" onclick="closeConfirmModal(event)">&times;</span>
+      <h2>Confirm Deletion</h2>
+      <p id="confirmMessage">Are you sure?</p>
+      <div>
+        <button type="button" class="confirm-btn" onclick="confirmAction()">Yes, Delete</button>
+        <button type="button" class="cancel-btn" onclick="closeConfirmModal(event)">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Container for Class Boxes -->
+  <div class="container" id="class-container"></div>
+
+  <script>
+    // In-memory data only (resets on page refresh)
+    let classesData = [
+      {
+        icon: "✝️",
+        name: "Religion",
+        assignments: [
+          { text: "✝️ EdPuzzle: The Big Bang Theory", dueDate: "2024-01-17", completed: false },
+          { text: "✝️ Jesus’ Teachings Activity PDF", dueDate: "2024-01-21", completed: false },
+          { text: "✝️ Ruhani Bustamante Prison Letters", dueDate: "2024-01-28", completed: false },
+          { text: "✝️ Quiz: JMTs + Corporal Works of Mercy", dueDate: "2024-01-30", completed: false },
+          { text: "✝️ EdPuzzle: First 300 Years", dueDate: "2024-01-31", completed: false },
+          { text: "✝️ History of the Catholic Church Chapter 3", dueDate: "2024-02-09", completed: false },
+          { text: "✝️ Timeline of Early Church Fathers", dueDate: "2024-02-28", completed: false },
+          { text: "✝️ Nicene Creed EdPuzzle", dueDate: "2024-02-14", completed: false }
+        ]
+      },
+      {
+        icon: "📜",
+        name: "History",
+        assignments: [
+          { text: "📌 EdPuzzle - American Imperialism", dueDate: "2024-02-12", completed: false },
+          { text: "📌 Yellow Journalism Assignment", dueDate: "2024-02-11", completed: false },
+          { text: "📌 The Birth of an American Empire", dueDate: "2024-02-17", completed: false },
+          { text: "📌 SHE RESISTED Women’s Rights Simulation", dueDate: "2024-02-18", completed: false },
+          { text: "📌 Flint Activity (Red Summer of 1919)", dueDate: "2024-02-18", completed: false },
+          { text: "📌 WWI Over the Top Simulation", dueDate: "2024-02-25", completed: false },
+          { text: "📌 WWI Western Front Simulation", dueDate: "2024-02-25", completed: false },
+          { text: "📌 Unit 7 Study Guide", dueDate: "2024-02-28", completed: false },
+          { text: "📌 Unit #7 Test", dueDate: "2024-03-03", completed: false }
+        ]
+      }
+    ];
+    let currentClassIndex = null;  // Which class we're adding an assignment to
+    let confirmCallback = null;    // For custom confirmation modal
+
+    // Helper: Format date (e.g., "Mon, 5/8")
+    function formatDate(dateString) {
+      const [year, month, day] = dateString.split('-');
+      const localDate = new Date(year, month - 1, day);
+      const options = { weekday: 'short', month: 'numeric', day: 'numeric' };
+      return localDate.toLocaleDateString('en-US', options);
+    }
+
+    // Helper: Check if a due date is overdue (end-of-day)
+    function isOverdue(dueDateValue) {
+      if (!dueDateValue) return false;
+      let dueDate = new Date(dueDateValue);
+      dueDate.setHours(23, 59, 59, 999);
+      return dueDate < new Date();
+    }
+
+    // Render all classes and assignments
+    function renderClasses() {
+      const container = document.getElementById('class-container');
+      container.innerHTML = "";
+      classesData.forEach((cls, classIndex) => {
+        const box = document.createElement('div');
+        box.classList.add('box');
+
+        // Header
+        const headerDiv = document.createElement('div');
+        headerDiv.classList.add('box-header');
+
+        const headerTop = document.createElement('div');
+        headerTop.classList.add('header-top');
+
+        const title = document.createElement('h2');
+        title.textContent = `${cls.icon} ${cls.name}`;
+
+        const deleteClassBtn = document.createElement('button');
+        deleteClassBtn.type = "button";
+        deleteClassBtn.classList.add('delete-class-btn');
+        deleteClassBtn.textContent = "🗑️";
+        deleteClassBtn.title = "Delete Class";
+        deleteClassBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          openConfirmModal(`Are you sure you want to delete the ${cls.name} class?`, function() {
+            classesData.splice(classIndex, 1);
+            renderClasses();
+          });
+        });
+
+        headerTop.appendChild(title);
+        headerTop.appendChild(deleteClassBtn);
+
+        // Progress indicator
+        const total = cls.assignments.length;
+        const completed = cls.assignments.filter(a => a.completed).length;
+        const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+        const progress = document.createElement('p');
+        progress.classList.add('progress-indicator');
+        progress.textContent = `${completed}/${total} Completed (${percent}%)`;
+
+        headerDiv.appendChild(headerTop);
+        headerDiv.appendChild(progress);
+        box.appendChild(headerDiv);
+
+        // List assignments
+        const ul = document.createElement('ul');
+        cls.assignments.forEach((assignment, assignmentIndex) => {
+          const li = document.createElement('li');
+          let displayText = assignment.text;
+          if (assignment.dueDate) {
+            displayText += " → " + formatDate(assignment.dueDate);
+          }
+          li.innerHTML = displayText;
+          if (assignment.completed) li.classList.add('completed');
+          if (assignment.dueDate && isOverdue(assignment.dueDate)) li.classList.add('overdue');
+
+          li.addEventListener('click', function(e) {
+            if (e.target.tagName !== 'BUTTON') {
+              assignment.completed = !assignment.completed;
+              renderClasses();
+            }
+          });
+
+          const btnContainer = document.createElement('div');
+
+          const editBtn = document.createElement('button');
+          editBtn.type = "button";
+          editBtn.classList.add('edit-btn');
+          editBtn.textContent = "✏️";
+          editBtn.title = "Edit Assignment";
+          editBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const newText = prompt("Edit assignment text:", assignment.text);
+            if (newText !== null) {
+              const newDate = prompt("Edit due date (YYYY-MM-DD):", assignment.dueDate || "");
+              assignment.text = newText;
+              assignment.dueDate = newDate;
+              renderClasses();
+            }
+          });
+
+          const deleteBtn = document.createElement('button');
+          deleteBtn.type = "button";
+          deleteBtn.classList.add('delete-btn');
+          deleteBtn.textContent = "×";
+          deleteBtn.title = "Delete Assignment";
+          deleteBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            cls.assignments.splice(assignmentIndex, 1);
+            renderClasses();
+          });
+
+          btnContainer.appendChild(editBtn);
+          btnContainer.appendChild(deleteBtn);
+          li.appendChild(btnContainer);
+          ul.appendChild(li);
+        });
+        box.appendChild(ul);
+
+        // Footer
+        const footerDiv = document.createElement('div');
+        footerDiv.classList.add('box-footer');
+
+        const addAssignmentBtn = document.createElement('button');
+        addAssignmentBtn.type = "button";
+        addAssignmentBtn.classList.add('add-assignment-btn');
+        addAssignmentBtn.textContent = "➕ Add Assignment";
+        addAssignmentBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          currentClassIndex = classIndex;
+          document.getElementById("assignmentModal").style.display = "flex";
+        });
+
+        const sortBtn = document.createElement('button');
+        sortBtn.type = "button";
+        sortBtn.classList.add('sort-btn');
+        sortBtn.textContent = "Sort by Date";
+        sortBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          classesData[classIndex].assignments.sort((a, b) => {
+            if (!a.dueDate && !b.dueDate) return 0;
+            if (!a.dueDate) return 1;
+            if (!b.dueDate) return -1;
+            return new Date(a.dueDate) - new Date(b.dueDate);
+          });
+          renderClasses();
+        });
+
+        const clearCompletedBtn = document.createElement('button');
+        clearCompletedBtn.type = "button";
+        clearCompletedBtn.classList.add('clear-completed-btn');
+        clearCompletedBtn.textContent = "Clear Completed";
+        clearCompletedBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          cls.assignments = cls.assignments.filter(a => !a.completed);
+          renderClasses();
+        });
+
+        footerDiv.appendChild(addAssignmentBtn);
+        footerDiv.appendChild(sortBtn);
+        footerDiv.appendChild(clearCompletedBtn);
+        box.appendChild(footerDiv);
+
+        container.appendChild(box);
+      });
+    }
+
+    // Theme toggle (in-memory only)
+    function toggleTheme(e) {
+      if (e) e.preventDefault();
+      document.documentElement.classList.toggle("light");
+    }
+
+    // Class Modal Controls
+    function openClassModal(e) {
+      if (e) e.preventDefault();
+      document.getElementById("classModal").style.display = "flex";
+    }
+    function closeClassModal(e) {
+      if (e) e.preventDefault();
+      document.getElementById("classModal").style.display = "none";
+    }
+    function addClass(e) {
+      if (e) e.preventDefault();
+      const classNameInput = document.getElementById("class-name");
+      const classIconInput = document.getElementById("class-icon");
+      const className = classNameInput.value.trim();
+      if (className !== "") {
+        classesData.push({
+          icon: classIconInput.value,
+          name: className,
+          assignments: []
+        });
+        renderClasses();
+        closeClassModal();
+        classNameInput.value = "";
+      }
+    }
+
+    // Assignment Modal Controls
+    function closeAssignmentModal(e) {
+      if (e) e.preventDefault();
+      document.getElementById("assignmentModal").style.display = "none";
+      document.getElementById("assignment-text").value = "";
+      document.getElementById("assignment-date").value = "";
+    }
+    function addAssignmentFromModal(e) {
+      if (e) e.preventDefault();
+      const assignmentInput = document.getElementById("assignment-text");
+      const dateInput = document.getElementById("assignment-date");
+      const assignmentText = assignmentInput.value.trim();
+      if (assignmentText !== "") {
+        classesData[currentClassIndex].assignments.push({ 
+          text: assignmentText, 
+          dueDate: dateInput.value || "", 
+          completed: false 
+        });
+        renderClasses();
+        closeAssignmentModal();
+      }
+    }
+
+    // Custom Confirmation Modal Controls
+    function openConfirmModal(message, callback) {
+      document.getElementById("confirmMessage").textContent = message;
+      confirmCallback = callback;
+      document.getElementById("confirmModal").style.display = "flex";
+    }
+    function closeConfirmModal(e) {
+      if (e) e.preventDefault();
+      document.getElementById("confirmModal").style.display = "none";
+      confirmCallback = null;
+    }
+    function confirmAction() {
+      if (confirmCallback) {
+        confirmCallback();
+      }
+      closeConfirmModal(null);
+    }
+
+    // Render classes immediately when the script loads
+    renderClasses();
+  </script>
 </body>
 </html>
