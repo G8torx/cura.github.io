@@ -98,7 +98,6 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      /* Removed hover transform on the class box */
       transition: none;
       position: relative;
     }
@@ -141,7 +140,6 @@
       margin: 8px 0;
       border-radius: 12px;
       font-size: 1em;
-      /* Removed constant transition; apply transition only on hover */
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -155,7 +153,7 @@
       text-decoration: line-through;
       opacity: 0.6;
     }
-    /* Options button (three dots) styling with a rounded square effect */
+    /* Options button styling */
     .options-btn {
       background: transparent;
       border: none;
@@ -171,7 +169,7 @@
       transform: scale(1.05);
     }
     
-    /* Footer with smaller, cleaner buttons */
+    /* Footer with buttons */
     .box-footer {
       display: flex;
       justify-content: flex-end;
@@ -249,7 +247,7 @@
       font-size: 1.5em;
       cursor: pointer;
     }
-    /* Assignment Options Modal Buttons */
+    /* Modal buttons for Assignment Options */
     .edit-btn-modal {
       background: var(--accent-color);
       color: var(--bg-color);
@@ -292,7 +290,7 @@
   </style>
 </head>
 <body>
-  <!-- Header (Reverted to original style) -->
+  <!-- Header -->
   <header>
     <h1>📅 Assignment Tracker</h1>
     <div>
@@ -380,38 +378,9 @@
   <div class="container" id="class-container"></div>
 
   <script>
-    // In-memory data (loaded from localStorage if available)
-    let classesData = [
-      {
-        icon: "✝️",
-        name: "Religion",
-        assignments: [
-          { text: "✝️ EdPuzzle: The Big Bang Theory", dueDate: "2024-01-17", completed: false },
-          { text: "✝️ Jesus’ Teachings Activity PDF", dueDate: "2024-01-21", completed: false },
-          { text: "✝️ Ruhani Bustamante Prison Letters", dueDate: "2024-01-28", completed: false },
-          { text: "✝️ Quiz: JMTs + Corporal Works of Mercy", dueDate: "2024-01-30", completed: false },
-          { text: "✝️ EdPuzzle: First 300 Years", dueDate: "2024-01-31", completed: false },
-          { text: "✝️ History of the Catholic Church Chapter 3", dueDate: "2024-02-09", completed: false },
-          { text: "✝️ Timeline of Early Church Fathers", dueDate: "2024-02-28", completed: false },
-          { text: "✝️ Nicene Creed EdPuzzle", dueDate: "2024-02-14", completed: false }
-        ]
-      },
-      {
-        icon: "📜",
-        name: "History",
-        assignments: [
-          { text: "📌 EdPuzzle - American Imperialism", dueDate: "2024-02-12", completed: false },
-          { text: "📌 Yellow Journalism Assignment", dueDate: "2024-02-11", completed: false },
-          { text: "📌 The Birth of an American Empire", dueDate: "2024-02-17", completed: false },
-          { text: "📌 SHE RESISTED Women’s Rights Simulation", dueDate: "2024-02-18", completed: false },
-          { text: "📌 Flint Activity (Red Summer of 1919)", dueDate: "2024-02-18", completed: false },
-          { text: "📌 WWI Over the Top Simulation", dueDate: "2024-02-25", completed: false },
-          { text: "📌 WWI Western Front Simulation", dueDate: "2024-02-25", completed: false },
-          { text: "📌 Unit 7 Study Guide", dueDate: "2024-02-28", completed: false },
-          { text: "📌 Unit #7 Test", dueDate: "2024-03-03", completed: false }
-        ]
-      }
-    ];
+    // In-memory data now starts as an empty array
+    let classesData = [];
+
     let currentClassIndex = null;   // Which class we're working on
     let currentAssignmentIndex = null;  // Which assignment is selected
     let confirmCallback = null;     // For custom confirmation modal
