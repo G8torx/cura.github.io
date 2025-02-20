@@ -10,19 +10,28 @@
   <style>
     /* CSS Variables for themes */
     :root {
-      --bg-color: #121212;
-      --text-color: #fff;
-      --accent-color: #ffcc00;
-      --box-bg: rgba(255, 255, 255, 0.1);
-      --box-bg-hover: rgba(255, 255, 255, 0.3);
+      /* Dark Mode Variables (default) */
+      --bg-color: #121212;             /* Very dark background */
+      --text-color: #fff;              /* White text */
+      --accent-color: #ffcc00;         /* Accent remains the same */
+      --box-bg: #1e1e1e;               /* Dark box background */
+      --box-bg-hover: #2a2a2a;          /* Slightly lighter on hover */
+      --box-shadow: none;              /* No shadow in dark mode */
     }
     html.light {
-      --bg-color: #f0f0f0;
-      --text-color: #333;
+      /* Light Mode Variables */
+      --bg-color: #f0f0f0;             /* Light background */
+      --text-color: #333;              /* Dark text */
       --accent-color: #ffcc00;
-      --box-bg: #fff;
-      --box-bg-hover: #f9f9f9;
+      --box-bg: #fff;                  /* White boxes */
+      --box-bg-hover: #f9f9f9;          /* Light hover color */
+      --box-shadow: 0 0 25px rgba(255,255,255,0.2);  /* Shadow for light mode */
     }
+    /* Force the options button text to be white in dark mode */
+    html:not(.light) .options-btn {
+      color: #fff;
+    }
+    
     /* Overdue indicator */
     .overdue {
       border-left: 4px solid red;
@@ -92,7 +101,7 @@
       background: var(--box-bg);
       padding: 30px;
       border-radius: 20px;
-      box-shadow: 0 0 25px rgba(255,255,255,0.2);
+      box-shadow: var(--box-shadow);
       width: 450px;
       min-height: 450px;
       display: flex;
