@@ -27,7 +27,6 @@
     html:not(.light) .options-btn { color: #fff; }
     .overdue { border-left: 4px solid red; }
     .progress-indicator { font-size: 0.9em; margin-top: 5px; color: var(--accent-color); }
-
     /* Global Styles */
     body {
       font-family: 'Poppins', sans-serif;
@@ -367,11 +366,11 @@
 
   <!-- Supabase and App Code -->
   <script type="module">
-    // Replace the placeholders with your actual Supabase project credentials.
+    // Set your Supabase URL and anon key (client API key)
     const SUPABASE_URL = "https://skpaziktshkxohlmdnwk.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNrcGF6aWt0c2hreG9obG1kbndrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAxNTgwNTgsImV4cCI6MjA1NTczNDA1OH0.ihJvl6TZLh7CWpM9uagQtAJ5ix4igOF9nk_d2lukrmE";
     
-    // Initialize the Supabase client
+    // Initialize Supabase client
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     // Global Variables
@@ -661,8 +660,10 @@
         const { error, data } = await supabaseClient.auth.signUp({ email, password });
         if (error) alert("Sign Up failed: " + error.message);
         else {
+          // Show success message to the new user.
+          alert("Sign up successful! You can now use the checklist.");
           currentUser = data.user;
-          // After sign-up, insert an empty record for this user
+          // Insert an empty record for the new user.
           const { error: insertError } = await supabaseClient
             .from("user_data")
             .insert([{ user_id: currentUser.id, classes_data: [] }]);
