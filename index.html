@@ -3,46 +3,31 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Cura</title>
+  <title>Cura with Supabase</title>
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-  
   <style>
-    /* CSS Variables for themes */
+    /* Theme Variables */
     :root {
-      /* Dark Mode Variables (default) */
-      --bg-color: #121212;             /* Very dark background */
-      --text-color: #fff;              /* White text */
-      --accent-color: #ffcc00;         /* Accent remains the same */
-      --box-bg: #1e1e1e;               /* Dark box background */
-      --box-bg-hover: #2a2a2a;          /* Slightly lighter on hover */
-      --box-shadow: none;              /* No shadow in dark mode */
+      --bg-color: #121212;
+      --text-color: #fff;
+      --accent-color: #ffcc00;
+      --box-bg: #1e1e1e;
+      --box-bg-hover: #2a2a2e;
+      --box-shadow: none;
     }
     html.light {
-      /* Light Mode Variables */
-      --bg-color: #f0f0f0;             /* Light background */
-      --text-color: #333;              /* Dark text */
+      --bg-color: #f0f0f0;
+      --text-color: #333;
       --accent-color: #ffcc00;
-      --box-bg: #fff;                  /* White boxes */
-      --box-bg-hover: #f9f9f9;          /* Light hover color */
-      --box-shadow: 0 0 25px rgba(255,255,255,0.2);  /* Shadow for light mode */
+      --box-bg: #fff;
+      --box-bg-hover: #f9f9f9;
+      --box-shadow: 0 0 25px rgba(255,255,255,0.2);
     }
-    /* Force the options button text to be white in dark mode */
-    html:not(.light) .options-btn {
-      color: #fff;
-    }
-    
-    /* Overdue indicator */
-    .overdue {
-      border-left: 4px solid red;
-    }
-    /* Progress indicator styling */
-    .progress-indicator {
-      font-size: 0.9em;
-      margin-top: 5px;
-      color: var(--accent-color);
-    }
-    
+    html:not(.light) .options-btn { color: #fff; }
+    .overdue { border-left: 4px solid red; }
+    .progress-indicator { font-size: 0.9em; margin-top: 5px; color: var(--accent-color); }
+
     /* Global Styles */
     body {
       font-family: 'Poppins', sans-serif;
@@ -50,9 +35,6 @@
       color: var(--text-color);
       margin: 0;
       padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
       min-height: 100vh;
       transition: background 0.3s, color 0.3s;
     }
@@ -68,11 +50,7 @@
       top: 0;
       z-index: 100;
     }
-    header h1 {
-      margin: 0;
-      font-size: 2em;
-      color: var(--accent-color);
-    }
+    header h1 { margin: 0; font-size: 2em; color: var(--accent-color); }
     .theme-toggle, .add-class-btn {
       background: var(--accent-color);
       border: none;
@@ -84,11 +62,7 @@
       transition: background 0.3s;
       margin-left: 10px;
     }
-    .theme-toggle:hover, .add-class-btn:hover {
-      background: #ffdb4d;
-    }
-    
-    /* Container & Box Styles */
+    .theme-toggle:hover, .add-class-btn:hover { background: #ffdb4d; }
     .container {
       display: flex;
       flex-wrap: wrap;
@@ -107,16 +81,9 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      transition: none;
       position: relative;
     }
-    
-    .box-header {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      margin-bottom: 10px;
-    }
+    .box-header { display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 10px; }
     .box-header .header-top {
       width: 100%;
       display: flex;
@@ -136,7 +103,6 @@
       color: red;
       cursor: pointer;
     }
-    
     ul {
       list-style: none;
       padding: 0;
@@ -158,11 +124,7 @@
       transition: transform 0.3s, background 0.3s, opacity 0.3s;
       transform: scale(1.03);
     }
-    li.completed {
-      text-decoration: line-through;
-      opacity: 0.6;
-    }
-    /* Options button styling */
+    li.completed { text-decoration: line-through; opacity: 0.6; }
     .options-btn {
       background: transparent;
       border: none;
@@ -173,12 +135,7 @@
       border-radius: 8px;
       transition: background 0.3s, transform 0.2s;
     }
-    .options-btn:hover {
-      background: rgba(0, 0, 0, 0.15);
-      transform: scale(1.05);
-    }
-    
-    /* Footer with buttons */
+    .options-btn:hover { background: rgba(0, 0, 0, 0.15); transform: scale(1.05); }
     .box-footer {
       display: flex;
       justify-content: flex-end;
@@ -203,7 +160,6 @@
       background: #ffdb4d;
       transform: scale(1.05);
     }
-    
     /* Modal Styles */
     .modal {
       display: none;
@@ -234,13 +190,7 @@
       from { transform: scale(0.8); opacity: 0; }
       to { transform: scale(1); opacity: 1; }
     }
-    .modal-content h2 {
-      margin-top: 0;
-      color: var(--accent-color);
-    }
-    .modal-content p {
-      margin: 20px 0;
-    }
+    .modal-content h2 { margin-top: 0; color: var(--accent-color); }
     .modal-content input,
     .modal-content select {
       width: 80%;
@@ -256,65 +206,97 @@
       font-size: 1.5em;
       cursor: pointer;
     }
-    /* Modal buttons for Assignment Options */
-    .edit-btn-modal {
+    .edit-btn-modal, .delete-btn-modal, .cancel-btn {
+      border: none;
+      border-radius: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+      margin: 5px;
+      transition: background 0.3s;
+    }
+    .edit-btn-modal { background: var(--accent-color); color: var(--bg-color); }
+    .edit-btn-modal:hover { background: #ffdb4d; }
+    .delete-btn-modal { background: red; color: var(--bg-color); }
+    .delete-btn-modal:hover { background: #ff6f6f; }
+    .cancel-btn { background: var(--accent-color); color: var(--bg-color); }
+    .cancel-btn:hover { background: #ffdb4d; }
+    /* Dedicated Authentication Page */
+    .auth-page {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: var(--bg-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 300;
+    }
+    .auth-container {
+      background: var(--box-bg);
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      text-align: center;
+      width: 300px;
+    }
+    .auth-container h2 { margin-top: 0; color: var(--accent-color); }
+    .auth-container input {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 5px;
+    }
+    .auth-container button {
+      padding: 10px 20px;
       background: var(--accent-color);
-      color: var(--bg-color);
       border: none;
-      border-radius: 10px;
-      padding: 10px 20px;
-      cursor: pointer;
-      margin: 5px;
-      transition: background 0.3s;
-    }
-    .edit-btn-modal:hover {
-      background: #ffdb4d;
-    }
-    .delete-btn-modal {
-      background: red;
+      border-radius: 5px;
       color: var(--bg-color);
-      border: none;
-      border-radius: 10px;
-      padding: 10px 20px;
       cursor: pointer;
-      margin: 5px;
-      transition: background 0.3s;
+      font-size: 1em;
+      margin-top: 10px;
     }
-    .delete-btn-modal:hover {
-      background: #ff6f6f;
-    }
-    .cancel-btn {
-      background: var(--accent-color);
-      color: var(--bg-color);
-      border: none;
-      border-radius: 10px;
-      padding: 10px 20px;
-      cursor: pointer;
-      margin: 5px;
-      transition: background 0.3s;
-    }
-    .cancel-btn:hover {
-      background: #ffdb4d;
-    }
+    .auth-container button:hover { background: #ffdb4d; }
+    .auth-container p { margin-top: 15px; }
+    .auth-container a { color: var(--accent-color); text-decoration: none; }
   </style>
+  <!-- Include Supabase JS client from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
 </head>
 <body>
-  <!-- Header -->
+  <!-- Dedicated Authentication Page -->
+  <div id="authPage" class="auth-page" style="display: none;">
+    <div class="auth-container">
+      <h2 id="authTitle">Login to Cura</h2>
+      <input type="email" id="auth-email" placeholder="Email">
+      <input type="password" id="auth-password" placeholder="Password">
+      <button id="authActionButton" onclick="authAction(event)">Login</button>
+      <p id="authToggleText">
+        Don't have an account? <a href="#" onclick="toggleAuthMode()">Sign Up</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- Main App Header -->
   <header>
     <h1 style="padding-left: 30px;">Cura</h1>
-    <div style="padding-right: 30px;">
-      <button type="button" class="theme-toggle" onclick="toggleTheme(event)">Toggle Theme</button>
-      <button type="button" class="add-class-btn" onclick="openClassModal(event)">➕ Add Class</button>
+    <div id="header-right" style="padding-right: 30px;">
+      <!-- Header buttons update after login -->
     </div>
   </header>
 
-  <!-- Modal for Adding a New Class -->
+  <!-- Main App Container -->
+  <div class="container" id="class-container"></div>
+
+  <!-- Modals for Class/Assignment Editing -->
+  <!-- Add Class Modal -->
   <div class="modal" id="classModal">
     <div class="modal-content">
       <span class="close-button" onclick="closeClassModal(event)">&times;</span>
       <h2>Add New Class</h2>
-      <input type="text" id="class-name" placeholder="Enter class name..." />
-      <br />
+      <input type="text" id="class-name" placeholder="Enter class name...">
+      <br>
       <select id="class-icon">
         <option value="📚">📚 General</option>
         <option value="📜">📜 History</option>
@@ -328,222 +310,224 @@
         <option value="🗣️">🗣️ Spanish</option>
         <option value="🏀">🏀 PE</option>
       </select>
-      <br />
-      <button type="button" class="add-class-btn" onclick="addClass(event)">Add Class</button>
+      <br>
+      <button class="add-class-btn" onclick="addClass(event)">Add Class</button>
     </div>
   </div>
 
-  <!-- Modal for Adding a New Assignment -->
+  <!-- Add Assignment Modal -->
   <div class="modal" id="assignmentModal">
     <div class="modal-content">
       <span class="close-button" onclick="closeAssignmentModal(event)">&times;</span>
       <h2>Add New Assignment</h2>
-      <input type="text" id="assignment-text" placeholder="Enter assignment details..." />
-      <br />
-      <input type="date" id="assignment-date" />
-      <br />
-      <button type="button" class="add-class-btn" onclick="addAssignmentFromModal(event)">Add Assignment</button>
+      <input type="text" id="assignment-text" placeholder="Enter assignment details...">
+      <br>
+      <input type="date" id="assignment-date">
+      <br>
+      <button class="add-class-btn" onclick="addAssignmentFromModal(event)">Add Assignment</button>
     </div>
   </div>
 
-  <!-- Modal for Editing an Assignment -->
+  <!-- Edit Assignment Modal -->
   <div class="modal" id="editAssignmentModal">
     <div class="modal-content">
       <span class="close-button" onclick="closeEditAssignmentModal(event)">&times;</span>
       <h2>Edit Assignment</h2>
-      <input type="text" id="edit-assignment-text" placeholder="Edit assignment details..." />
-      <br />
-      <input type="date" id="edit-assignment-date" />
-      <br />
-      <button type="button" class="add-class-btn" onclick="saveEditedAssignment(event)">Save Changes</button>
+      <input type="text" id="edit-assignment-text" placeholder="Edit assignment details...">
+      <br>
+      <input type="date" id="edit-assignment-date">
+      <br>
+      <button class="add-class-btn" onclick="saveEditedAssignment(event)">Save Changes</button>
     </div>
   </div>
 
-  <!-- Modal for Assignment Options (Edit/Delete) -->
+  <!-- Assignment Options Modal -->
   <div class="modal" id="assignmentOptionsModal">
     <div class="modal-content">
       <span class="close-button" onclick="closeAssignmentOptionsModal(event)">&times;</span>
       <h2>Assignment Options</h2>
-      <button type="button" class="edit-btn-modal" onclick="openEditAssignmentModal()">Edit Assignment</button>
-      <button type="button" class="delete-btn-modal" onclick="confirmDeleteAssignment()">Delete Assignment</button>
-      <button type="button" class="cancel-btn" onclick="closeAssignmentOptionsModal(event)">Cancel</button>
+      <button class="edit-btn-modal" onclick="openEditAssignmentModal()">Edit Assignment</button>
+      <button class="delete-btn-modal" onclick="confirmDeleteAssignment()">Delete Assignment</button>
+      <button class="cancel-btn" onclick="closeAssignmentOptionsModal(event)">Cancel</button>
     </div>
   </div>
 
-  <!-- Custom Confirmation Modal -->
+  <!-- Confirmation Modal -->
   <div class="modal" id="confirmModal">
     <div class="modal-content">
       <span class="close-button" onclick="closeConfirmModal(event)">&times;</span>
       <h2>Confirm Deletion</h2>
       <p id="confirmMessage">Are you sure?</p>
       <div>
-        <button type="button" class="delete-btn-modal" onclick="confirmAction()">Yes, Delete</button>
-        <button type="button" class="cancel-btn" onclick="closeConfirmModal(event)">Cancel</button>
+        <button class="delete-btn-modal" onclick="confirmAction()">Yes, Delete</button>
+        <button class="cancel-btn" onclick="closeConfirmModal(event)">Cancel</button>
       </div>
     </div>
   </div>
 
-  <!-- Container for Class Boxes -->
-  <div class="container" id="class-container"></div>
+  <!-- Supabase and App Code -->
+  <script type="module">
+    // Replace the placeholders with your actual Supabase project credentials.
+    const SUPABASE_URL = "https://skpaziktshkxohlmdnwk.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNrcGF6aWt0c2hreG9obG1kbndrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAxNTgwNTgsImV4cCI6MjA1NTczNDA1OH0.ihJvl6TZLh7CWpM9uagQtAJ5ix4igOF9nk_d2lukrmE";
+    
+    // Initialize the Supabase client
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  <script>
-    // In-memory data now starts as an empty array
+    // Global Variables
     let classesData = [];
+    let currentClassIndex = null;
+    let currentAssignmentIndex = null;
+    let confirmCallback = null;
+    let authMode = "login"; // "login" or "signup"
+    let currentUser = null;
 
-    let currentClassIndex = null;   // Which class we're working on
-    let currentAssignmentIndex = null;  // Which assignment is selected
-    let confirmCallback = null;     // For custom confirmation modal
-
-    // Helper: Save the classesData to localStorage
-    function saveData() {
-      localStorage.setItem("classesData", JSON.stringify(classesData));
+    // ----------------- Data Functions -----------------
+    async function saveData() {
+      if (currentUser) {
+        const { error } = await supabaseClient
+          .from("user_data")
+          .update({ classes_data: classesData })
+          .eq("user_id", currentUser.id);
+        if (error) console.error("Save error:", error);
+      }
     }
-
-    // Helper: Load classesData from localStorage if available
-    function loadData() {
-      const storedData = localStorage.getItem("classesData");
-      if (storedData) {
-        classesData = JSON.parse(storedData);
+    async function loadData() {
+      if (currentUser) {
+        let { data, error } = await supabaseClient
+          .from("user_data")
+          .select("classes_data")
+          .eq("user_id", currentUser.id)
+          .single();
+        if (error && error.code === "PGRST116") {
+          // Record not found – create one
+          classesData = [];
+          const { error: insertError } = await supabaseClient
+            .from("user_data")
+            .insert([{ user_id: currentUser.id, classes_data: classesData }]);
+          if (insertError) console.error("Insert error:", insertError);
+        } else if (data) {
+          classesData = data.classes_data || [];
+        }
+        renderClasses();
       }
     }
 
-    // Helper: Save the current theme to localStorage
-    function saveTheme(theme) {
-      localStorage.setItem("theme", theme);
-    }
-
-    // Load saved theme
+    // ----------------- Theme Functions -----------------
+    function saveTheme(theme) { localStorage.setItem("theme", theme); }
     function loadTheme() {
       const savedTheme = localStorage.getItem("theme");
-      if (savedTheme === "light") {
-        document.documentElement.classList.add("light");
-      } else {
-        document.documentElement.classList.remove("light");
-      }
+      if (savedTheme === "light") document.documentElement.classList.add("light");
+      else document.documentElement.classList.remove("light");
+    }
+    function toggleTheme(e) {
+      if (e) e.preventDefault();
+      document.documentElement.classList.toggle("light");
+      const theme = document.documentElement.classList.contains("light") ? "light" : "dark";
+      saveTheme(theme);
     }
 
-    // Helper: Format date (e.g., "Mon, 5/8")
+    // ----------------- Date Helpers -----------------
     function formatDate(dateString) {
-      const [year, month, day] = dateString.split('-');
+      const [year, month, day] = dateString.split("-");
       const localDate = new Date(year, month - 1, day);
-      const options = { weekday: 'short', month: 'numeric', day: 'numeric' };
-      return localDate.toLocaleDateString('en-US', options);
+      return localDate.toLocaleDateString("en-US", { weekday: "short", month: "numeric", day: "numeric" });
     }
-
-    // Helper: Check if a due date is overdue (end-of-day)
     function isOverdue(dueDateValue) {
       if (!dueDateValue) return false;
       let dueDate = new Date(dueDateValue);
-      dueDate.setHours(23, 59, 59, 999);
+      dueDate.setHours(23,59,59,999);
       return dueDate < new Date();
     }
 
-    // Render all classes and assignments
+    // ----------------- Render Functions -----------------
     function renderClasses() {
-      const container = document.getElementById('class-container');
+      const container = document.getElementById("class-container");
       container.innerHTML = "";
       classesData.forEach((cls, classIndex) => {
-        const box = document.createElement('div');
-        box.classList.add('box');
+        const box = document.createElement("div");
+        box.classList.add("box");
 
-        // Header
-        const headerDiv = document.createElement('div');
-        headerDiv.classList.add('box-header');
-
-        const headerTop = document.createElement('div');
-        headerTop.classList.add('header-top');
-
-        const title = document.createElement('h2');
+        // Box Header
+        const headerDiv = document.createElement("div");
+        headerDiv.classList.add("box-header");
+        const headerTop = document.createElement("div");
+        headerTop.classList.add("header-top");
+        const title = document.createElement("h2");
         title.textContent = `${cls.icon} ${cls.name}`;
-
-        const deleteClassBtn = document.createElement('button');
+        const deleteClassBtn = document.createElement("button");
         deleteClassBtn.type = "button";
-        deleteClassBtn.classList.add('delete-class-btn');
+        deleteClassBtn.classList.add("delete-class-btn");
         deleteClassBtn.textContent = "🗑️";
         deleteClassBtn.title = "Delete Class";
-        deleteClassBtn.addEventListener('click', function(e) {
+        deleteClassBtn.addEventListener("click", function(e) {
           e.stopPropagation();
-          openConfirmModal(`Are you sure you want to delete the ${cls.name} class?`, function() {
+          openConfirmModal(`Are you sure you want to delete the ${cls.name} class?`, async function() {
             classesData.splice(classIndex, 1);
-            saveData();
+            await saveData();
             renderClasses();
           });
         });
-
         headerTop.appendChild(title);
         headerTop.appendChild(deleteClassBtn);
-
-        // Progress indicator
+        const progress = document.createElement("p");
+        progress.classList.add("progress-indicator");
         const total = cls.assignments.length;
         const completed = cls.assignments.filter(a => a.completed).length;
-        const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
-        const progress = document.createElement('p');
-        progress.classList.add('progress-indicator');
-        progress.textContent = `${completed}/${total} Completed (${percent}%)`;
-
+        progress.textContent = `${completed}/${total} Completed (${total > 0 ? Math.round((completed/total)*100) : 0}%)`;
         headerDiv.appendChild(headerTop);
         headerDiv.appendChild(progress);
         box.appendChild(headerDiv);
 
-        // List assignments
-        const ul = document.createElement('ul');
+        // Assignment List
+        const ul = document.createElement("ul");
         cls.assignments.forEach((assignment, assignmentIndex) => {
-          const li = document.createElement('li');
+          const li = document.createElement("li");
           let displayText = assignment.text;
-          if (assignment.dueDate) {
-            displayText += " → " + formatDate(assignment.dueDate);
-          }
+          if (assignment.dueDate) displayText += " → " + formatDate(assignment.dueDate);
           li.innerHTML = displayText;
-          if (assignment.completed) li.classList.add('completed');
-          if (assignment.dueDate && isOverdue(assignment.dueDate)) li.classList.add('overdue');
-
-          li.addEventListener('click', function(e) {
-            // Toggle complete when not clicking on a button
-            if (e.target.tagName !== 'BUTTON') {
+          if (assignment.completed) li.classList.add("completed");
+          if (assignment.dueDate && isOverdue(assignment.dueDate)) li.classList.add("overdue");
+          li.addEventListener("click", async function(e) {
+            if (e.target.tagName !== "BUTTON") {
               assignment.completed = !assignment.completed;
-              saveData();
+              await saveData();
               renderClasses();
             }
           });
-
-          const btnContainer = document.createElement('div');
-
-          // Options button (three dots)
-          const optionsBtn = document.createElement('button');
+          const btnContainer = document.createElement("div");
+          const optionsBtn = document.createElement("button");
           optionsBtn.type = "button";
-          optionsBtn.classList.add('options-btn');
+          optionsBtn.classList.add("options-btn");
           optionsBtn.textContent = "⋮";
           optionsBtn.title = "Options";
-          optionsBtn.addEventListener('click', function(e) {
+          optionsBtn.addEventListener("click", function(e) {
             e.stopPropagation();
             openAssignmentOptionsModal(classIndex, assignmentIndex);
           });
-
           btnContainer.appendChild(optionsBtn);
           li.appendChild(btnContainer);
           ul.appendChild(li);
         });
         box.appendChild(ul);
 
-        // Footer
-        const footerDiv = document.createElement('div');
-        footerDiv.classList.add('box-footer');
-
-        const addAssignmentBtn = document.createElement('button');
+        // Box Footer
+        const footerDiv = document.createElement("div");
+        footerDiv.classList.add("box-footer");
+        const addAssignmentBtn = document.createElement("button");
         addAssignmentBtn.type = "button";
-        addAssignmentBtn.classList.add('add-assignment-btn');
+        addAssignmentBtn.classList.add("add-assignment-btn");
         addAssignmentBtn.textContent = "➕ Add Assignment";
-        addAssignmentBtn.addEventListener('click', function(e) {
+        addAssignmentBtn.addEventListener("click", function(e) {
           e.stopPropagation();
           currentClassIndex = classIndex;
           document.getElementById("assignmentModal").style.display = "flex";
         });
-
-        const sortBtn = document.createElement('button');
+        const sortBtn = document.createElement("button");
         sortBtn.type = "button";
-        sortBtn.classList.add('sort-btn');
+        sortBtn.classList.add("sort-btn");
         sortBtn.textContent = "Sort by Date";
-        sortBtn.addEventListener('click', function(e) {
+        sortBtn.addEventListener("click", async function(e) {
           e.stopPropagation();
           classesData[classIndex].assignments.sort((a, b) => {
             if (!a.dueDate && !b.dueDate) return 0;
@@ -551,21 +535,19 @@
             if (!b.dueDate) return -1;
             return new Date(a.dueDate) - new Date(b.dueDate);
           });
-          saveData();
+          await saveData();
           renderClasses();
         });
-
-        const clearCompletedBtn = document.createElement('button');
+        const clearCompletedBtn = document.createElement("button");
         clearCompletedBtn.type = "button";
-        clearCompletedBtn.classList.add('clear-completed-btn');
+        clearCompletedBtn.classList.add("clear-completed-btn");
         clearCompletedBtn.textContent = "Clear Completed";
-        clearCompletedBtn.addEventListener('click', function(e) {
+        clearCompletedBtn.addEventListener("click", async function(e) {
           e.stopPropagation();
           cls.assignments = cls.assignments.filter(a => !a.completed);
-          saveData();
+          await saveData();
           renderClasses();
         });
-
         footerDiv.appendChild(addAssignmentBtn);
         footerDiv.appendChild(sortBtn);
         footerDiv.appendChild(clearCompletedBtn);
@@ -575,77 +557,47 @@
       });
     }
 
-    // Theme toggle with persistence
-    function toggleTheme(e) {
+    // ----------------- Modal & Class/Assignment Functions -----------------
+    function openClassModal(e) { if (e) e.preventDefault(); document.getElementById("classModal").style.display = "flex"; }
+    function closeClassModal(e) { if (e) e.preventDefault(); document.getElementById("classModal").style.display = "none"; }
+    async function addClass(e) {
       if (e) e.preventDefault();
-      document.documentElement.classList.toggle("light");
-      const theme = document.documentElement.classList.contains("light") ? "light" : "dark";
-      saveTheme(theme);
-    }
-
-    // Class Modal Controls
-    function openClassModal(e) {
-      if (e) e.preventDefault();
-      document.getElementById("classModal").style.display = "flex";
-    }
-    function closeClassModal(e) {
-      if (e) e.preventDefault();
-      document.getElementById("classModal").style.display = "none";
-    }
-    function addClass(e) {
-      if (e) e.preventDefault();
-      const classNameInput = document.getElementById("class-name");
-      const classIconInput = document.getElementById("class-icon");
-      const className = classNameInput.value.trim();
+      const className = document.getElementById("class-name").value.trim();
+      const classIcon = document.getElementById("class-icon").value;
       if (className !== "") {
-        classesData.push({
-          icon: classIconInput.value,
-          name: className,
-          assignments: []
-        });
-        saveData();
+        classesData.push({ icon: classIcon, name: className, assignments: [] });
+        await saveData();
         renderClasses();
         closeClassModal();
-        classNameInput.value = "";
+        document.getElementById("class-name").value = "";
       }
     }
 
-    // Assignment Modal Controls
     function closeAssignmentModal(e) {
       if (e) e.preventDefault();
       document.getElementById("assignmentModal").style.display = "none";
       document.getElementById("assignment-text").value = "";
       document.getElementById("assignment-date").value = "";
     }
-    function addAssignmentFromModal(e) {
+    async function addAssignmentFromModal(e) {
       if (e) e.preventDefault();
-      const assignmentInput = document.getElementById("assignment-text");
-      const dateInput = document.getElementById("assignment-date");
-      const assignmentText = assignmentInput.value.trim();
+      const assignmentText = document.getElementById("assignment-text").value.trim();
+      const assignmentDate = document.getElementById("assignment-date").value;
       if (assignmentText !== "") {
-        classesData[currentClassIndex].assignments.push({ 
-          text: assignmentText, 
-          dueDate: dateInput.value || "", 
-          completed: false 
-        });
-        saveData();
+        classesData[currentClassIndex].assignments.push({ text: assignmentText, dueDate: assignmentDate || "", completed: false });
+        await saveData();
         renderClasses();
         closeAssignmentModal();
       }
     }
 
-    // Assignment Options Modal Controls
     function openAssignmentOptionsModal(classIndex, assignmentIndex) {
       currentClassIndex = classIndex;
       currentAssignmentIndex = assignmentIndex;
       document.getElementById("assignmentOptionsModal").style.display = "flex";
     }
-    function closeAssignmentOptionsModal(e) {
-      if (e) e.preventDefault();
-      document.getElementById("assignmentOptionsModal").style.display = "none";
-    }
+    function closeAssignmentOptionsModal(e) { if (e) e.preventDefault(); document.getElementById("assignmentOptionsModal").style.display = "none"; }
 
-    // Open Edit Assignment Modal (prepopulate fields)
     function openEditAssignmentModal() {
       closeAssignmentOptionsModal(null);
       const assignment = classesData[currentClassIndex].assignments[currentAssignmentIndex];
@@ -653,55 +605,133 @@
       document.getElementById("edit-assignment-date").value = assignment.dueDate;
       document.getElementById("editAssignmentModal").style.display = "flex";
     }
-    function closeEditAssignmentModal(e) {
-      if (e) e.preventDefault();
-      document.getElementById("editAssignmentModal").style.display = "none";
-    }
-    function saveEditedAssignment(e) {
+    function closeEditAssignmentModal(e) { if (e) e.preventDefault(); document.getElementById("editAssignmentModal").style.display = "none"; }
+    async function saveEditedAssignment(e) {
       if (e) e.preventDefault();
       const newText = document.getElementById("edit-assignment-text").value.trim();
       const newDate = document.getElementById("edit-assignment-date").value;
       if (newText !== "") {
         classesData[currentClassIndex].assignments[currentAssignmentIndex].text = newText;
         classesData[currentClassIndex].assignments[currentAssignmentIndex].dueDate = newDate;
-        saveData();
+        await saveData();
         renderClasses();
         closeEditAssignmentModal();
       }
     }
 
-    // Delete Assignment via Options Modal
-    function confirmDeleteAssignment() {
+    async function confirmDeleteAssignment() {
       closeAssignmentOptionsModal(null);
-      openConfirmModal("Are you sure you want to delete this assignment?", function() {
+      openConfirmModal("Are you sure you want to delete this assignment?", async function() {
         classesData[currentClassIndex].assignments.splice(currentAssignmentIndex, 1);
-        saveData();
+        await saveData();
         renderClasses();
       });
     }
 
-    // Custom Confirmation Modal Controls
     function openConfirmModal(message, callback) {
       document.getElementById("confirmMessage").textContent = message;
       confirmCallback = callback;
       document.getElementById("confirmModal").style.display = "flex";
     }
-    function closeConfirmModal(e) {
-      if (e) e.preventDefault();
-      document.getElementById("confirmModal").style.display = "none";
-      confirmCallback = null;
-    }
-    function confirmAction() {
-      if (confirmCallback) {
-        confirmCallback();
+    function closeConfirmModal(e) { if (e) e.preventDefault(); document.getElementById("confirmModal").style.display = "none"; confirmCallback = null; }
+    function confirmAction() { if (confirmCallback) { confirmCallback(); } closeConfirmModal(null); }
+
+    // ----------------- Authentication Functions -----------------
+    async function toggleAuthMode() {
+      if (authMode === "login") {
+        authMode = "signup";
+        document.getElementById("authTitle").textContent = "Sign Up for Cura";
+        document.getElementById("authActionButton").textContent = "Sign Up";
+        document.getElementById("authToggleText").innerHTML = 'Already have an account? <a href="#" onclick="toggleAuthMode()">Login</a>';
+      } else {
+        authMode = "login";
+        document.getElementById("authTitle").textContent = "Login to Cura";
+        document.getElementById("authActionButton").textContent = "Login";
+        document.getElementById("authToggleText").innerHTML = 'Don\'t have an account? <a href="#" onclick="toggleAuthMode()">Sign Up</a>';
       }
-      closeConfirmModal(null);
+    }
+    async function authAction(e) {
+      e.preventDefault();
+      const email = document.getElementById("auth-email").value;
+      const password = document.getElementById("auth-password").value;
+      if (authMode === "login") {
+        const { error, data } = await supabaseClient.auth.signInWithPassword({ email, password });
+        if (error) alert("Login failed: " + error.message);
+      } else {
+        const { error, data } = await supabaseClient.auth.signUp({ email, password });
+        if (error) alert("Sign Up failed: " + error.message);
+        else {
+          currentUser = data.user;
+          // After sign-up, insert an empty record for this user
+          const { error: insertError } = await supabaseClient
+            .from("user_data")
+            .insert([{ user_id: currentUser.id, classes_data: [] }]);
+          if (insertError) console.error("Insert error:", insertError);
+        }
+      }
+    }
+    async function logoutUser(e) {
+      if (e) e.preventDefault();
+      const { error } = await supabaseClient.auth.signOut();
+      if (error) console.error("Error signing out:", error);
+      classesData = [];
+      renderClasses();
     }
 
-    // Load data and theme on startup, then render
-    loadData();
+    // ----------------- Header Update -----------------
+    function updateHeaderForAuth(isLoggedIn) {
+      const headerRight = document.getElementById("header-right");
+      if (isLoggedIn) {
+        headerRight.innerHTML = `
+          <button class="theme-toggle" onclick="toggleTheme(event)">Toggle Theme</button>
+          <button class="add-class-btn" onclick="openClassModal(event)">➕ Add Class</button>
+          <button class="add-class-btn" onclick="logoutUser(event)">Logout</button>
+        `;
+      } else {
+        headerRight.innerHTML = `<button class="theme-toggle" onclick="toggleTheme(event)">Toggle Theme</button>`;
+      }
+    }
+
+    // ----------------- Auth State Observer -----------------
+    supabaseClient.auth.onAuthStateChange(async (event, session) => {
+      if (session && session.user) {
+        currentUser = session.user;
+        document.getElementById("authPage").style.display = "none";
+        updateHeaderForAuth(true);
+        await loadData();
+      } else {
+        currentUser = null;
+        updateHeaderForAuth(false);
+        classesData = [];
+        renderClasses();
+        document.getElementById("authPage").style.display = "flex";
+      }
+    });
+
+    // ----------------- On Startup -----------------
     loadTheme();
-    renderClasses();
+
+    // Expose functions for inline event handlers
+    window.toggleAuthMode = toggleAuthMode;
+    window.authAction = authAction;
+    window.loginUser = loginUser;
+    window.signupUser = signupUser;
+    window.logoutUser = logoutUser;
+    window.toggleTheme = toggleTheme;
+    window.openClassModal = openClassModal;
+    window.closeClassModal = closeClassModal;
+    window.addClass = addClass;
+    window.closeAssignmentModal = closeAssignmentModal;
+    window.addAssignmentFromModal = addAssignmentFromModal;
+    window.openAssignmentOptionsModal = openAssignmentOptionsModal;
+    window.closeAssignmentOptionsModal = closeAssignmentOptionsModal;
+    window.openEditAssignmentModal = openEditAssignmentModal;
+    window.closeEditAssignmentModal = closeEditAssignmentModal;
+    window.saveEditedAssignment = saveEditedAssignment;
+    window.confirmDeleteAssignment = confirmDeleteAssignment;
+    window.openConfirmModal = openConfirmModal;
+    window.closeConfirmModal = closeConfirmModal;
+    window.confirmAction = confirmAction;
   </script>
 </body>
 </html>
