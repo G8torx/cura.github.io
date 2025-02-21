@@ -259,18 +259,6 @@
     .auth-container button:hover { background: #ffdb4d; }
     .auth-container p { margin-top: 15px; }
     .auth-container a { color: var(--accent-color); text-decoration: none; }
-    /* Google Sign-In Button */
-    .google-btn {
-      background: #fff;
-      color: #000;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      padding: 10px 20px;
-      font-size: 1em;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    .google-btn:hover { background: #f7f7f7; }
   </style>
   <!-- Include Supabase JS client from CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
@@ -283,7 +271,6 @@
       <input type="email" id="auth-email" placeholder="Email">
       <input type="password" id="auth-password" placeholder="Password">
       <button id="authActionButton" onclick="authAction(event)">Login</button>
-      <button class="google-btn" onclick="googleSignIn(event)">Sign in with Google</button>
       <p id="authToggleText">
         Don't have an account? <a href="#" onclick="toggleAuthMode()">Sign Up</a>
       </p>
@@ -677,7 +664,7 @@
           alert("Sign Up failed: " + error.message);
         } else {
           // Show a success message for new users.
-          alert("Sign up successful! Please check your email for confirmation (or log in directly if email confirmation is disabled).");
+          alert("Sign up successful! You can now use the checklist.");
           currentUser = data.user;
           // Insert an empty record for the new user.
           const { error: insertError } = await supabaseClient
@@ -685,14 +672,6 @@
             .insert([{ user_id: currentUser.id, classes_data: [] }]);
           if (insertError) console.error("Insert error:", insertError);
         }
-      }
-    }
-    async function googleSignIn(e) {
-      e.preventDefault();
-      const { error } = await supabaseClient.auth.signInWithOAuth({ provider: 'google' });
-      if (error) {
-        console.error("Google sign in error:", error);
-        alert("Google sign in failed: " + error.message);
       }
     }
     async function logoutUser(e) {
@@ -739,7 +718,7 @@
     // Expose functions for inline event handlers
     window.toggleAuthMode = toggleAuthMode;
     window.authAction = authAction;
-    window.googleSignIn = googleSignIn;
+    window.googleSignIn = googleSignIn; // This function has been removed as per request.
     window.loginUser = loginUser;
     window.signupUser = signupUser;
     window.logoutUser = logoutUser;
