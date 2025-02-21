@@ -686,7 +686,7 @@
       e.preventDefault();
       const email = document.getElementById("auth-email").value;
       if (!email) {
-        alert("Please enter your email address.");
+        alert("Please enter your email address first.");
         return;
       }
       const { error } = await supabaseClient.auth.resetPasswordForEmail(email);
@@ -700,9 +700,13 @@
     async function logoutUser(e) {
       if (e) e.preventDefault();
       const { error } = await supabaseClient.auth.signOut();
-      if (error) console.error("Error signing out:", error);
-      classesData = [];
-      renderClasses();
+      if (error) {
+        console.error("Error signing out:", error);
+        alert("Error signing out, please try again.");
+      } else {
+        // Reload the page to update auth state
+        location.reload();
+      }
     }
 
     // ----------------- Header Update -----------------
