@@ -259,7 +259,7 @@
     .auth-container button:hover { background: #ffdb4d; }
     .auth-container p { margin-top: 15px; }
     .auth-container a { color: var(--accent-color); text-decoration: none; }
-    /* Additional Google Sign-In button */
+    /* Google Sign-In Button */
     .google-btn {
       background: #fff;
       color: #000;
@@ -270,9 +270,7 @@
       cursor: pointer;
       margin-top: 10px;
     }
-    .google-btn:hover {
-      background: #f7f7f7;
-    }
+    .google-btn:hover { background: #f7f7f7; }
   </style>
   <!-- Include Supabase JS client from CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
@@ -668,15 +666,20 @@
       const password = document.getElementById("auth-password").value;
       if (authMode === "login") {
         const { error, data } = await supabaseClient.auth.signInWithPassword({ email, password });
-        if (error) alert("Login failed: " + error.message);
+        if (error) {
+          console.error("Login error:", error);
+          alert("Login failed: " + error.message);
+        }
       } else {
         const { error, data } = await supabaseClient.auth.signUp({ email, password });
-        if (error) alert("Sign Up failed: " + error.message);
-        else {
-          // If you require email confirmation, the session may not be created immediately.
-          alert("Sign up successful! Please check your email for confirmation, then log in.");
-          // If you don't require confirmation, the auth state observer will hide the auth page.
+        if (error) {
+          console.error("Sign Up error:", error);
+          alert("Sign Up failed: " + error.message);
+        } else {
+          // Show a success message for new users.
+          alert("Sign up successful! Please check your email for confirmation (or log in directly if email confirmation is disabled).");
           currentUser = data.user;
+          // Insert an empty record for the new user.
           const { error: insertError } = await supabaseClient
             .from("user_data")
             .insert([{ user_id: currentUser.id, classes_data: [] }]);
@@ -687,7 +690,10 @@
     async function googleSignIn(e) {
       e.preventDefault();
       const { error } = await supabaseClient.auth.signInWithOAuth({ provider: 'google' });
-      if (error) alert("Google sign in failed: " + error.message);
+      if (error) {
+        console.error("Google sign in error:", error);
+        alert("Google sign in failed: " + error.message);
+      }
     }
     async function logoutUser(e) {
       if (e) e.preventDefault();
