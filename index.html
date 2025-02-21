@@ -259,6 +259,20 @@
     .auth-container button:hover { background: #ffdb4d; }
     .auth-container p { margin-top: 15px; }
     .auth-container a { color: var(--accent-color); text-decoration: none; }
+    /* Additional Google Sign-In button */
+    .google-btn {
+      background: #fff;
+      color: #000;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 10px 20px;
+      font-size: 1em;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .google-btn:hover {
+      background: #f7f7f7;
+    }
   </style>
   <!-- Include Supabase JS client from CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
@@ -271,6 +285,7 @@
       <input type="email" id="auth-email" placeholder="Email">
       <input type="password" id="auth-password" placeholder="Password">
       <button id="authActionButton" onclick="authAction(event)">Login</button>
+      <button class="google-btn" onclick="googleSignIn(event)">Sign in with Google</button>
       <p id="authToggleText">
         Don't have an account? <a href="#" onclick="toggleAuthMode()">Sign Up</a>
       </p>
@@ -366,11 +381,9 @@
 
   <!-- Supabase and App Code -->
   <script type="module">
-    // Set your Supabase URL and anon key (client API key)
+    // Supabase configuration
     const SUPABASE_URL = "https://skpaziktshkxohlmdnwk.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNrcGF6aWt0c2hreG9obG1kbndrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAxNTgwNTgsImV4cCI6MjA1NTczNDA1OH0.ihJvl6TZLh7CWpM9uagQtAJ5ix4igOF9nk_d2lukrmE";
-    
-    // Initialize Supabase client
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     // Global Variables
@@ -660,16 +673,21 @@
         const { error, data } = await supabaseClient.auth.signUp({ email, password });
         if (error) alert("Sign Up failed: " + error.message);
         else {
-          // Show success message to the new user.
-          alert("Sign up successful! You can now use the checklist.");
+          // If you require email confirmation, the session may not be created immediately.
+          alert("Sign up successful! Please check your email for confirmation, then log in.");
+          // If you don't require confirmation, the auth state observer will hide the auth page.
           currentUser = data.user;
-          // Insert an empty record for the new user.
           const { error: insertError } = await supabaseClient
             .from("user_data")
             .insert([{ user_id: currentUser.id, classes_data: [] }]);
           if (insertError) console.error("Insert error:", insertError);
         }
       }
+    }
+    async function googleSignIn(e) {
+      e.preventDefault();
+      const { error } = await supabaseClient.auth.signInWithOAuth({ provider: 'google' });
+      if (error) alert("Google sign in failed: " + error.message);
     }
     async function logoutUser(e) {
       if (e) e.preventDefault();
@@ -715,6 +733,7 @@
     // Expose functions for inline event handlers
     window.toggleAuthMode = toggleAuthMode;
     window.authAction = authAction;
+    window.googleSignIn = googleSignIn;
     window.loginUser = loginUser;
     window.signupUser = signupUser;
     window.logoutUser = logoutUser;
