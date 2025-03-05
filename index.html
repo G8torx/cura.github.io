@@ -10,7 +10,7 @@
   <style>
     /* CSS Variables for themes */
     :root {
-      /* Default Dark Mode Variables */
+      /* Dark Mode Variables (default) */
       --bg-color: #121212;
       --text-color: #fff;
       --accent-color: #ffcc00;
@@ -27,6 +27,7 @@
       --box-bg-hover: #f9f9f9;
       --box-shadow: 0 0 25px rgba(255,255,255,0.2);
     }
+    /* Force the options button text to be white in dark mode */
     html:not(.light) .options-btn {
       color: #fff;
     }
@@ -178,8 +179,8 @@
       margin-top: 10px;
     }
     .add-assignment-btn,
-    .clear-completed-btn,
-    .sort-btn {
+    .sort-btn,
+    .archive-btn {
       padding: 8px 14px;
       font-size: 0.9em;
       border-radius: 6px;
@@ -190,8 +191,8 @@
       transition: transform 0.3s, background 0.3s;
     }
     .add-assignment-btn:hover,
-    .clear-completed-btn:hover,
-    .sort-btn:hover {
+    .sort-btn:hover,
+    .archive-btn:hover {
       background: #ffdb4d;
       transform: scale(1.05);
     }
@@ -294,7 +295,6 @@
     <h1 style="padding-left: 30px;">Cura</h1>
     <div style="padding-right: 30px;">
       <button type="button" class="theme-toggle" onclick="toggleTheme(event)">Toggle Theme</button>
-      <button type="button" class="add-class-btn" onclick="openCustomThemeModal(event)">Customize Theme</button>
       <button type="button" class="add-class-btn" onclick="openClassModal(event)">➕ Add Class</button>
     </div>
   </header>
@@ -365,30 +365,6 @@
     </div>
   </div>
 
-  <!-- Modal for Customizing Theme -->
-  <div class="modal" id="customThemeModal">
-    <div class="modal-content">
-      <span class="close-button" onclick="closeCustomThemeModal(event)">&times;</span>
-      <h2>Customize Theme</h2>
-      <label>Background Color:</label>
-      <input type="color" id="custom-bg-color" value="#121212" />
-      <br />
-      <label>Text Color:</label>
-      <input type="color" id="custom-text-color" value="#fff" />
-      <br />
-      <label>Accent Color:</label>
-      <input type="color" id="custom-accent-color" value="#ffcc00" />
-      <br />
-      <label>Box Background:</label>
-      <input type="color" id="custom-box-bg" value="#1e1e1e" />
-      <br />
-      <label>Box Hover Background:</label>
-      <input type="color" id="custom-box-bg-hover" value="#2a2a2a" />
-      <br />
-      <button type="button" class="add-class-btn" onclick="saveCustomTheme(event)">Save Custom Theme</button>
-    </div>
-  </div>
-
   <!-- Custom Confirmation Modal -->
   <div class="modal" id="confirmModal">
     <div class="modal-content">
@@ -406,20 +382,27 @@
   <div class="container" id="class-container"></div>
 
   <script>
+    // In-memory data starts as an empty array.
+    // Each class now also has an archivedAssignments array.
     let classesData = [];
     let currentClassIndex = null;
     let currentAssignmentIndex = null;
     let confirmCallback = null;
 
+    // Helper: Save classesData to localStorage
     function saveData() {
       localStorage.setItem("classesData", JSON.stringify(classesData));
     }
+
+    // Helper: Load classesData from localStorage if available
     function loadData() {
       const storedData = localStorage.getItem("classesData");
       if (storedData) {
         classesData = JSON.parse(storedData);
       }
     }
+
+    // Theme functions remain the same.
     function saveTheme(theme) {
       localStorage.setItem("theme", theme);
     }
@@ -430,50 +413,42 @@
       } else {
         document.documentElement.classList.remove("light");
       }
-      applyCustomTheme();
     }
-    function applyCustomTheme() {
-      const customTheme = JSON.parse(localStorage.getItem("customTheme") || "{}");
-      if (customTheme.bgColor) {
-        document.documentElement.style.setProperty("--bg-color", customTheme.bgColor);
-      }
-      if (customTheme.textColor) {
-        document.documentElement.style.setProperty("--text-color", customTheme.textColor);
-      }
-      if (customTheme.accentColor) {
-        document.documentElement.style.setProperty("--accent-color", customTheme.accentColor);
-      }
-      if (customTheme.boxBg) {
-        document.documentElement.style.setProperty("--box-bg", customTheme.boxBg);
-      }
-      if (customTheme.boxBgHover) {
-        document.documentElement.style.setProperty("--box-bg-hover", customTheme.boxBgHover);
-      }
-    }
+
+    // Format date helper
     function formatDate(dateString) {
       const [year, month, day] = dateString.split('-');
       const localDate = new Date(year, month - 1, day);
       const options = { weekday: 'short', month: 'numeric', day: 'numeric' };
       return localDate.toLocaleDateString('en-US', options);
     }
+
+    // Check if due date is overdue (end-of-day)
     function isOverdue(dueDateValue) {
       if (!dueDateValue) return false;
       let dueDate = new Date(dueDateValue);
       dueDate.setHours(23, 59, 59, 999);
       return dueDate < new Date();
     }
+
+    // Render classes and assignments
     function renderClasses() {
       const container = document.getElementById('class-container');
       container.innerHTML = "";
       classesData.forEach((cls, classIndex) => {
         const box = document.createElement('div');
         box.classList.add('box');
+
+        // Header
         const headerDiv = document.createElement('div');
         headerDiv.classList.add('box-header');
+
         const headerTop = document.createElement('div');
         headerTop.classList.add('header-top');
+
         const title = document.createElement('h2');
         title.textContent = `${cls.icon} ${cls.name}`;
+
         const deleteClassBtn = document.createElement('button');
         deleteClassBtn.type = "button";
         deleteClassBtn.classList.add('delete-class-btn');
@@ -487,26 +462,34 @@
             renderClasses();
           });
         });
+
         headerTop.appendChild(title);
         headerTop.appendChild(deleteClassBtn);
+
         const total = cls.assignments.length;
         const completed = cls.assignments.filter(a => a.completed).length;
         const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
         const progress = document.createElement('p');
         progress.classList.add('progress-indicator');
         progress.textContent = `${completed}/${total} Completed (${percent}%)`;
+
         headerDiv.appendChild(headerTop);
         headerDiv.appendChild(progress);
         box.appendChild(headerDiv);
+
+        // List active assignments
         const ul = document.createElement('ul');
         cls.assignments.forEach((assignment, assignmentIndex) => {
           const li = document.createElement('li');
+
           const assignmentContainer = document.createElement('div');
           assignmentContainer.style.display = 'flex';
           assignmentContainer.style.flexDirection = 'column';
+          
           const assignmentText = document.createElement('span');
           assignmentText.textContent = assignment.text + (assignment.dueDate ? " → " + formatDate(assignment.dueDate) : "");
           assignmentContainer.appendChild(assignmentText);
+
           if (assignment.link) {
             const linkAnchor = document.createElement('a');
             linkAnchor.href = assignment.link;
@@ -520,9 +503,12 @@
             });
             assignmentContainer.appendChild(linkAnchor);
           }
+
           li.appendChild(assignmentContainer);
+
           if (assignment.completed) li.classList.add('completed');
           if (assignment.dueDate && isOverdue(assignment.dueDate)) li.classList.add('overdue');
+
           li.addEventListener('click', function(e) {
             if (e.target.tagName !== 'BUTTON') {
               assignment.completed = !assignment.completed;
@@ -530,6 +516,7 @@
               renderClasses();
             }
           });
+
           const btnContainer = document.createElement('div');
           const optionsBtn = document.createElement('button');
           optionsBtn.type = "button";
@@ -545,8 +532,30 @@
           ul.appendChild(li);
         });
         box.appendChild(ul);
+
+        // Display archived assignments if any
+        if (cls.archivedAssignments && cls.archivedAssignments.length > 0) {
+          const archivedHeader = document.createElement('h3');
+          archivedHeader.textContent = "Archived Assignments:";
+          archivedHeader.style.marginTop = "10px";
+          archivedHeader.style.fontSize = "1.2em";
+          archivedHeader.style.color = "gray";
+          box.appendChild(archivedHeader);
+          
+          const archivedUl = document.createElement('ul');
+          cls.archivedAssignments.forEach(assignment => {
+            const li = document.createElement('li');
+            li.textContent = assignment.text + (assignment.dueDate ? " → " + formatDate(assignment.dueDate) : "");
+            li.style.opacity = "0.7";
+            archivedUl.appendChild(li);
+          });
+          box.appendChild(archivedUl);
+        }
+
+        // Footer with buttons
         const footerDiv = document.createElement('div');
         footerDiv.classList.add('box-footer');
+
         const addAssignmentBtn = document.createElement('button');
         addAssignmentBtn.type = "button";
         addAssignmentBtn.classList.add('add-assignment-btn');
@@ -556,6 +565,7 @@
           currentClassIndex = classIndex;
           document.getElementById("assignmentModal").style.display = "flex";
         });
+
         const sortBtn = document.createElement('button');
         sortBtn.type = "button";
         sortBtn.classList.add('sort-btn');
@@ -571,29 +581,40 @@
           saveData();
           renderClasses();
         });
-        const clearCompletedBtn = document.createElement('button');
-        clearCompletedBtn.type = "button";
-        clearCompletedBtn.classList.add('clear-completed-btn');
-        clearCompletedBtn.textContent = "Clear Completed";
-        clearCompletedBtn.addEventListener('click', function(e) {
+
+        const archiveBtn = document.createElement('button');
+        archiveBtn.type = "button";
+        archiveBtn.classList.add('archive-btn');
+        archiveBtn.textContent = "Archive Completed";
+        archiveBtn.addEventListener('click', function(e) {
           e.stopPropagation();
+          // Move completed assignments to archive.
+          const completed = cls.assignments.filter(a => a.completed);
+          if (!cls.archivedAssignments) {
+            cls.archivedAssignments = [];
+          }
+          cls.archivedAssignments = cls.archivedAssignments.concat(completed);
           cls.assignments = cls.assignments.filter(a => !a.completed);
           saveData();
           renderClasses();
         });
+
         footerDiv.appendChild(addAssignmentBtn);
         footerDiv.appendChild(sortBtn);
-        footerDiv.appendChild(clearCompletedBtn);
+        footerDiv.appendChild(archiveBtn);
         box.appendChild(footerDiv);
+
         container.appendChild(box);
       });
     }
+
     function toggleTheme(e) {
       if (e) e.preventDefault();
       document.documentElement.classList.toggle("light");
       const theme = document.documentElement.classList.contains("light") ? "light" : "dark";
       saveTheme(theme);
     }
+
     function openClassModal(e) {
       if (e) e.preventDefault();
       document.getElementById("classModal").style.display = "flex";
@@ -608,10 +629,12 @@
       const classIconInput = document.getElementById("class-icon");
       const className = classNameInput.value.trim();
       if (className !== "") {
+        // Add archivedAssignments property for new classes.
         classesData.push({
           icon: classIconInput.value,
           name: className,
-          assignments: []
+          assignments: [],
+          archivedAssignments: []
         });
         saveData();
         renderClasses();
@@ -619,6 +642,7 @@
         classNameInput.value = "";
       }
     }
+
     function closeAssignmentModal(e) {
       if (e) e.preventDefault();
       document.getElementById("assignmentModal").style.display = "none";
@@ -645,6 +669,7 @@
         closeAssignmentModal();
       }
     }
+
     function openAssignmentOptionsModal(classIndex, assignmentIndex) {
       currentClassIndex = classIndex;
       currentAssignmentIndex = assignmentIndex;
@@ -680,6 +705,7 @@
         closeEditAssignmentModal();
       }
     }
+
     function confirmDeleteAssignment() {
       closeAssignmentOptionsModal(null);
       openConfirmModal("Are you sure you want to delete this assignment?", function() {
@@ -688,6 +714,7 @@
         renderClasses();
       });
     }
+
     function openConfirmModal(message, callback) {
       document.getElementById("confirmMessage").textContent = message;
       confirmCallback = callback;
@@ -704,47 +731,7 @@
       }
       closeConfirmModal(null);
     }
-    // Custom Theme Modal Controls
-    function openCustomThemeModal(e) {
-      if (e) e.preventDefault();
-      const customTheme = JSON.parse(localStorage.getItem("customTheme") || "{}");
-      if (customTheme.bgColor) {
-        document.getElementById("custom-bg-color").value = customTheme.bgColor;
-      }
-      if (customTheme.textColor) {
-        document.getElementById("custom-text-color").value = customTheme.textColor;
-      }
-      if (customTheme.accentColor) {
-        document.getElementById("custom-accent-color").value = customTheme.accentColor;
-      }
-      if (customTheme.boxBg) {
-        document.getElementById("custom-box-bg").value = customTheme.boxBg;
-      }
-      if (customTheme.boxBgHover) {
-        document.getElementById("custom-box-bg-hover").value = customTheme.boxBgHover;
-      }
-      document.getElementById("customThemeModal").style.display = "flex";
-    }
-    function closeCustomThemeModal(e) {
-      if (e) e.preventDefault();
-      document.getElementById("customThemeModal").style.display = "none";
-    }
-    function saveCustomTheme(e) {
-      if (e) e.preventDefault();
-      const bgColor = document.getElementById("custom-bg-color").value;
-      const textColor = document.getElementById("custom-text-color").value;
-      const accentColor = document.getElementById("custom-accent-color").value;
-      const boxBg = document.getElementById("custom-box-bg").value;
-      const boxBgHover = document.getElementById("custom-box-bg-hover").value;
-      document.documentElement.style.setProperty("--bg-color", bgColor);
-      document.documentElement.style.setProperty("--text-color", textColor);
-      document.documentElement.style.setProperty("--accent-color", accentColor);
-      document.documentElement.style.setProperty("--box-bg", boxBg);
-      document.documentElement.style.setProperty("--box-bg-hover", boxBgHover);
-      const customTheme = { bgColor, textColor, accentColor, boxBg, boxBgHover };
-      localStorage.setItem("customTheme", JSON.stringify(customTheme));
-      closeCustomThemeModal();
-    }
+
     loadData();
     loadTheme();
     renderClasses();
