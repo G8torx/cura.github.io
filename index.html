@@ -26,11 +26,11 @@
       --box-bg-hover: #f9f9f9;
       --box-shadow: none;
     }
-    /* Apply smooth transitions to elements that use the theme colors */
+    /* Smooth transitions */
     body, header, .box, .modal-content, ul, li, .progress-indicator {
       transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease;
     }
-    /* Force the options button text to be white in dark mode */
+    /* Force options button text to be white in dark mode */
     html:not(.light) .options-btn {
       color: #fff;
     }
@@ -243,12 +243,15 @@
       cursor: pointer;
     }
     
-    /* Pre-made Theme Options Styling */
+    /* Pre-made Theme Options Styling (with scrollable container) */
     #themeOptions {
       display: flex;
       flex-direction: column;
       gap: 10px;
       margin: 20px 0;
+      max-height: 300px;
+      overflow-y: auto;
+      padding-right: 10px;
     }
     .theme-option-btn {
       padding: 10px;
@@ -507,11 +510,9 @@
       }
     };
 
-    // Save classesData to localStorage.
     function saveData() {
       localStorage.setItem("classesData", JSON.stringify(classesData));
     }
-    // Load classesData from localStorage.
     function loadData() {
       const storedData = localStorage.getItem("classesData");
       if (storedData) classesData = JSON.parse(storedData);
@@ -537,7 +538,6 @@
       }
     }
 
-    // Apply a pre-made theme by updating CSS variables.
     function applyPreMadeTheme(themeKey) {
       const theme = preMadeThemes[themeKey];
       if (theme) {
@@ -550,30 +550,24 @@
       }
     }
 
-    // Format a date string.
     function formatDate(dateString) {
       const [year, month, day] = dateString.split('-');
       const localDate = new Date(year, month - 1, day);
       const options = { weekday: 'short', month: 'numeric', day: 'numeric' };
       return localDate.toLocaleDateString('en-US', options);
     }
-
-    // Check if due date is overdue.
     function isOverdue(dueDateValue) {
       if (!dueDateValue) return false;
       let dueDate = new Date(dueDateValue);
       dueDate.setHours(23, 59, 59, 999);
       return dueDate < new Date();
     }
-
-    // Render classes and assignments.
     function renderClasses() {
       const container = document.getElementById("class-container");
       container.innerHTML = "";
       classesData.forEach((cls, classIndex) => {
         const box = document.createElement("div");
         box.classList.add("box");
-        // Header
         const headerDiv = document.createElement("div");
         headerDiv.classList.add("box-header");
         const headerTop = document.createElement("div");
@@ -604,7 +598,6 @@
         headerDiv.appendChild(headerTop);
         headerDiv.appendChild(progress);
         box.appendChild(headerDiv);
-        // List assignments.
         const ul = document.createElement("ul");
         cls.assignments.forEach((assignment, assignmentIndex) => {
           const li = document.createElement("li");
@@ -652,7 +645,6 @@
           ul.appendChild(li);
         });
         box.appendChild(ul);
-        // Footer with buttons.
         const footerDiv = document.createElement("div");
         footerDiv.classList.add("box-footer");
         const addAssignmentBtn = document.createElement("button");
