@@ -26,6 +26,10 @@
       --box-bg-hover: #f9f9f9;
       --box-shadow: none;
     }
+    /* Apply smooth transitions to elements that use the theme colors */
+    body, header, .box, .modal-content, ul, li, .progress-indicator {
+      transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease;
+    }
     /* Force the options button text to be white in dark mode */
     html:not(.light) .options-btn {
       color: #fff;
@@ -50,7 +54,6 @@
       flex-direction: column;
       align-items: center;
       min-height: 100vh;
-      transition: background 0.3s, color 0.3s;
     }
     header {
       width: 100%;
@@ -148,7 +151,6 @@
       cursor: pointer;
     }
     li:hover {
-      transition: transform 0.3s, background 0.3s, opacity 0.3s;
       transform: scale(1.03);
     }
     li.completed {
