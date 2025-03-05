@@ -3,36 +3,49 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Cura - Enhanced Edition</title>
+  <title>Cura</title>
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  
   <style>
-    /* --- Theme Variables --- */
+    /* Default (Dark Mode) Variables */
     :root {
       --bg-color: #121212;
       --text-color: #fff;
       --accent-color: #ffcc00;
       --box-bg: #1e1e1e;
       --box-bg-hover: #2a2b2e;
-      --box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      --font-size: 16px;
+      --box-shadow: none;
     }
+    /* Light Mode Variables (if activated by theme presets) */
     html.light {
       --bg-color: #f0f0f0;
       --text-color: #333;
       --accent-color: #ffcc00;
       --box-bg: #fff;
       --box-bg-hover: #f9f9f9;
-      --box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      --box-shadow: none;
     }
-    /* Smooth transitions for theme changes */
+    /* Apply smooth transitions to elements that use the theme colors */
     body, header, .box, .modal-content, ul, li, .progress-indicator {
       transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease;
     }
-    /* Global Styles */
+    /* Force the options button text to be white in dark mode */
+    html:not(.light) .options-btn {
+      color: #fff;
+    }
+    
+    .overdue {
+      border-left: 4px solid red;
+    }
+    .progress-indicator {
+      font-size: 0.9em;
+      margin-top: 5px;
+      color: var(--accent-color);
+    }
+    
     body {
       font-family: 'Poppins', sans-serif;
-      font-size: var(--font-size);
       background: var(--bg-color);
       color: var(--text-color);
       margin: 0;
@@ -48,9 +61,8 @@
       background: var(--box-bg);
       box-shadow: none;
       display: flex;
-      flex-wrap: wrap;
+      justify-content: space-between;
       align-items: center;
-      gap: 10px;
       position: sticky;
       top: 0;
       z-index: 100;
@@ -59,36 +71,22 @@
       margin: 0;
       font-size: 2em;
       color: var(--accent-color);
-      flex: 1 0 100%;
     }
-    /* Header buttons and search */
-    .header-buttons {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-    .header-buttons button,
-    .header-buttons input {
+    .customize-btn, .add-class-btn {
       background: var(--accent-color);
       border: none;
       border-radius: 5px;
-      padding: 8px 12px;
+      padding: 10px 15px;
       font-size: 1em;
       color: var(--bg-color);
       cursor: pointer;
       transition: filter 0.3s;
+      margin-left: 10px;
     }
-    .header-buttons input {
-      background: var(--box-bg);
-      color: var(--text-color);
-      border: 1px solid var(--accent-color);
-      width: 200px;
-    }
-    .header-buttons button:hover,
-    .header-buttons input:hover {
+    .customize-btn:hover, .add-class-btn:hover {
       filter: brightness(130%);
     }
+    
     .container {
       display: flex;
       flex-wrap: wrap;
@@ -134,6 +132,7 @@
       color: red;
       cursor: pointer;
     }
+    
     ul {
       list-style: none;
       padding: 0;
@@ -172,13 +171,14 @@
       filter: brightness(130%);
       transform: scale(1.05);
     }
+    
     .box-footer {
       display: flex;
       justify-content: flex-end;
       gap: 10px;
       margin-top: 10px;
     }
-    .box-footer button {
+    .add-assignment-btn, .sort-btn {
       padding: 8px 14px;
       font-size: 0.9em;
       border-radius: 6px;
@@ -188,15 +188,16 @@
       cursor: pointer;
       transition: filter 0.3s, transform 0.3s;
     }
-    .box-footer button:hover {
+    .add-assignment-btn:hover, .sort-btn:hover {
       filter: brightness(130%);
       transform: scale(1.05);
     }
+    
     /* Modal Styles */
     .modal {
       display: none;
       position: fixed;
-      z-index: 300;
+      z-index: 200;
       left: 0;
       top: 0;
       width: 100%;
@@ -215,7 +216,7 @@
       text-align: center;
       color: var(--text-color);
       position: relative;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      box-shadow: none;
       animation: popIn 0.3s ease-out;
     }
     @keyframes popIn {
@@ -241,14 +242,47 @@
       font-size: 1.5em;
       cursor: pointer;
     }
-    /* Additional button styles for modals */
-    .edit-btn-modal, .delete-btn-modal, .cancel-btn {
+    .edit-btn-modal {
+      background: var(--accent-color);
+      color: var(--bg-color);
+      border: none;
+      border-radius: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+      margin: 5px;
       transition: filter 0.3s;
     }
-    .edit-btn-modal:hover, .delete-btn-modal:hover, .cancel-btn:hover {
+    .edit-btn-modal:hover {
       filter: brightness(130%);
     }
-    /* Pre-made Theme Options */
+    .delete-btn-modal {
+      background: red;
+      color: var(--bg-color);
+      border: none;
+      border-radius: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+      margin: 5px;
+      transition: filter 0.3s;
+    }
+    .delete-btn-modal:hover {
+      filter: brightness(130%);
+    }
+    .cancel-btn {
+      background: var(--accent-color);
+      color: var(--bg-color);
+      border: none;
+      border-radius: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+      margin: 5px;
+      transition: filter 0.3s;
+    }
+    .cancel-btn:hover {
+      filter: brightness(130%);
+    }
+
+    /* Pre-made Theme Options Styling */
     #themeOptions {
       display: flex;
       flex-direction: column;
@@ -269,33 +303,22 @@
   </style>
 </head>
 <body>
-  <!-- HEADER with extra features: Customize Theme, Add Class, Export, Import, Calendar Toggle, Font Settings, and Search -->
+  <!-- Header -->
   <header>
-    <h1>Cura</h1>
-    <div class="header-buttons">
+    <h1 style="padding-left: 30px;">Cura</h1>
+    <div style="padding-right: 30px;">
       <button type="button" class="customize-btn" onclick="openCustomThemeModal(event)">Customize Theme</button>
       <button type="button" class="add-class-btn" onclick="openClassModal(event)">➕ Add Class</button>
-      <button type="button" onclick="exportData()">Export Data</button>
-      <button type="button" onclick="document.getElementById('importInput').click()">Import Data</button>
-      <button type="button" onclick="toggleCalendarView()">Calendar View</button>
-      <button type="button" onclick="openFontSettingsModal(event)">Font Settings</button>
-      <input type="text" id="searchInput" placeholder="Search assignments...">
-      <!-- Hidden file input for import -->
-      <input type="file" id="importInput" style="display:none" accept=".json" onchange="importData(event)">
     </div>
   </header>
-
-  <!-- Main Container -->
-  <div id="mainView" class="container"></div>
-  <div id="calendarView" class="container" style="display:none"></div>
 
   <!-- Modal for Adding a New Class -->
   <div class="modal" id="classModal">
     <div class="modal-content">
       <span class="close-button" onclick="closeClassModal(event)">&times;</span>
       <h2>Add New Class</h2>
-      <input type="text" id="class-name" placeholder="Enter class name...">
-      <br>
+      <input type="text" id="class-name" placeholder="Enter class name..." />
+      <br />
       <select id="class-icon">
         <option value="📚">📚 General</option>
         <option value="📜">📜 History</option>
@@ -309,7 +332,7 @@
         <option value="🗣️">🗣️ Spanish</option>
         <option value="🏀">🏀 PE</option>
       </select>
-      <br>
+      <br />
       <button type="button" class="add-class-btn" onclick="addClass(event)">Add Class</button>
     </div>
   </div>
@@ -319,12 +342,12 @@
     <div class="modal-content">
       <span class="close-button" onclick="closeAssignmentModal(event)">&times;</span>
       <h2>Add New Assignment</h2>
-      <input type="text" id="assignment-text" placeholder="Enter assignment details...">
-      <br>
-      <input type="date" id="assignment-date">
-      <br>
-      <input type="url" id="assignment-link" placeholder="Enter assignment link (optional)...">
-      <br>
+      <input type="text" id="assignment-text" placeholder="Enter assignment details..." />
+      <br />
+      <input type="date" id="assignment-date" />
+      <br />
+      <input type="url" id="assignment-link" placeholder="Enter assignment link (optional)..." />
+      <br />
       <button type="button" class="add-class-btn" onclick="addAssignmentFromModal(event)">Add Assignment</button>
     </div>
   </div>
@@ -334,51 +357,44 @@
     <div class="modal-content">
       <span class="close-button" onclick="closeEditAssignmentModal(event)">&times;</span>
       <h2>Edit Assignment</h2>
-      <input type="text" id="edit-assignment-text" placeholder="Edit assignment details...">
-      <br>
-      <input type="date" id="edit-assignment-date">
-      <br>
-      <input type="url" id="edit-assignment-link" placeholder="Enter assignment link (optional)...">
-      <br>
+      <input type="text" id="edit-assignment-text" placeholder="Edit assignment details..." />
+      <br />
+      <input type="date" id="edit-assignment-date" />
+      <br />
+      <input type="url" id="edit-assignment-link" placeholder="Enter assignment link (optional)..." />
+      <br />
       <button type="button" class="add-class-btn" onclick="saveEditedAssignment(event)">Save Changes</button>
     </div>
   </div>
 
-  <!-- Modal for Assignment Options (Edit/Delete/Subtasks) -->
+  <!-- Modal for Assignment Options (Edit/Delete) -->
   <div class="modal" id="assignmentOptionsModal">
     <div class="modal-content">
       <span class="close-button" onclick="closeAssignmentOptionsModal(event)">&times;</span>
       <h2>Assignment Options</h2>
       <button type="button" class="edit-btn-modal" onclick="openEditAssignmentModal()">Edit Assignment</button>
       <button type="button" class="delete-btn-modal" onclick="confirmDeleteAssignment()">Delete Assignment</button>
-      <button type="button" class="add-class-btn" onclick="openSubtasksModal()">Manage Subtasks</button>
       <button type="button" class="cancel-btn" onclick="closeAssignmentOptionsModal(event)">Cancel</button>
     </div>
   </div>
 
-  <!-- Modal for Managing Subtasks -->
-  <div class="modal" id="subtasksModal">
+  <!-- Modal for Customizing Theme with Pre-made Options -->
+  <div class="modal" id="customThemeModal">
     <div class="modal-content">
-      <span class="close-button" onclick="closeSubtasksModal(event)">&times;</span>
-      <h2>Manage Subtasks</h2>
-      <ul id="subtasksList" style="text-align:left"></ul>
-      <input type="text" id="newSubtask" placeholder="New subtask...">
-      <br>
-      <button type="button" class="add-class-btn" onclick="addSubtask()">Add Subtask</button>
-      <br>
-      <button type="button" class="cancel-btn" onclick="closeSubtasksModal(event)">Close</button>
-    </div>
-  </div>
-
-  <!-- Modal for Font Settings -->
-  <div class="modal" id="fontSettingsModal">
-    <div class="modal-content">
-      <span class="close-button" onclick="closeFontSettingsModal(event)">&times;</span>
-      <h2>Font Settings</h2>
-      <label for="fontSizeInput">Font Size (px):</label>
-      <input type="number" id="fontSizeInput" min="12" max="30">
-      <br>
-      <button type="button" class="add-class-btn" onclick="saveFontSettings()">Save</button>
+      <span class="close-button" onclick="closeCustomThemeModal(event)">&times;</span>
+      <h2>Choose a Theme</h2>
+      <div id="themeOptions">
+        <button type="button" class="theme-option-btn" style="background: #121212; color: #fff;" onclick="applyPreMadeTheme('default')">Default</button>
+        <button type="button" class="theme-option-btn" style="background: #f0f0f0; color: #333;" onclick="applyPreMadeTheme('light')">Light</button>
+        <button type="button" class="theme-option-btn" style="background: #1B2B34; color: #C0C5CE;" onclick="applyPreMadeTheme('ocean')">Ocean</button>
+        <button type="button" class="theme-option-btn" style="background: #2C3E50; color: #ECF0F1;" onclick="applyPreMadeTheme('forest')">Forest</button>
+        <button type="button" class="theme-option-btn" style="background: #2D2D2D; color: #F2F2F2;" onclick="applyPreMadeTheme('sunset')">Sunset</button>
+        <button type="button" class="theme-option-btn" style="background: #000000; color: #E0E0E0;" onclick="applyPreMadeTheme('midnight')">Midnight</button>
+        <button type="button" class="theme-option-btn" style="background: #ffe4e1; color: #800000;" onclick="applyPreMadeTheme('rose')">Rose</button>
+        <button type="button" class="theme-option-btn" style="background: #ffefd5; color: #ff1493;" onclick="applyPreMadeTheme('candy')">Candy</button>
+      </div>
+      <br />
+      <button type="button" class="add-class-btn" onclick="closeCustomThemeModal(event)">Close</button>
     </div>
   </div>
 
@@ -395,16 +411,16 @@
     </div>
   </div>
 
+  <!-- Container for Class Boxes -->
+  <div class="container" id="class-container"></div>
+
   <script>
-    /***** Data Structures *****/
     let classesData = [];
     let currentClassIndex = null;
     let currentAssignmentIndex = null;
     let confirmCallback = null;
-    let currentSubtasks = []; // For managing subtasks of current assignment
-    let calendarMode = false;
 
-    /***** Pre-made Themes *****/
+    // Pre-made themes with distinct box backgrounds.
     const preMadeThemes = {
       default: { 
         bgColor: "#121212", 
@@ -441,7 +457,7 @@
         boxBg: "#3A3A3A", 
         boxBgHover: "#4A4A4A" 
       },
-      midnight: { 
+      midnight:{ 
         bgColor: "#000000", 
         textColor: "#E0E0E0", 
         accentColor: "#00FFFF", 
@@ -464,10 +480,11 @@
       }
     };
 
-    /***** Local Storage Functions *****/
+    // Save classesData to localStorage.
     function saveData() {
       localStorage.setItem("classesData", JSON.stringify(classesData));
     }
+    // Load classesData from localStorage.
     function loadData() {
       const storedData = localStorage.getItem("classesData");
       if (storedData) {
@@ -485,6 +502,7 @@
         document.documentElement.classList.remove("light");
       }
     }
+    // Load custom theme if saved.
     function loadCustomTheme() {
       const savedCustom = localStorage.getItem("customTheme");
       if (savedCustom) {
@@ -494,8 +512,7 @@
         }
       }
     }
-
-    /***** Theme Functions *****/
+    // Apply a pre-made theme by updating CSS variables.
     function applyPreMadeTheme(themeKey) {
       const theme = preMadeThemes[themeKey];
       if (theme) {
@@ -507,240 +524,23 @@
         localStorage.setItem("customTheme", JSON.stringify({themeKey: themeKey}));
       }
     }
-
-    /***** Font Settings *****/
-    function openFontSettingsModal(e) {
-      if (e) e.preventDefault();
-      document.getElementById("fontSettingsModal").style.display = "flex";
-      document.getElementById("fontSizeInput").value = parseInt(getComputedStyle(document.body).fontSize);
+    // Format a date string.
+    function formatDate(dateString) {
+      const [year, month, day] = dateString.split('-');
+      const localDate = new Date(year, month - 1, day);
+      const options = { weekday: 'short', month: 'numeric', day: 'numeric' };
+      return localDate.toLocaleDateString('en-US', options);
     }
-    function closeFontSettingsModal(e) {
-      if (e) e.preventDefault();
-      document.getElementById("fontSettingsModal").style.display = "none";
+    // Check if due date is overdue.
+    function isOverdue(dueDateValue) {
+      if (!dueDateValue) return false;
+      let dueDate = new Date(dueDateValue);
+      dueDate.setHours(23, 59, 59, 999);
+      return dueDate < new Date();
     }
-    function saveFontSettings() {
-      const newSize = document.getElementById("fontSizeInput").value;
-      document.body.style.fontSize = newSize + "px";
-      localStorage.setItem("fontSize", newSize);
-      closeFontSettingsModal();
-    }
-    function loadFontSettings() {
-      const savedSize = localStorage.getItem("fontSize");
-      if (savedSize) {
-        document.body.style.fontSize = savedSize + "px";
-      }
-    }
-
-    /***** Search Filter *****/
-    function getSearchTerm() {
-      return document.getElementById("searchInput").value.toLowerCase();
-    }
-
-    /***** Due Date Reminders (Notifications) *****/
-    function checkDueDates() {
-      if (!("Notification" in window)) return;
-      if (Notification.permission !== "granted") {
-        Notification.requestPermission();
-        return;
-      }
-      classesData.forEach(cls => {
-        cls.assignments.forEach(assignment => {
-          if (assignment.dueDate && !assignment.notified) {
-            const due = new Date(assignment.dueDate);
-            const now = new Date();
-            // If overdue or due within 1 day
-            if (due < now || (due - now) < 86400000) {
-              new Notification("Assignment Reminder", {
-                body: assignment.text + " is due " + (due < now ? "now/overdue" : "soon!")
-              });
-              assignment.notified = true; // avoid duplicate notifications
-              saveData();
-            }
-          }
-        });
-      });
-    }
-
-    /***** Export/Import Functions *****/
-    function exportData() {
-      const dataStr = JSON.stringify(classesData, null, 2);
-      const blob = new Blob([dataStr], {type: "application/json"});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "classesData.json";
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-    function importData(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        try {
-          classesData = JSON.parse(e.target.result);
-          saveData();
-          renderView();
-        } catch (err) {
-          alert("Invalid file format.");
-        }
-      }
-      reader.readAsText(file);
-    }
-
-    /***** Drag-and-Drop Reordering *****/
-    let dragSrcEl = null;
-    function handleDragStart(e) {
-      dragSrcEl = this;
-      e.dataTransfer.effectAllowed = 'move';
-      e.dataTransfer.setData('text/html', this.outerHTML);
-      this.classList.add('dragElem');
-    }
-    function handleDragOver(e) {
-      if (e.preventDefault) e.preventDefault();
-      this.classList.add('over');
-      e.dataTransfer.dropEffect = 'move';
-      return false;
-    }
-    function handleDragLeave(e) {
-      this.classList.remove('over');
-    }
-    function handleDrop(e) {
-      if (e.stopPropagation) e.stopPropagation();
-      if (dragSrcEl !== this) {
-        // Find indices of dragged element and drop target in current class assignments
-        const parentUl = this.parentNode;
-        const nodes = Array.from(parentUl.children);
-        const srcIndex = nodes.indexOf(dragSrcEl);
-        const destIndex = nodes.indexOf(this);
-        const assignments = classesData[currentClassIndex].assignments;
-        // Swap the assignments
-        const moved = assignments.splice(srcIndex, 1)[0];
-        assignments.splice(destIndex, 0, moved);
-        saveData();
-        renderView();
-      }
-      return false;
-    }
-    function addDnDHandlers(li) {
-      li.setAttribute('draggable', 'true');
-      li.addEventListener('dragstart', handleDragStart, false);
-      li.addEventListener('dragover', handleDragOver, false);
-      li.addEventListener('dragleave', handleDragLeave, false);
-      li.addEventListener('drop', handleDrop, false);
-    }
-
-    /***** Subtasks Management *****/
-    // Each assignment may have a subtasks array: [{text: '', completed: false}]
-    function openSubtasksModal() {
-      closeAssignmentOptionsModal();
-      const assignment = classesData[currentClassIndex].assignments[currentAssignmentIndex];
-      if (!assignment.subtasks) assignment.subtasks = [];
-      currentSubtasks = assignment.subtasks;
-      renderSubtasks();
-      document.getElementById("subtasksModal").style.display = "flex";
-    }
-    function closeSubtasksModal(e) {
-      if (e) e.preventDefault();
-      document.getElementById("subtasksModal").style.display = "none";
-      saveData();
-      renderView();
-    }
-    function renderSubtasks() {
-      const ul = document.getElementById("subtasksList");
-      ul.innerHTML = "";
-      currentSubtasks.forEach((subtask, index) => {
-        const li = document.createElement("li");
-        li.style.listStyle = "disc";
-        li.style.marginLeft = "20px";
-        li.textContent = subtask.text;
-        if (subtask.completed) {
-          li.style.textDecoration = "line-through";
-          li.style.opacity = "0.7";
-        }
-        li.addEventListener("click", function(e) {
-          e.stopPropagation();
-          subtask.completed = !subtask.completed;
-          renderSubtasks();
-        });
-        const delBtn = document.createElement("button");
-        delBtn.textContent = "✖";
-        delBtn.style.marginLeft = "10px";
-        delBtn.addEventListener("click", function(e) {
-          e.stopPropagation();
-          currentSubtasks.splice(index, 1);
-          renderSubtasks();
-        });
-        li.appendChild(delBtn);
-        ul.appendChild(li);
-      });
-    }
-    function addSubtask() {
-      const input = document.getElementById("newSubtask");
-      const text = input.value.trim();
-      if (text) {
-        currentSubtasks.push({ text: text, completed: false });
-        input.value = "";
-        renderSubtasks();
-      }
-    }
-
-    /***** Calendar View *****/
-    function toggleCalendarView() {
-      calendarMode = !calendarMode;
-      renderView();
-    }
-    function renderCalendar() {
-      // Group assignments by due date across all classes.
-      const calendarContainer = document.getElementById("calendarView");
-      calendarContainer.innerHTML = "";
-      // Create a map date -> array of assignments (with class info)
-      const dateMap = {};
-      classesData.forEach((cls) => {
-        cls.assignments.forEach(assignment => {
-          if (assignment.dueDate) {
-            const dateStr = assignment.dueDate;
-            if (!dateMap[dateStr]) dateMap[dateStr] = [];
-            dateMap[dateStr].push({ class: cls.name, text: assignment.text, link: assignment.link, completed: assignment.completed });
-          }
-        });
-      });
-      // Create a sorted list of dates
-      const dates = Object.keys(dateMap).sort((a, b) => new Date(a) - new Date(b));
-      dates.forEach(dateStr => {
-        const dateHeader = document.createElement("h3");
-        dateHeader.textContent = new Date(dateStr).toLocaleDateString();
-        calendarContainer.appendChild(dateHeader);
-        const ul = document.createElement("ul");
-        dateMap[dateStr].forEach(item => {
-          const li = document.createElement("li");
-          li.textContent = `[${item.class}] ${item.text}` + (item.link ? " (link)" : "");
-          if (item.completed) li.style.textDecoration = "line-through";
-          ul.appendChild(li);
-        });
-        calendarContainer.appendChild(ul);
-      });
-    }
-
-    /***** Rendering Views *****/
-    function renderView() {
-      if (calendarMode) {
-        document.getElementById("mainView").style.display = "none";
-        renderCalendar();
-        document.getElementById("calendarView").style.display = "flex";
-      } else {
-        document.getElementById("calendarView").style.display = "none";
-        renderClasses();
-        document.getElementById("mainView").style.display = "flex";
-      }
-      // Also update search filter
-      const searchTerm = getSearchTerm();
-      if (searchTerm) filterAssignments(searchTerm);
-    }
-
-    /***** Render List View (Classes) *****/
+    // Render classes and assignments.
     function renderClasses() {
-      const container = document.getElementById('mainView');
+      const container = document.getElementById('class-container');
       container.innerHTML = "";
       classesData.forEach((cls, classIndex) => {
         const box = document.createElement('div');
@@ -762,7 +562,7 @@
           openConfirmModal(`Are you sure you want to delete the ${cls.name} class?`, function() {
             classesData.splice(classIndex, 1);
             saveData();
-            renderView();
+            renderClasses();
           });
         });
         headerTop.appendChild(title);
@@ -776,17 +576,15 @@
         headerDiv.appendChild(headerTop);
         headerDiv.appendChild(progress);
         box.appendChild(headerDiv);
-        // List assignments
+        // List assignments.
         const ul = document.createElement('ul');
         cls.assignments.forEach((assignment, assignmentIndex) => {
           const li = document.createElement('li');
-          // Add drag-and-drop handlers
-          addDnDHandlers(li);
           const assignmentContainer = document.createElement('div');
           assignmentContainer.style.display = 'flex';
           assignmentContainer.style.flexDirection = 'column';
           const assignmentText = document.createElement('span');
-          assignmentText.textContent = assignment.text + (assignment.dueDate ? " → " + new Date(assignment.dueDate).toLocaleDateString() : "");
+          assignmentText.textContent = assignment.text + (assignment.dueDate ? " → " + formatDate(assignment.dueDate) : "");
           assignmentContainer.appendChild(assignmentText);
           if (assignment.link) {
             const linkAnchor = document.createElement('a');
@@ -808,7 +606,7 @@
             if (e.target.tagName !== 'BUTTON') {
               assignment.completed = !assignment.completed;
               saveData();
-              renderView();
+              renderClasses();
             }
           });
           const btnContainer = document.createElement('div');
@@ -819,16 +617,14 @@
           optionsBtn.title = "Options";
           optionsBtn.addEventListener('click', function(e) {
             e.stopPropagation();
-            currentClassIndex = classIndex;
-            currentAssignmentIndex = assignmentIndex;
-            document.getElementById("assignmentOptionsModal").style.display = "flex";
+            openAssignmentOptionsModal(classIndex, assignmentIndex);
           });
           btnContainer.appendChild(optionsBtn);
           li.appendChild(btnContainer);
           ul.appendChild(li);
         });
         box.appendChild(ul);
-        // Footer with buttons
+        // Footer with buttons.
         const footerDiv = document.createElement('div');
         footerDiv.classList.add('box-footer');
         const addAssignmentBtn = document.createElement('button');
@@ -853,112 +649,108 @@
             return new Date(a.dueDate) - new Date(b.dueDate);
           });
           saveData();
-          renderView();
+          renderClasses();
         });
         footerDiv.appendChild(addAssignmentBtn);
         footerDiv.appendChild(sortBtn);
         box.appendChild(footerDiv);
         container.appendChild(box);
       });
-      // After rendering, check due dates for notifications
-      checkDueDates();
     }
-
-    /***** Drag-and-Drop Handlers *****/
-    let dragSrcEl = null;
-    function handleDragStart(e) {
-      dragSrcEl = this;
-      e.dataTransfer.effectAllowed = 'move';
-      e.dataTransfer.setData('text/plain', '');
-      this.classList.add('dragElem');
-    }
-    function handleDragOver(e) {
-      if (e.preventDefault) e.preventDefault();
-      this.classList.add('over');
-      e.dataTransfer.dropEffect = 'move';
-      return false;
-    }
-    function handleDragLeave(e) {
-      this.classList.remove('over');
-    }
-    function handleDrop(e) {
-      if (e.stopPropagation) e.stopPropagation();
-      if (dragSrcEl !== this) {
-        const parent = this.parentNode;
-        const nodes = Array.from(parent.children);
-        const srcIndex = nodes.indexOf(dragSrcEl);
-        const destIndex = nodes.indexOf(this);
-        const assignments = classesData[currentClassIndex].assignments;
-        const moved = assignments.splice(srcIndex, 1)[0];
-        assignments.splice(destIndex, 0, moved);
-        saveData();
-        renderView();
-      }
-      return false;
-    }
-    function addDnDHandlers(li) {
-      li.setAttribute('draggable', 'true');
-      li.addEventListener('dragstart', handleDragStart, false);
-      li.addEventListener('dragover', handleDragOver, false);
-      li.addEventListener('dragleave', handleDragLeave, false);
-      li.addEventListener('drop', handleDrop, false);
-    }
-
-    /***** Subtasks Modal Functions *****/
-    function openSubtasksModal() {
-      closeAssignmentOptionsModal();
-      const assignment = classesData[currentClassIndex].assignments[currentAssignmentIndex];
-      if (!assignment.subtasks) assignment.subtasks = [];
-      currentSubtasks = assignment.subtasks;
-      renderSubtasks();
-      document.getElementById("subtasksModal").style.display = "flex";
-    }
-    function closeSubtasksModal(e) {
+    function openClassModal(e) {
       if (e) e.preventDefault();
-      document.getElementById("subtasksModal").style.display = "none";
-      saveData();
-      renderView();
+      document.getElementById("classModal").style.display = "flex";
     }
-    function renderSubtasks() {
-      const ul = document.getElementById("subtasksList");
-      ul.innerHTML = "";
-      currentSubtasks.forEach((subtask, idx) => {
-        const li = document.createElement("li");
-        li.style.listStyle = "disc";
-        li.style.marginLeft = "20px";
-        li.textContent = subtask.text;
-        if (subtask.completed) {
-          li.style.textDecoration = "line-through";
-          li.style.opacity = "0.7";
-        }
-        li.addEventListener("click", function(e) {
-          e.stopPropagation();
-          subtask.completed = !subtask.completed;
-          renderSubtasks();
+    function closeClassModal(e) {
+      if (e) e.preventDefault();
+      document.getElementById("classModal").style.display = "none";
+    }
+    function addClass(e) {
+      if (e) e.preventDefault();
+      const classNameInput = document.getElementById("class-name");
+      const classIconInput = document.getElementById("class-icon");
+      const className = classNameInput.value.trim();
+      if (className !== "") {
+        classesData.push({
+          icon: classIconInput.value,
+          name: className,
+          assignments: []
         });
-        const delBtn = document.createElement("button");
-        delBtn.textContent = "✖";
-        delBtn.style.marginLeft = "10px";
-        delBtn.addEventListener("click", function(e) {
-          e.stopPropagation();
-          currentSubtasks.splice(idx, 1);
-          renderSubtasks();
+        saveData();
+        renderClasses();
+        closeClassModal();
+        classNameInput.value = "";
+      }
+    }
+    function closeAssignmentModal(e) {
+      if (e) e.preventDefault();
+      document.getElementById("assignmentModal").style.display = "none";
+      document.getElementById("assignment-text").value = "";
+      document.getElementById("assignment-date").value = "";
+      document.getElementById("assignment-link").value = "";
+    }
+    function addAssignmentFromModal(e) {
+      if (e) e.preventDefault();
+      const assignmentInput = document.getElementById("assignment-text");
+      const dateInput = document.getElementById("assignment-date");
+      const linkInput = document.getElementById("assignment-link");
+      const assignmentText = assignmentInput.value.trim();
+      const assignmentLink = linkInput.value.trim();
+      if (assignmentText !== "") {
+        classesData[currentClassIndex].assignments.push({ 
+          text: assignmentText, 
+          dueDate: dateInput.value || "", 
+          link: assignmentLink,
+          completed: false 
         });
-        li.appendChild(delBtn);
-        ul.appendChild(li);
+        saveData();
+        renderClasses();
+        closeAssignmentModal();
+      }
+    }
+    function openAssignmentOptionsModal(classIndex, assignmentIndex) {
+      currentClassIndex = classIndex;
+      currentAssignmentIndex = assignmentIndex;
+      document.getElementById("assignmentOptionsModal").style.display = "flex";
+    }
+    function closeAssignmentOptionsModal(e) {
+      if (e) e.preventDefault();
+      document.getElementById("assignmentOptionsModal").style.display = "none";
+    }
+    function openEditAssignmentModal() {
+      closeAssignmentOptionsModal(null);
+      const assignment = classesData[currentClassIndex].assignments[currentAssignmentIndex];
+      document.getElementById("edit-assignment-text").value = assignment.text;
+      document.getElementById("edit-assignment-date").value = assignment.dueDate;
+      document.getElementById("edit-assignment-link").value = assignment.link || "";
+      document.getElementById("editAssignmentModal").style.display = "flex";
+    }
+    function closeEditAssignmentModal(e) {
+      if (e) e.preventDefault();
+      document.getElementById("editAssignmentModal").style.display = "none";
+    }
+    function saveEditedAssignment(e) {
+      if (e) e.preventDefault();
+      const newText = document.getElementById("edit-assignment-text").value.trim();
+      const newDate = document.getElementById("edit-assignment-date").value;
+      const newLink = document.getElementById("edit-assignment-link").value.trim();
+      if (newText !== "") {
+        classesData[currentClassIndex].assignments[currentAssignmentIndex].text = newText;
+        classesData[currentClassIndex].assignments[currentAssignmentIndex].dueDate = newDate;
+        classesData[currentClassIndex].assignments[currentAssignmentIndex].link = newLink;
+        saveData();
+        renderClasses();
+        closeEditAssignmentModal();
+      }
+    }
+    function confirmDeleteAssignment() {
+      closeAssignmentOptionsModal(null);
+      openConfirmModal("Are you sure you want to delete this assignment?", function() {
+        classesData[currentClassIndex].assignments.splice(currentAssignmentIndex, 1);
+        saveData();
+        renderClasses();
       });
     }
-    function addSubtask() {
-      const input = document.getElementById("newSubtask");
-      const text = input.value.trim();
-      if (text) {
-        currentSubtasks.push({ text: text, completed: false });
-        input.value = "";
-        renderSubtasks();
-      }
-    }
-
-    /***** Confirmation Modal *****/
     function openConfirmModal(message, callback) {
       document.getElementById("confirmMessage").textContent = message;
       confirmCallback = callback;
@@ -970,244 +762,25 @@
       confirmCallback = null;
     }
     function confirmAction() {
-      if (confirmCallback) confirmCallback();
-      closeConfirmModal();
+      if (confirmCallback) {
+        confirmCallback();
+      }
+      closeConfirmModal(null);
     }
-
-    /***** Assignment Options Modal *****/
-    function closeAssignmentOptionsModal(e) {
+    // Custom Theme Modal Controls
+    function openCustomThemeModal(e) {
       if (e) e.preventDefault();
-      document.getElementById("assignmentOptionsModal").style.display = "none";
+      document.getElementById("customThemeModal").style.display = "flex";
     }
-
-    /***** Edit Assignment Modal *****/
-    function closeEditAssignmentModal(e) {
+    function closeCustomThemeModal(e) {
       if (e) e.preventDefault();
-      document.getElementById("editAssignmentModal").style.display = "none";
+      document.getElementById("customThemeModal").style.display = "none";
     }
-
-    /***** Assignment Modal *****/
-    function closeAssignmentModal(e) {
-      if (e) e.preventDefault();
-      document.getElementById("assignmentModal").style.display = "none";
-      document.getElementById("assignment-text").value = "";
-      document.getElementById("assignment-date").value = "";
-      document.getElementById("assignment-link").value = "";
-    }
-
-    /***** Class Modal *****/
-    function closeClassModal(e) {
-      if (e) e.preventDefault();
-      document.getElementById("classModal").style.display = "none";
-    }
-
-    /***** Font Settings Modal *****/
-    function openFontSettingsModal(e) {
-      if (e) e.preventDefault();
-      document.getElementById("fontSettingsModal").style.display = "flex";
-      document.getElementById("fontSizeInput").value = parseInt(getComputedStyle(document.body).fontSize);
-    }
-    function closeFontSettingsModal(e) {
-      if (e) e.preventDefault();
-      document.getElementById("fontSettingsModal").style.display = "none";
-    }
-    function saveFontSettings() {
-      const newSize = document.getElementById("fontSizeInput").value;
-      document.body.style.fontSize = newSize + "px";
-      localStorage.setItem("fontSize", newSize);
-      closeFontSettingsModal();
-    }
-    function loadFontSettings() {
-      const savedSize = localStorage.getItem("fontSize");
-      if (savedSize) {
-        document.body.style.fontSize = savedSize + "px";
-      }
-    }
-
-    /***** Search Filtering *****/
-    function filterAssignments(term) {
-      term = term.toLowerCase();
-      // Re-render classes and then hide assignments that don't match
-      renderClasses();
-      const ulLists = document.querySelectorAll("#mainView ul");
-      ulLists.forEach(ul => {
-        Array.from(ul.children).forEach(li => {
-          const text = li.innerText.toLowerCase();
-          if (text.indexOf(term) === -1) {
-            li.style.display = "none";
-          } else {
-            li.style.display = "";
-          }
-        });
-      });
-    }
-    document.getElementById("searchInput").addEventListener("input", function() {
-      filterAssignments(this.value);
-    });
-
-    /***** Export/Import Functions *****/
-    function exportData() {
-      const dataStr = JSON.stringify(classesData, null, 2);
-      const blob = new Blob([dataStr], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "classesData.json";
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-    function importData(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        try {
-          classesData = JSON.parse(e.target.result);
-          saveData();
-          renderView();
-        } catch (err) {
-          alert("Invalid file format.");
-        }
-      }
-      reader.readAsText(file);
-    }
-
-    /***** Due Date Reminders *****/
-    function checkDueDates() {
-      if (!("Notification" in window)) return;
-      if (Notification.permission !== "granted") {
-        Notification.requestPermission();
-        return;
-      }
-      classesData.forEach(cls => {
-        cls.assignments.forEach(assignment => {
-          if (assignment.dueDate && !assignment.notified) {
-            const due = new Date(assignment.dueDate);
-            const now = new Date();
-            if (due < now || (due - now) < 86400000) {
-              new Notification("Assignment Reminder", {
-                body: assignment.text + " is due " + (due < now ? "now/overdue" : "soon!")
-              });
-              assignment.notified = true;
-              saveData();
-            }
-          }
-        });
-      });
-    }
-
-    /***** Rendering *****/
-    function renderView() {
-      if (calendarMode) {
-        document.getElementById("mainView").style.display = "none";
-        renderCalendar();
-        document.getElementById("calendarView").style.display = "flex";
-      } else {
-        document.getElementById("calendarView").style.display = "none";
-        renderClasses();
-        document.getElementById("mainView").style.display = "flex";
-      }
-    }
-    function renderCalendar() {
-      const container = document.getElementById("calendarView");
-      container.innerHTML = "";
-      const dateMap = {};
-      classesData.forEach(cls => {
-        cls.assignments.forEach(assignment => {
-          if (assignment.dueDate) {
-            const dateStr = assignment.dueDate;
-            if (!dateMap[dateStr]) dateMap[dateStr] = [];
-            dateMap[dateStr].push({ class: cls.name, text: assignment.text, link: assignment.link, completed: assignment.completed });
-          }
-        });
-      });
-      const dates = Object.keys(dateMap).sort((a, b) => new Date(a) - new Date(b));
-      dates.forEach(dateStr => {
-        const dateHeader = document.createElement("h3");
-        dateHeader.textContent = new Date(dateStr).toLocaleDateString();
-        container.appendChild(dateHeader);
-        const ul = document.createElement("ul");
-        dateMap[dateStr].forEach(item => {
-          const li = document.createElement("li");
-          li.textContent = `[${item.class}] ${item.text}` + (item.link ? " (link)" : "");
-          if (item.completed) li.style.textDecoration = "line-through";
-          ul.appendChild(li);
-        });
-        container.appendChild(ul);
-      });
-    }
-
-    /***** Basic Modals: Class, Assignment, Edit Assignment *****/
-    function closeClassModal(e) { if(e) e.preventDefault(); document.getElementById("classModal").style.display = "none"; }
-    function closeAssignmentModal(e) { if(e) e.preventDefault(); document.getElementById("assignmentModal").style.display = "none"; document.getElementById("assignment-text").value=""; document.getElementById("assignment-date").value=""; document.getElementById("assignment-link").value=""; }
-    function closeEditAssignmentModal(e) { if(e) e.preventDefault(); document.getElementById("editAssignmentModal").style.display = "none"; }
-
-    function addClass(e) {
-      if(e) e.preventDefault();
-      const name = document.getElementById("class-name").value.trim();
-      const icon = document.getElementById("class-icon").value;
-      if(name !== "") {
-        classesData.push({ icon: icon, name: name, assignments: [] });
-        saveData();
-        renderView();
-        closeClassModal();
-        document.getElementById("class-name").value = "";
-      }
-    }
-    function addAssignmentFromModal(e) {
-      if(e) e.preventDefault();
-      const text = document.getElementById("assignment-text").value.trim();
-      const date = document.getElementById("assignment-date").value;
-      const link = document.getElementById("assignment-link").value.trim();
-      if(text !== "") {
-        classesData[currentClassIndex].assignments.push({ text: text, dueDate: date || "", link: link, completed: false });
-        saveData();
-        renderView();
-        closeAssignmentModal();
-      }
-    }
-    function saveEditedAssignment(e) {
-      if(e) e.preventDefault();
-      const newText = document.getElementById("edit-assignment-text").value.trim();
-      const newDate = document.getElementById("edit-assignment-date").value;
-      const newLink = document.getElementById("edit-assignment-link").value.trim();
-      if(newText !== "") {
-        classesData[currentClassIndex].assignments[currentAssignmentIndex].text = newText;
-        classesData[currentClassIndex].assignments[currentAssignmentIndex].dueDate = newDate;
-        classesData[currentClassIndex].assignments[currentAssignmentIndex].link = newLink;
-        saveData();
-        renderView();
-        closeEditAssignmentModal();
-      }
-    }
-
-    function openEditAssignmentModal() {
-      closeAssignmentOptionsModal();
-      const assignment = classesData[currentClassIndex].assignments[currentAssignmentIndex];
-      document.getElementById("edit-assignment-text").value = assignment.text;
-      document.getElementById("edit-assignment-date").value = assignment.dueDate;
-      document.getElementById("edit-assignment-link").value = assignment.link || "";
-      document.getElementById("editAssignmentModal").style.display = "flex";
-    }
-    function confirmDeleteAssignment() {
-      closeAssignmentOptionsModal();
-      openConfirmModal("Are you sure you want to delete this assignment?", function() {
-        classesData[currentClassIndex].assignments.splice(currentAssignmentIndex, 1);
-        saveData();
-        renderView();
-      });
-    }
-    function closeAssignmentOptionsModal(e) { if(e) e.preventDefault(); document.getElementById("assignmentOptionsModal").style.display = "none"; }
-
-    /***** Initialization *****/
+    // Load saved data, theme, and custom theme on startup, then render classes.
     loadData();
     loadTheme();
     loadCustomTheme();
-    loadFontSettings();
-    renderView();
-    // Check due dates on load (and then every 10 minutes)
-    checkDueDates();
-    setInterval(checkDueDates, 600000);
+    renderClasses();
   </script>
 </body>
 </html>
