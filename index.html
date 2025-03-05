@@ -11,39 +11,34 @@
     /* CSS Variables for themes */
     :root {
       /* Dark Mode Variables (default) */
-      --bg-color: #121212;             /* Very dark background */
-      --text-color: #fff;              /* White text */
-      --accent-color: #ffcc00;         /* Accent remains the same */
-      --box-bg: #1e1e1e;               /* Dark box background */
-      --box-bg-hover: #2a2a2a;          /* Slightly lighter on hover */
-      --box-shadow: none;              /* No shadow in dark mode */
+      --bg-color: #121212;
+      --text-color: #fff;
+      --accent-color: #ffcc00;
+      --box-bg: #1e1e1e;
+      --box-bg-hover: #2a2a2a;
+      --box-shadow: none;
     }
     html.light {
-      /* Light Mode Variables */
-      --bg-color: #f0f0f0;             /* Light background */
-      --text-color: #333;              /* Dark text */
+      --bg-color: #f0f0f0;
+      --text-color: #333;
       --accent-color: #ffcc00;
-      --box-bg: #fff;                  /* White boxes */
-      --box-bg-hover: #f9f9f9;          /* Light hover color */
-      --box-shadow: 0 0 25px rgba(255,255,255,0.2);  /* Shadow for light mode */
+      --box-bg: #fff;
+      --box-bg-hover: #f9f9f9;
+      --box-shadow: 0 0 25px rgba(255,255,255,0.2);
     }
-    /* Force the options button text to be white in dark mode */
     html:not(.light) .options-btn {
       color: #fff;
     }
     
-    /* Overdue indicator */
     .overdue {
       border-left: 4px solid red;
     }
-    /* Progress indicator styling */
     .progress-indicator {
       font-size: 0.9em;
       margin-top: 5px;
       color: var(--accent-color);
     }
     
-    /* Global Styles */
     body {
       font-family: 'Poppins', sans-serif;
       background: var(--bg-color);
@@ -88,7 +83,6 @@
       background: #ffdb4d;
     }
     
-    /* Container & Box Styles */
     .container {
       display: flex;
       flex-wrap: wrap;
@@ -107,7 +101,6 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      transition: none;
       position: relative;
     }
     
@@ -162,7 +155,6 @@
       text-decoration: line-through;
       opacity: 0.6;
     }
-    /* Options button styling */
     .options-btn {
       background: transparent;
       border: none;
@@ -178,7 +170,6 @@
       transform: scale(1.05);
     }
     
-    /* Footer with buttons */
     .box-footer {
       display: flex;
       justify-content: flex-end;
@@ -204,7 +195,6 @@
       transform: scale(1.05);
     }
     
-    /* Modal Styles */
     .modal {
       display: none;
       position: fixed;
@@ -256,7 +246,6 @@
       font-size: 1.5em;
       cursor: pointer;
     }
-    /* Modal buttons for Assignment Options */
     .edit-btn-modal {
       background: var(--accent-color);
       color: var(--bg-color);
@@ -393,19 +382,15 @@
   <div class="container" id="class-container"></div>
 
   <script>
-    // In-memory data now starts as an empty array
     let classesData = [];
+    let currentClassIndex = null;
+    let currentAssignmentIndex = null;
+    let confirmCallback = null;
 
-    let currentClassIndex = null;   // Which class we're working on
-    let currentAssignmentIndex = null;  // Which assignment is selected
-    let confirmCallback = null;     // For custom confirmation modal
-
-    // Helper: Save the classesData to localStorage
     function saveData() {
       localStorage.setItem("classesData", JSON.stringify(classesData));
     }
 
-    // Helper: Load classesData from localStorage if available
     function loadData() {
       const storedData = localStorage.getItem("classesData");
       if (storedData) {
@@ -413,12 +398,10 @@
       }
     }
 
-    // Helper: Save the current theme to localStorage
     function saveTheme(theme) {
       localStorage.setItem("theme", theme);
     }
 
-    // Load saved theme
     function loadTheme() {
       const savedTheme = localStorage.getItem("theme");
       if (savedTheme === "light") {
@@ -428,7 +411,6 @@
       }
     }
 
-    // Helper: Format date (e.g., "Mon, 5/8")
     function formatDate(dateString) {
       const [year, month, day] = dateString.split('-');
       const localDate = new Date(year, month - 1, day);
@@ -436,7 +418,6 @@
       return localDate.toLocaleDateString('en-US', options);
     }
 
-    // Helper: Check if a due date is overdue (end-of-day)
     function isOverdue(dueDateValue) {
       if (!dueDateValue) return false;
       let dueDate = new Date(dueDateValue);
@@ -444,7 +425,6 @@
       return dueDate < new Date();
     }
 
-    // Render all classes and assignments
     function renderClasses() {
       const container = document.getElementById('class-container');
       container.innerHTML = "";
@@ -479,7 +459,6 @@
         headerTop.appendChild(title);
         headerTop.appendChild(deleteClassBtn);
 
-        // Progress indicator
         const total = cls.assignments.length;
         const completed = cls.assignments.filter(a => a.completed).length;
         const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
@@ -495,32 +474,37 @@
         const ul = document.createElement('ul');
         cls.assignments.forEach((assignment, assignmentIndex) => {
           const li = document.createElement('li');
+
+          // Create a container for assignment text and optional link.
+          const assignmentContainer = document.createElement('div');
+          assignmentContainer.style.display = 'flex';
+          assignmentContainer.style.flexDirection = 'column';
           
-          // Create a container for assignment text/link
-          const assignmentContainer = document.createElement('span');
+          const assignmentText = document.createElement('span');
+          assignmentText.textContent = assignment.text + (assignment.dueDate ? " → " + formatDate(assignment.dueDate) : "");
+          assignmentContainer.appendChild(assignmentText);
+
+          // If a link exists, add a separate small link element.
           if (assignment.link) {
-              const anchor = document.createElement('a');
-              anchor.href = assignment.link;
-              anchor.target = "_blank";
-              anchor.textContent = assignment.text;
-              // Prevent toggling completion when clicking the link
-              anchor.addEventListener('click', function(e) {
-                e.stopPropagation();
-              });
-              assignmentContainer.appendChild(anchor);
-          } else {
-              assignmentContainer.textContent = assignment.text;
+            const linkAnchor = document.createElement('a');
+            linkAnchor.href = assignment.link;
+            linkAnchor.target = "_blank";
+            linkAnchor.textContent = "link";
+            linkAnchor.style.color = "lightgray";
+            linkAnchor.style.fontSize = "0.8em";
+            linkAnchor.style.textDecoration = "underline";
+            linkAnchor.addEventListener('click', function(e) {
+              e.stopPropagation();
+            });
+            assignmentContainer.appendChild(linkAnchor);
           }
-          if (assignment.dueDate) {
-              assignmentContainer.appendChild(document.createTextNode(" → " + formatDate(assignment.dueDate)));
-          }
+
           li.appendChild(assignmentContainer);
 
           if (assignment.completed) li.classList.add('completed');
           if (assignment.dueDate && isOverdue(assignment.dueDate)) li.classList.add('overdue');
 
           li.addEventListener('click', function(e) {
-            // Toggle complete when not clicking on a button
             if (e.target.tagName !== 'BUTTON') {
               assignment.completed = !assignment.completed;
               saveData();
@@ -529,8 +513,6 @@
           });
 
           const btnContainer = document.createElement('div');
-
-          // Options button (three dots)
           const optionsBtn = document.createElement('button');
           optionsBtn.type = "button";
           optionsBtn.classList.add('options-btn');
@@ -540,7 +522,6 @@
             e.stopPropagation();
             openAssignmentOptionsModal(classIndex, assignmentIndex);
           });
-
           btnContainer.appendChild(optionsBtn);
           li.appendChild(btnContainer);
           ul.appendChild(li);
@@ -597,7 +578,6 @@
       });
     }
 
-    // Theme toggle with persistence
     function toggleTheme(e) {
       if (e) e.preventDefault();
       document.documentElement.classList.toggle("light");
@@ -605,7 +585,6 @@
       saveTheme(theme);
     }
 
-    // Class Modal Controls
     function openClassModal(e) {
       if (e) e.preventDefault();
       document.getElementById("classModal").style.display = "flex";
@@ -632,7 +611,6 @@
       }
     }
 
-    // Assignment Modal Controls
     function closeAssignmentModal(e) {
       if (e) e.preventDefault();
       document.getElementById("assignmentModal").style.display = "none";
@@ -660,7 +638,6 @@
       }
     }
 
-    // Assignment Options Modal Controls
     function openAssignmentOptionsModal(classIndex, assignmentIndex) {
       currentClassIndex = classIndex;
       currentAssignmentIndex = assignmentIndex;
@@ -671,7 +648,6 @@
       document.getElementById("assignmentOptionsModal").style.display = "none";
     }
 
-    // Open Edit Assignment Modal (prepopulate fields)
     function openEditAssignmentModal() {
       closeAssignmentOptionsModal(null);
       const assignment = classesData[currentClassIndex].assignments[currentAssignmentIndex];
@@ -688,8 +664,7 @@
       if (e) e.preventDefault();
       const newText = document.getElementById("edit-assignment-text").value.trim();
       const newDate = document.getElementById("edit-assignment-date").value;
-      const editLinkInput = document.getElementById("edit-assignment-link");
-      const newLink = editLinkInput.value.trim();
+      const newLink = document.getElementById("edit-assignment-link").value.trim();
       if (newText !== "") {
         classesData[currentClassIndex].assignments[currentAssignmentIndex].text = newText;
         classesData[currentClassIndex].assignments[currentAssignmentIndex].dueDate = newDate;
@@ -700,7 +675,6 @@
       }
     }
 
-    // Delete Assignment via Options Modal
     function confirmDeleteAssignment() {
       closeAssignmentOptionsModal(null);
       openConfirmModal("Are you sure you want to delete this assignment?", function() {
@@ -710,7 +684,6 @@
       });
     }
 
-    // Custom Confirmation Modal Controls
     function openConfirmModal(message, callback) {
       document.getElementById("confirmMessage").textContent = message;
       confirmCallback = callback;
@@ -728,7 +701,6 @@
       closeConfirmModal(null);
     }
 
-    // Load data and theme on startup, then render
     loadData();
     loadTheme();
     renderClasses();
