@@ -14,7 +14,7 @@
       --text-color: #fff;
       --accent-color: #ffcc00;
       --box-bg: #1e1e1e;
-      --box-bg-hover: #2a2b2e;
+      --box-bg-hover: #2a2a2e;
       --box-shadow: none;
     }
     /* Light Mode Variables (if activated by theme presets) */
@@ -26,7 +26,7 @@
       --box-bg-hover: #f9f9f9;
       --box-shadow: none;
     }
-    /* Apply smooth transitions */
+    /* Apply smooth transitions to elements that use the theme colors */
     body, header, .box, .modal-content, ul, li, .progress-indicator {
       transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease;
     }
@@ -72,12 +72,7 @@
       font-size: 2em;
       color: var(--accent-color);
     }
-    /* Header buttons */
-    .header-buttons {
-      display: flex;
-      gap: 10px;
-    }
-    .header-buttons button {
+    .customize-btn, .add-class-btn {
       background: var(--accent-color);
       border: none;
       border-radius: 5px;
@@ -86,8 +81,9 @@
       color: var(--bg-color);
       cursor: pointer;
       transition: filter 0.3s;
+      margin-left: 10px;
     }
-    .header-buttons button:hover {
+    .customize-btn:hover, .add-class-btn:hover {
       filter: brightness(130%);
     }
     
@@ -182,7 +178,7 @@
       gap: 10px;
       margin-top: 10px;
     }
-    .box-footer button {
+    .add-assignment-btn, .sort-btn {
       padding: 8px 14px;
       font-size: 0.9em;
       border-radius: 6px;
@@ -192,7 +188,7 @@
       cursor: pointer;
       transition: filter 0.3s, transform 0.3s;
     }
-    .box-footer button:hover {
+    .add-assignment-btn:hover, .sort-btn:hover {
       filter: brightness(130%);
       transform: scale(1.05);
     }
@@ -268,22 +264,15 @@
   </style>
 </head>
 <body>
-  <!-- HEADER with an added Calendar View toggle button -->
+  <!-- Header -->
   <header>
     <h1 style="padding-left: 30px;">Cura</h1>
-    <div class="header-buttons" style="padding-right: 30px;">
+    <div style="padding-right: 30px;">
       <button type="button" class="customize-btn" onclick="openCustomThemeModal(event)">Customize Theme</button>
       <button type="button" class="add-class-btn" onclick="openClassModal(event)">➕ Add Class</button>
-      <button type="button" onclick="toggleCalendarView()">Calendar View</button>
     </div>
   </header>
 
-  <!-- Container for Class Boxes (List View) -->
-  <div class="container" id="class-container"></div>
-  <!-- Container for Calendar View; hidden by default -->
-  <div class="container" id="calendar-container" style="display: none;"></div>
-
-  <!-- (Keep your modals unchanged) -->
   <!-- Modal for Adding a New Class -->
   <div class="modal" id="classModal">
     <div class="modal-content">
@@ -356,6 +345,7 @@
       <span class="close-button" onclick="closeCustomThemeModal(event)">&times;</span>
       <h2>Choose a Theme</h2>
       <div id="themeOptions">
+        <!-- Original Themes -->
         <button type="button" class="theme-option-btn" style="background: #121212; color: #fff;" onclick="applyPreMadeTheme('default')">Default</button>
         <button type="button" class="theme-option-btn" style="background: #f0f0f0; color: #333;" onclick="applyPreMadeTheme('light')">Light</button>
         <button type="button" class="theme-option-btn" style="background: #1B2B34; color: #C0C5CE;" onclick="applyPreMadeTheme('ocean')">Ocean</button>
@@ -364,13 +354,22 @@
         <button type="button" class="theme-option-btn" style="background: #000000; color: #E0E0E0;" onclick="applyPreMadeTheme('midnight')">Midnight</button>
         <button type="button" class="theme-option-btn" style="background: #ffe4e1; color: #800000;" onclick="applyPreMadeTheme('rose')">Rose</button>
         <button type="button" class="theme-option-btn" style="background: #ffefd5; color: #ff1493;" onclick="applyPreMadeTheme('candy')">Candy</button>
+        <!-- Additional Themes -->
+        <button type="button" class="theme-option-btn" style="background: #002b36; color: #839496;" onclick="applyPreMadeTheme('solarizedDark')">Solarized Dark</button>
+        <button type="button" class="theme-option-btn" style="background: #fdf6e3; color: #657b83;" onclick="applyPreMadeTheme('solarizedLight')">Solarized Light</button>
+        <button type="button" class="theme-option-btn" style="background: #282a36; color: #f8f8f2;" onclick="applyPreMadeTheme('dracula')">Dracula</button>
+        <button type="button" class="theme-option-btn" style="background: #272822; color: #f8f8f2;" onclick="applyPreMadeTheme('monokai')">Monokai</button>
+        <button type="button" class="theme-option-btn" style="background: #ffd1dc; color: #5d576b;" onclick="applyPreMadeTheme('pastel')">Pastel</button>
+        <button type="button" class="theme-option-btn" style="background: #0f0f0f; color: #ffffff;" onclick="applyPreMadeTheme('neon')">Neon</button>
+        <button type="button" class="theme-option-btn" style="background: #f5f5dc; color: #4b4b4b;" onclick="applyPreMadeTheme('vintage')">Vintage</button>
+        <button type="button" class="theme-option-btn" style="background: #000000; color: #00ff00;" onclick="applyPreMadeTheme('matrix')">Matrix</button>
       </div>
       <br />
       <button type="button" class="add-class-btn" onclick="closeCustomThemeModal(event)">Close</button>
     </div>
   </div>
 
-  <!-- Modal for Custom Confirmation -->
+  <!-- Custom Confirmation Modal -->
   <div class="modal" id="confirmModal">
     <div class="modal-content">
       <span class="close-button" onclick="closeConfirmModal(event)">&times;</span>
@@ -383,18 +382,16 @@
     </div>
   </div>
 
-  <!-- Containers for Views -->
+  <!-- Container for Class Boxes -->
   <div class="container" id="class-container"></div>
-  <div class="container" id="calendar-container" style="display:none;"></div>
 
   <script>
     let classesData = [];
     let currentClassIndex = null;
     let currentAssignmentIndex = null;
     let confirmCallback = null;
-    let calendarMode = false;
 
-    // Pre-made themes.
+    // Pre-made themes with additional options.
     const preMadeThemes = {
       default: { 
         bgColor: "#121212", 
@@ -451,13 +448,70 @@
         accentColor: "#ff69b4", 
         boxBg: "#ffefd5", 
         boxBgHover: "#ffefd5" 
+      },
+      solarizedDark: {
+        bgColor: "#002b36",
+        textColor: "#839496",
+        accentColor: "#b58900",
+        boxBg: "#073642",
+        boxBgHover: "#586e75"
+      },
+      solarizedLight: {
+        bgColor: "#fdf6e3",
+        textColor: "#657b83",
+        accentColor: "#b58900",
+        boxBg: "#eee8d5",
+        boxBgHover: "#93a1a1"
+      },
+      dracula: {
+        bgColor: "#282a36",
+        textColor: "#f8f8f2",
+        accentColor: "#ff79c6",
+        boxBg: "#44475a",
+        boxBgHover: "#6272a4"
+      },
+      monokai: {
+        bgColor: "#272822",
+        textColor: "#f8f8f2",
+        accentColor: "#f92672",
+        boxBg: "#3e3d32",
+        boxBgHover: "#75715e"
+      },
+      pastel: {
+        bgColor: "#ffd1dc",
+        textColor: "#5d576b",
+        accentColor: "#ff9a76",
+        boxBg: "#ffe3e0",
+        boxBgHover: "#ffc6c7"
+      },
+      neon: {
+        bgColor: "#0f0f0f",
+        textColor: "#ffffff",
+        accentColor: "#39ff14",
+        boxBg: "#1c1c1c",
+        boxBgHover: "#2a2a2a"
+      },
+      vintage: {
+        bgColor: "#f5f5dc",
+        textColor: "#4b4b4b",
+        accentColor: "#cd5c5c",
+        boxBg: "#fffacd",
+        boxBgHover: "#f0e68c"
+      },
+      matrix: {
+        bgColor: "#000000",
+        textColor: "#00ff00",
+        accentColor: "#008000",
+        boxBg: "#0a0a0a",
+        boxBgHover: "#0a0a0a"
       }
     };
 
-    /* --- Local Storage Functions --- */
+    // Save classesData to localStorage.
     function saveData() {
       localStorage.setItem("classesData", JSON.stringify(classesData));
     }
+    // Load classesData from localStorage.
     function loadData() {
       const storedData = localStorage.getItem("classesData");
       if (storedData) classesData = JSON.parse(storedData);
@@ -483,7 +537,7 @@
       }
     }
 
-    /* --- Theme Functions --- */
+    // Apply a pre-made theme by updating CSS variables.
     function applyPreMadeTheme(themeKey) {
       const theme = preMadeThemes[themeKey];
       if (theme) {
@@ -492,11 +546,27 @@
         document.documentElement.style.setProperty("--accent-color", theme.accentColor);
         document.documentElement.style.setProperty("--box-bg", theme.boxBg);
         document.documentElement.style.setProperty("--box-bg-hover", theme.boxBgHover);
-        localStorage.setItem("customTheme", JSON.stringify({ themeKey: themeKey }));
+        localStorage.setItem("customTheme", JSON.stringify({themeKey: themeKey}));
       }
     }
 
-    /* --- Rendering Functions --- */
+    // Format a date string.
+    function formatDate(dateString) {
+      const [year, month, day] = dateString.split('-');
+      const localDate = new Date(year, month - 1, day);
+      const options = { weekday: 'short', month: 'numeric', day: 'numeric' };
+      return localDate.toLocaleDateString('en-US', options);
+    }
+
+    // Check if due date is overdue.
+    function isOverdue(dueDateValue) {
+      if (!dueDateValue) return false;
+      let dueDate = new Date(dueDateValue);
+      dueDate.setHours(23, 59, 59, 999);
+      return dueDate < new Date();
+    }
+
+    // Render classes and assignments.
     function renderClasses() {
       const container = document.getElementById("class-container");
       container.innerHTML = "";
@@ -520,7 +590,7 @@
           openConfirmModal(`Are you sure you want to delete the ${cls.name} class?`, function() {
             classesData.splice(classIndex, 1);
             saveData();
-            renderView();
+            renderClasses();
           });
         });
         headerTop.appendChild(title);
@@ -534,7 +604,7 @@
         headerDiv.appendChild(headerTop);
         headerDiv.appendChild(progress);
         box.appendChild(headerDiv);
-        // List assignments
+        // List assignments.
         const ul = document.createElement("ul");
         cls.assignments.forEach((assignment, assignmentIndex) => {
           const li = document.createElement("li");
@@ -564,7 +634,7 @@
             if (e.target.tagName !== "BUTTON") {
               assignment.completed = !assignment.completed;
               saveData();
-              renderView();
+              renderClasses();
             }
           });
           const btnContainer = document.createElement("div");
@@ -575,16 +645,14 @@
           optionsBtn.title = "Options";
           optionsBtn.addEventListener("click", function(e) {
             e.stopPropagation();
-            currentClassIndex = classIndex;
-            currentAssignmentIndex = assignmentIndex;
-            document.getElementById("assignmentOptionsModal").style.display = "flex";
+            openAssignmentOptionsModal(classIndex, assignmentIndex);
           });
           btnContainer.appendChild(optionsBtn);
           li.appendChild(btnContainer);
           ul.appendChild(li);
         });
         box.appendChild(ul);
-        // Footer
+        // Footer with buttons.
         const footerDiv = document.createElement("div");
         footerDiv.classList.add("box-footer");
         const addAssignmentBtn = document.createElement("button");
@@ -609,7 +677,7 @@
             return new Date(a.dueDate) - new Date(b.dueDate);
           });
           saveData();
-          renderView();
+          renderClasses();
         });
         footerDiv.appendChild(addAssignmentBtn);
         footerDiv.appendChild(sortBtn);
@@ -618,7 +686,6 @@
       });
       checkDueDates();
     }
-
     function renderCalendar() {
       const container = document.getElementById("calendar-container");
       container.innerHTML = "";
@@ -650,12 +717,10 @@
         container.appendChild(ul);
       });
     }
-
     function toggleCalendarView() {
       calendarMode = !calendarMode;
       renderView();
     }
-
     function renderView() {
       if (calendarMode) {
         document.getElementById("class-container").style.display = "none";
@@ -669,72 +734,8 @@
       const term = getSearchTerm();
       if (term) filterAssignments(term);
     }
-
-    /* --- Modal Close Functions --- */
-    function closeClassModal(e) { if(e) e.preventDefault(); document.getElementById("classModal").style.display = "none"; }
-    function closeAssignmentModal(e) { 
-      if(e) e.preventDefault();
-      document.getElementById("assignmentModal").style.display = "none"; 
-      document.getElementById("assignment-text").value = "";
-      document.getElementById("assignment-date").value = "";
-      document.getElementById("assignment-link").value = "";
-    }
-    function closeEditAssignmentModal(e) { if(e) e.preventDefault(); document.getElementById("editAssignmentModal").style.display = "none"; }
-    function closeAssignmentOptionsModal(e) { if(e) e.preventDefault(); document.getElementById("assignmentOptionsModal").style.display = "none"; }
-    function closeCustomThemeModal(e) { if(e) e.preventDefault(); document.getElementById("customThemeModal").style.display = "none"; }
-    function closeConfirmModal(e) { if(e) e.preventDefault(); document.getElementById("confirmModal").style.display = "none"; confirmCallback = null; }
-
-    /* --- Modal Add/Save Functions --- */
-    function addClass(e) {
-      if(e) e.preventDefault();
-      const name = document.getElementById("class-name").value.trim();
-      const icon = document.getElementById("class-icon").value;
-      if(name !== "") {
-        classesData.push({ icon: icon, name: name, assignments: [] });
-        saveData();
-        renderView();
-        closeClassModal();
-        document.getElementById("class-name").value = "";
-      }
-    }
-    function addAssignmentFromModal(e) {
-      if(e) e.preventDefault();
-      const text = document.getElementById("assignment-text").value.trim();
-      const date = document.getElementById("assignment-date").value;
-      const link = document.getElementById("assignment-link").value.trim();
-      if(text !== "") {
-        classesData[currentClassIndex].assignments.push({ text: text, dueDate: date || "", link: link, completed: false });
-        saveData();
-        renderView();
-        closeAssignmentModal();
-      }
-    }
-    function saveEditedAssignment(e) {
-      if(e) e.preventDefault();
-      const newText = document.getElementById("edit-assignment-text").value.trim();
-      const newDate = document.getElementById("edit-assignment-date").value;
-      const newLink = document.getElementById("edit-assignment-link").value.trim();
-      if(newText !== "") {
-        classesData[currentClassIndex].assignments[currentAssignmentIndex].text = newText;
-        classesData[currentClassIndex].assignments[currentAssignmentIndex].dueDate = newDate;
-        classesData[currentClassIndex].assignments[currentAssignmentIndex].link = newLink;
-        saveData();
-        renderView();
-        closeEditAssignmentModal();
-      }
-    }
-    function confirmDeleteAssignment() {
-      closeAssignmentOptionsModal();
-      openConfirmModal("Are you sure you want to delete this assignment?", function() {
-        classesData[currentClassIndex].assignments.splice(currentAssignmentIndex, 1);
-        saveData();
-        renderView();
-      });
-    }
-
-    /* --- Search Functions --- */
     function getSearchTerm() {
-      return document.getElementById("searchInput").value.toLowerCase();
+      return document.getElementById("searchInput") ? document.getElementById("searchInput").value.toLowerCase() : "";
     }
     function filterAssignments(term) {
       term = term.toLowerCase();
@@ -747,11 +748,9 @@
         });
       });
     }
-    document.getElementById("searchInput").addEventListener("input", function() {
+    document.getElementById("searchInput")?.addEventListener("input", function() {
       filterAssignments(this.value);
     });
-
-    /* --- Export/Import Functions --- */
     function exportData() {
       const dataStr = JSON.stringify(classesData, null, 2);
       const blob = new Blob([dataStr], { type: "application/json" });
@@ -777,8 +776,6 @@
       }
       reader.readAsText(file);
     }
-
-    /* --- Drag-and-Drop Reordering --- */
     let dragSrcEl = null;
     function handleDragStart(e) {
       dragSrcEl = this;
@@ -817,8 +814,6 @@
       li.addEventListener("dragleave", handleDragLeave, false);
       li.addEventListener("drop", handleDrop, false);
     }
-
-    /* --- Due Date Reminders --- */
     function checkDueDates() {
       if (!("Notification" in window)) return;
       if (Notification.permission !== "granted") {
@@ -841,64 +836,128 @@
         });
       });
     }
-
-    /* --- Calendar View --- */
-    function renderCalendar() {
-      const container = document.getElementById("calendar-container");
-      container.innerHTML = "";
-      const dateMap = {};
-      classesData.forEach(cls => {
-        cls.assignments.forEach(assignment => {
-          if (assignment.dueDate) {
-            if (!dateMap[assignment.dueDate]) dateMap[assignment.dueDate] = [];
-            dateMap[assignment.dueDate].push({
-              className: cls.name,
-              text: assignment.text,
-              completed: assignment.completed
-            });
-          }
-        });
-      });
-      const dates = Object.keys(dateMap).sort((a, b) => new Date(a) - new Date(b));
-      dates.forEach(dateStr => {
-        const header = document.createElement("h3");
-        header.textContent = new Date(dateStr).toLocaleDateString();
-        container.appendChild(header);
-        const ul = document.createElement("ul");
-        dateMap[dateStr].forEach(item => {
-          const li = document.createElement("li");
-          li.textContent = `[${item.className}] ${item.text}`;
-          if (item.completed) li.style.textDecoration = "line-through";
-          ul.appendChild(li);
-        });
-        container.appendChild(ul);
-      });
+    function openClassModal(e) {
+      if (e) e.preventDefault();
+      document.getElementById("classModal").style.display = "flex";
     }
-    function toggleCalendarView() {
-      calendarMode = !calendarMode;
-      renderView();
+    function closeClassModal(e) {
+      if (e) e.preventDefault();
+      document.getElementById("classModal").style.display = "none";
     }
-
-    /* --- Rendering Views --- */
-    function renderView() {
-      if (calendarMode) {
-        document.getElementById("class-container").style.display = "none";
-        renderCalendar();
-        document.getElementById("calendar-container").style.display = "flex";
-      } else {
-        document.getElementById("calendar-container").style.display = "none";
+    function addClass(e) {
+      if (e) e.preventDefault();
+      const classNameInput = document.getElementById("class-name");
+      const classIconInput = document.getElementById("class-icon");
+      const className = classNameInput.value.trim();
+      if (className !== "") {
+        classesData.push({
+          icon: classIconInput.value,
+          name: className,
+          assignments: []
+        });
+        saveData();
         renderClasses();
-        document.getElementById("class-container").style.display = "flex";
+        closeClassModal();
+        classNameInput.value = "";
       }
-      const term = getSearchTerm();
-      if (term) filterAssignments(term);
     }
-
-    /* --- Initialization --- */
+    function closeAssignmentModal(e) {
+      if (e) e.preventDefault();
+      document.getElementById("assignmentModal").style.display = "none";
+      document.getElementById("assignment-text").value = "";
+      document.getElementById("assignment-date").value = "";
+      document.getElementById("assignment-link").value = "";
+    }
+    function addAssignmentFromModal(e) {
+      if (e) e.preventDefault();
+      const assignmentInput = document.getElementById("assignment-text");
+      const dateInput = document.getElementById("assignment-date");
+      const linkInput = document.getElementById("assignment-link");
+      const assignmentText = assignmentInput.value.trim();
+      const assignmentLink = linkInput.value.trim();
+      if (assignmentText !== "") {
+        classesData[currentClassIndex].assignments.push({ 
+          text: assignmentText, 
+          dueDate: dateInput.value || "", 
+          link: assignmentLink,
+          completed: false 
+        });
+        saveData();
+        renderClasses();
+        closeAssignmentModal();
+      }
+    }
+    function openAssignmentOptionsModal(classIndex, assignmentIndex) {
+      currentClassIndex = classIndex;
+      currentAssignmentIndex = assignmentIndex;
+      document.getElementById("assignmentOptionsModal").style.display = "flex";
+    }
+    function closeAssignmentOptionsModal(e) {
+      if (e) e.preventDefault();
+      document.getElementById("assignmentOptionsModal").style.display = "none";
+    }
+    function openEditAssignmentModal() {
+      closeAssignmentOptionsModal(null);
+      const assignment = classesData[currentClassIndex].assignments[currentAssignmentIndex];
+      document.getElementById("edit-assignment-text").value = assignment.text;
+      document.getElementById("edit-assignment-date").value = assignment.dueDate;
+      document.getElementById("edit-assignment-link").value = assignment.link || "";
+      document.getElementById("editAssignmentModal").style.display = "flex";
+    }
+    function closeEditAssignmentModal(e) {
+      if (e) e.preventDefault();
+      document.getElementById("editAssignmentModal").style.display = "none";
+    }
+    function saveEditedAssignment(e) {
+      if (e) e.preventDefault();
+      const newText = document.getElementById("edit-assignment-text").value.trim();
+      const newDate = document.getElementById("edit-assignment-date").value;
+      const newLink = document.getElementById("edit-assignment-link").value.trim();
+      if (newText !== "") {
+        classesData[currentClassIndex].assignments[currentAssignmentIndex].text = newText;
+        classesData[currentClassIndex].assignments[currentAssignmentIndex].dueDate = newDate;
+        classesData[currentClassIndex].assignments[currentAssignmentIndex].link = newLink;
+        saveData();
+        renderClasses();
+        closeEditAssignmentModal();
+      }
+    }
+    function confirmDeleteAssignment() {
+      closeAssignmentOptionsModal();
+      openConfirmModal("Are you sure you want to delete this assignment?", function() {
+        classesData[currentClassIndex].assignments.splice(currentAssignmentIndex, 1);
+        saveData();
+        renderClasses();
+      });
+    }
+    function openConfirmModal(message, callback) {
+      document.getElementById("confirmMessage").textContent = message;
+      confirmCallback = callback;
+      document.getElementById("confirmModal").style.display = "flex";
+    }
+    function closeConfirmModal(e) {
+      if (e) e.preventDefault();
+      document.getElementById("confirmModal").style.display = "none";
+      confirmCallback = null;
+    }
+    function confirmAction() {
+      if (confirmCallback) {
+        confirmCallback();
+      }
+      closeConfirmModal(null);
+    }
+    function openCustomThemeModal(e) {
+      if (e) e.preventDefault();
+      document.getElementById("customThemeModal").style.display = "flex";
+    }
+    function closeCustomThemeModal(e) {
+      if (e) e.preventDefault();
+      document.getElementById("customThemeModal").style.display = "none";
+    }
     loadData();
     loadTheme();
     loadCustomTheme();
-    renderView();
+    renderClasses();
     checkDueDates();
   </script>
 </body>
