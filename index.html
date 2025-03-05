@@ -26,7 +26,7 @@
       --box-bg-hover: #f9f9f9;
       --box-shadow: none;
     }
-    /* Force options button text to be white in dark mode */
+    /* Force the options button text to be white in dark mode */
     html:not(.light) .options-btn {
       color: #fff;
     }
@@ -77,11 +77,11 @@
       font-size: 1em;
       color: var(--bg-color);
       cursor: pointer;
-      transition: background 0.3s;
+      transition: filter 0.3s;
       margin-left: 10px;
     }
     .customize-btn:hover, .add-class-btn:hover {
-      background: #ffdb4d;
+      filter: brightness(110%);
     }
     
     .container {
@@ -96,7 +96,6 @@
       background: var(--box-bg);
       padding: 30px;
       border-radius: 20px;
-      /* Box shadow removed */
       box-shadow: var(--box-shadow);
       width: 450px;
       min-height: 450px;
@@ -185,10 +184,10 @@
       color: var(--bg-color);
       border: none;
       cursor: pointer;
-      transition: transform 0.3s, background 0.3s;
+      transition: filter 0.3s, transform 0.3s;
     }
     .add-assignment-btn:hover, .sort-btn:hover {
-      background: #ffdb4d;
+      filter: brightness(110%);
       transform: scale(1.05);
     }
     
@@ -249,10 +248,10 @@
       padding: 10px 20px;
       cursor: pointer;
       margin: 5px;
-      transition: background 0.3s;
+      transition: filter 0.3s;
     }
     .edit-btn-modal:hover {
-      background: #ffdb4d;
+      filter: brightness(110%);
     }
     .delete-btn-modal {
       background: red;
@@ -262,10 +261,10 @@
       padding: 10px 20px;
       cursor: pointer;
       margin: 5px;
-      transition: background 0.3s;
+      transition: filter 0.3s;
     }
     .delete-btn-modal:hover {
-      background: #ff6f6f;
+      filter: brightness(110%);
     }
     .cancel-btn {
       background: var(--accent-color);
@@ -275,10 +274,10 @@
       padding: 10px 20px;
       cursor: pointer;
       margin: 5px;
-      transition: background 0.3s;
+      transition: filter 0.3s;
     }
     .cancel-btn:hover {
-      background: #ffdb4d;
+      filter: brightness(110%);
     }
 
     /* Pre-made Theme Options Styling */
@@ -294,10 +293,10 @@
       border-radius: 5px;
       cursor: pointer;
       font-size: 1em;
-      transition: background 0.3s;
+      transition: filter 0.3s;
     }
     .theme-option-btn:hover {
-      opacity: 0.8;
+      filter: brightness(110%);
     }
   </style>
 </head>
@@ -426,7 +425,7 @@
         textColor: "#fff", 
         accentColor: "#ffcc00", 
         boxBg: "#1e1e1e", 
-        boxBgHover: "#2a2a2a" 
+        boxBgHover: "#2a2a2e" 
       },
       light: { 
         bgColor: "#f0f0f0", 
@@ -456,7 +455,7 @@
         boxBg: "#3A3A3A", 
         boxBgHover: "#4A4A4A" 
       },
-      midnight: { 
+      midnight:{ 
         bgColor: "#000000", 
         textColor: "#E0E0E0", 
         accentColor: "#00FFFF", 
@@ -474,8 +473,8 @@
         bgColor: "#ffefd5", 
         textColor: "#ff1493", 
         accentColor: "#ff69b4", 
-        boxBg: "#fff8e7", 
-        boxBgHover: "#fffbf0" 
+        boxBg: "#ffefd5", 
+        boxBgHover: "#ffefd5" 
       }
     };
 
