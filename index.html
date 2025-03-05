@@ -4,14 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Cura</title>
-  <link rel="shortcut icon" type="image/png" href="curologo.png">
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
   
   <style>
     /* CSS Variables for themes */
     :root {
-      /* Dark Mode Variables (default) */
+      /* Default Dark Mode Variables */
       --bg-color: #121212;
       --text-color: #fff;
       --accent-color: #ffcc00;
@@ -20,6 +19,7 @@
       --box-shadow: none;
     }
     html.light {
+      /* Light Mode Variables */
       --bg-color: #f0f0f0;
       --text-color: #333;
       --accent-color: #ffcc00;
@@ -294,6 +294,7 @@
     <h1 style="padding-left: 30px;">Cura</h1>
     <div style="padding-right: 30px;">
       <button type="button" class="theme-toggle" onclick="toggleTheme(event)">Toggle Theme</button>
+      <button type="button" class="add-class-btn" onclick="openCustomThemeModal(event)">Customize Theme</button>
       <button type="button" class="add-class-btn" onclick="openClassModal(event)">➕ Add Class</button>
     </div>
   </header>
@@ -332,7 +333,6 @@
       <br />
       <input type="date" id="assignment-date" />
       <br />
-      <!-- New input for assignment link -->
       <input type="url" id="assignment-link" placeholder="Enter assignment link (optional)..." />
       <br />
       <button type="button" class="add-class-btn" onclick="addAssignmentFromModal(event)">Add Assignment</button>
@@ -348,7 +348,6 @@
       <br />
       <input type="date" id="edit-assignment-date" />
       <br />
-      <!-- New input for editing assignment link -->
       <input type="url" id="edit-assignment-link" placeholder="Enter assignment link (optional)..." />
       <br />
       <button type="button" class="add-class-btn" onclick="saveEditedAssignment(event)">Save Changes</button>
@@ -363,6 +362,30 @@
       <button type="button" class="edit-btn-modal" onclick="openEditAssignmentModal()">Edit Assignment</button>
       <button type="button" class="delete-btn-modal" onclick="confirmDeleteAssignment()">Delete Assignment</button>
       <button type="button" class="cancel-btn" onclick="closeAssignmentOptionsModal(event)">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Modal for Customizing Theme -->
+  <div class="modal" id="customThemeModal">
+    <div class="modal-content">
+      <span class="close-button" onclick="closeCustomThemeModal(event)">&times;</span>
+      <h2>Customize Theme</h2>
+      <label>Background Color:</label>
+      <input type="color" id="custom-bg-color" value="#121212" />
+      <br />
+      <label>Text Color:</label>
+      <input type="color" id="custom-text-color" value="#fff" />
+      <br />
+      <label>Accent Color:</label>
+      <input type="color" id="custom-accent-color" value="#ffcc00" />
+      <br />
+      <label>Box Background:</label>
+      <input type="color" id="custom-box-bg" value="#1e1e1e" />
+      <br />
+      <label>Box Hover Background:</label>
+      <input type="color" id="custom-box-bg-hover" value="#2a2a2a" />
+      <br />
+      <button type="button" class="add-class-btn" onclick="saveCustomTheme(event)">Save Custom Theme</button>
     </div>
   </div>
 
@@ -391,18 +414,15 @@
     function saveData() {
       localStorage.setItem("classesData", JSON.stringify(classesData));
     }
-
     function loadData() {
       const storedData = localStorage.getItem("classesData");
       if (storedData) {
         classesData = JSON.parse(storedData);
       }
     }
-
     function saveTheme(theme) {
       localStorage.setItem("theme", theme);
     }
-
     function loadTheme() {
       const savedTheme = localStorage.getItem("theme");
       if (savedTheme === "light") {
@@ -410,39 +430,50 @@
       } else {
         document.documentElement.classList.remove("light");
       }
+      applyCustomTheme();
     }
-
+    function applyCustomTheme() {
+      const customTheme = JSON.parse(localStorage.getItem("customTheme") || "{}");
+      if (customTheme.bgColor) {
+        document.documentElement.style.setProperty("--bg-color", customTheme.bgColor);
+      }
+      if (customTheme.textColor) {
+        document.documentElement.style.setProperty("--text-color", customTheme.textColor);
+      }
+      if (customTheme.accentColor) {
+        document.documentElement.style.setProperty("--accent-color", customTheme.accentColor);
+      }
+      if (customTheme.boxBg) {
+        document.documentElement.style.setProperty("--box-bg", customTheme.boxBg);
+      }
+      if (customTheme.boxBgHover) {
+        document.documentElement.style.setProperty("--box-bg-hover", customTheme.boxBgHover);
+      }
+    }
     function formatDate(dateString) {
       const [year, month, day] = dateString.split('-');
       const localDate = new Date(year, month - 1, day);
       const options = { weekday: 'short', month: 'numeric', day: 'numeric' };
       return localDate.toLocaleDateString('en-US', options);
     }
-
     function isOverdue(dueDateValue) {
       if (!dueDateValue) return false;
       let dueDate = new Date(dueDateValue);
       dueDate.setHours(23, 59, 59, 999);
       return dueDate < new Date();
     }
-
     function renderClasses() {
       const container = document.getElementById('class-container');
       container.innerHTML = "";
       classesData.forEach((cls, classIndex) => {
         const box = document.createElement('div');
         box.classList.add('box');
-
-        // Header
         const headerDiv = document.createElement('div');
         headerDiv.classList.add('box-header');
-
         const headerTop = document.createElement('div');
         headerTop.classList.add('header-top');
-
         const title = document.createElement('h2');
         title.textContent = `${cls.icon} ${cls.name}`;
-
         const deleteClassBtn = document.createElement('button');
         deleteClassBtn.type = "button";
         deleteClassBtn.classList.add('delete-class-btn');
@@ -456,36 +487,26 @@
             renderClasses();
           });
         });
-
         headerTop.appendChild(title);
         headerTop.appendChild(deleteClassBtn);
-
         const total = cls.assignments.length;
         const completed = cls.assignments.filter(a => a.completed).length;
         const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
         const progress = document.createElement('p');
         progress.classList.add('progress-indicator');
         progress.textContent = `${completed}/${total} Completed (${percent}%)`;
-
         headerDiv.appendChild(headerTop);
         headerDiv.appendChild(progress);
         box.appendChild(headerDiv);
-
-        // List assignments
         const ul = document.createElement('ul');
         cls.assignments.forEach((assignment, assignmentIndex) => {
           const li = document.createElement('li');
-
-          // Create a container for assignment text and optional link.
           const assignmentContainer = document.createElement('div');
           assignmentContainer.style.display = 'flex';
           assignmentContainer.style.flexDirection = 'column';
-          
           const assignmentText = document.createElement('span');
           assignmentText.textContent = assignment.text + (assignment.dueDate ? " → " + formatDate(assignment.dueDate) : "");
           assignmentContainer.appendChild(assignmentText);
-
-          // If a link exists, add a separate small link element.
           if (assignment.link) {
             const linkAnchor = document.createElement('a');
             linkAnchor.href = assignment.link;
@@ -499,12 +520,9 @@
             });
             assignmentContainer.appendChild(linkAnchor);
           }
-
           li.appendChild(assignmentContainer);
-
           if (assignment.completed) li.classList.add('completed');
           if (assignment.dueDate && isOverdue(assignment.dueDate)) li.classList.add('overdue');
-
           li.addEventListener('click', function(e) {
             if (e.target.tagName !== 'BUTTON') {
               assignment.completed = !assignment.completed;
@@ -512,7 +530,6 @@
               renderClasses();
             }
           });
-
           const btnContainer = document.createElement('div');
           const optionsBtn = document.createElement('button');
           optionsBtn.type = "button";
@@ -528,11 +545,8 @@
           ul.appendChild(li);
         });
         box.appendChild(ul);
-
-        // Footer
         const footerDiv = document.createElement('div');
         footerDiv.classList.add('box-footer');
-
         const addAssignmentBtn = document.createElement('button');
         addAssignmentBtn.type = "button";
         addAssignmentBtn.classList.add('add-assignment-btn');
@@ -542,7 +556,6 @@
           currentClassIndex = classIndex;
           document.getElementById("assignmentModal").style.display = "flex";
         });
-
         const sortBtn = document.createElement('button');
         sortBtn.type = "button";
         sortBtn.classList.add('sort-btn');
@@ -558,7 +571,6 @@
           saveData();
           renderClasses();
         });
-
         const clearCompletedBtn = document.createElement('button');
         clearCompletedBtn.type = "button";
         clearCompletedBtn.classList.add('clear-completed-btn');
@@ -569,23 +581,19 @@
           saveData();
           renderClasses();
         });
-
         footerDiv.appendChild(addAssignmentBtn);
         footerDiv.appendChild(sortBtn);
         footerDiv.appendChild(clearCompletedBtn);
         box.appendChild(footerDiv);
-
         container.appendChild(box);
       });
     }
-
     function toggleTheme(e) {
       if (e) e.preventDefault();
       document.documentElement.classList.toggle("light");
       const theme = document.documentElement.classList.contains("light") ? "light" : "dark";
       saveTheme(theme);
     }
-
     function openClassModal(e) {
       if (e) e.preventDefault();
       document.getElementById("classModal").style.display = "flex";
@@ -611,7 +619,6 @@
         classNameInput.value = "";
       }
     }
-
     function closeAssignmentModal(e) {
       if (e) e.preventDefault();
       document.getElementById("assignmentModal").style.display = "none";
@@ -638,7 +645,6 @@
         closeAssignmentModal();
       }
     }
-
     function openAssignmentOptionsModal(classIndex, assignmentIndex) {
       currentClassIndex = classIndex;
       currentAssignmentIndex = assignmentIndex;
@@ -648,7 +654,6 @@
       if (e) e.preventDefault();
       document.getElementById("assignmentOptionsModal").style.display = "none";
     }
-
     function openEditAssignmentModal() {
       closeAssignmentOptionsModal(null);
       const assignment = classesData[currentClassIndex].assignments[currentAssignmentIndex];
@@ -675,7 +680,6 @@
         closeEditAssignmentModal();
       }
     }
-
     function confirmDeleteAssignment() {
       closeAssignmentOptionsModal(null);
       openConfirmModal("Are you sure you want to delete this assignment?", function() {
@@ -684,7 +688,6 @@
         renderClasses();
       });
     }
-
     function openConfirmModal(message, callback) {
       document.getElementById("confirmMessage").textContent = message;
       confirmCallback = callback;
@@ -701,7 +704,47 @@
       }
       closeConfirmModal(null);
     }
-
+    // Custom Theme Modal Controls
+    function openCustomThemeModal(e) {
+      if (e) e.preventDefault();
+      const customTheme = JSON.parse(localStorage.getItem("customTheme") || "{}");
+      if (customTheme.bgColor) {
+        document.getElementById("custom-bg-color").value = customTheme.bgColor;
+      }
+      if (customTheme.textColor) {
+        document.getElementById("custom-text-color").value = customTheme.textColor;
+      }
+      if (customTheme.accentColor) {
+        document.getElementById("custom-accent-color").value = customTheme.accentColor;
+      }
+      if (customTheme.boxBg) {
+        document.getElementById("custom-box-bg").value = customTheme.boxBg;
+      }
+      if (customTheme.boxBgHover) {
+        document.getElementById("custom-box-bg-hover").value = customTheme.boxBgHover;
+      }
+      document.getElementById("customThemeModal").style.display = "flex";
+    }
+    function closeCustomThemeModal(e) {
+      if (e) e.preventDefault();
+      document.getElementById("customThemeModal").style.display = "none";
+    }
+    function saveCustomTheme(e) {
+      if (e) e.preventDefault();
+      const bgColor = document.getElementById("custom-bg-color").value;
+      const textColor = document.getElementById("custom-text-color").value;
+      const accentColor = document.getElementById("custom-accent-color").value;
+      const boxBg = document.getElementById("custom-box-bg").value;
+      const boxBgHover = document.getElementById("custom-box-bg-hover").value;
+      document.documentElement.style.setProperty("--bg-color", bgColor);
+      document.documentElement.style.setProperty("--text-color", textColor);
+      document.documentElement.style.setProperty("--accent-color", accentColor);
+      document.documentElement.style.setProperty("--box-bg", boxBg);
+      document.documentElement.style.setProperty("--box-bg-hover", boxBgHover);
+      const customTheme = { bgColor, textColor, accentColor, boxBg, boxBgHover };
+      localStorage.setItem("customTheme", JSON.stringify(customTheme));
+      closeCustomThemeModal();
+    }
     loadData();
     loadTheme();
     renderClasses();
