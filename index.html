@@ -551,7 +551,7 @@
         const headerTop = document.createElement('div');
         headerTop.classList.add('header-top');
         const title = document.createElement('h2');
-        title.textContent = ${cls.icon} ${cls.name};
+        title.textContent = `${cls.icon} ${cls.name}`;
         const deleteClassBtn = document.createElement('button');
         deleteClassBtn.type = "button";
         deleteClassBtn.classList.add('delete-class-btn');
@@ -559,7 +559,7 @@
         deleteClassBtn.title = "Delete Class";
         deleteClassBtn.addEventListener('click', function(e) {
           e.stopPropagation();
-          openConfirmModal(Are you sure you want to delete the ${cls.name} class?, function() {
+          openConfirmModal(`Are you sure you want to delete the ${cls.name} class?`, function() {
             classesData.splice(classIndex, 1);
             saveData();
             renderClasses();
@@ -572,7 +572,7 @@
         const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
         const progress = document.createElement('p');
         progress.classList.add('progress-indicator');
-        progress.textContent = ${completed}/${total} Completed (${percent}%);
+        progress.textContent = `${completed}/${total} Completed (${percent}%)`;
         headerDiv.appendChild(headerTop);
         headerDiv.appendChild(progress);
         box.appendChild(headerDiv);
