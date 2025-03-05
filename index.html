@@ -1,1076 +1,786 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cura - Enhanced Edition</title>
-    <!-- Google Fonts -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      /* --- Theme Variables --- */
-      :root {
-        --bg-color: #121212;
-        --text-color: #fff;
-        --accent-color: #ffcc00;
-        --box-bg: #1e1e1e;
-        --box-bg-hover: #2a2a2e;
-        --box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        --font-size: 16px;
-      }
-      html.light {
-        --bg-color: #f0f0f0;
-        --text-color: #333;
-        --accent-color: #ffcc00;
-        --box-bg: #fff;
-        --box-bg-hover: #f9f9f9;
-        --box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      }
-      /* Smooth transitions */
-      body,
-      header,
-      .box,
-      .modal-content,
-      ul,
-      li,
-      .progress-indicator {
-        transition: background-color 0.5s ease, color 0.5s ease,
-          border-color 0.5s ease;
-      }
-      /* Global Styles */
-      body {
-        font-family: 'Poppins', sans-serif;
-        font-size: var(--font-size);
-        background: var(--bg-color);
-        color: var(--text-color);
-        margin: 0;
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        min-height: 100vh;
-      }
-      header {
-        width: 100%;
-        padding: 20px 80px;
-        background: var(--box-bg);
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: 10px;
-        position: sticky;
-        top: 0;
-        z-index: 100;
-      }
-      header h1 {
-        flex: 1 0 100%;
-        margin: 0;
-        font-size: 2em;
-        color: var(--accent-color);
-      }
-      .header-buttons {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-        align-items: center;
-      }
-      .header-buttons button,
-      .header-buttons input {
-        background: var(--accent-color);
-        border: none;
-        border-radius: 5px;
-        padding: 8px 12px;
-        font-size: 1em;
-        color: var(--bg-color);
-        cursor: pointer;
-        transition: filter 0.3s;
-      }
-      .header-buttons input {
-        background: var(--box-bg);
-        color: var(--text-color);
-        border: 1px solid var(--accent-color);
-        width: 200px;
-      }
-      .header-buttons button:hover,
-      .header-buttons input:hover {
-        filter: brightness(130%);
-      }
-      .container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-        justify-content: center;
-        max-width: 1200px;
-        margin: 20px;
-      }
-      .box {
-        background: var(--box-bg);
-        padding: 30px;
-        border-radius: 20px;
-        box-shadow: var(--box-shadow);
-        width: 450px;
-        min-height: 450px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        position: relative;
-      }
-      .box-header {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        margin-bottom: 10px;
-      }
-      .box-header .header-top {
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-      .box-header h2 {
-        font-size: 1.5em;
-        border-bottom: 3px solid var(--accent-color);
-        padding-bottom: 5px;
-        margin: 0;
-      }
-      .box-header .delete-class-btn {
-        background: transparent;
-        border: none;
-        font-size: 1.2em;
-        color: red;
-        cursor: pointer;
-      }
-      ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        flex-grow: 1;
-      }
-      li {
-        background: var(--box-bg-hover);
-        padding: 10px;
-        margin: 8px 0;
-        border-radius: 12px;
-        font-size: 1em;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        cursor: pointer;
-      }
-      li:hover {
-        transform: scale(1.03);
-      }
-      li.completed {
-        text-decoration: line-through;
-        opacity: 0.6;
-      }
-      .options-btn {
-        background: transparent;
-        border: none;
-        font-size: 1.2em;
-        cursor: pointer;
-        margin-left: 5px;
-        padding: 6px;
-        border-radius: 8px;
-        transition: filter 0.3s, transform 0.2s;
-      }
-      .options-btn:hover {
-        filter: brightness(130%);
-        transform: scale(1.05);
-      }
-      .box-footer {
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
-        margin-top: 10px;
-      }
-      .box-footer button {
-        padding: 8px 14px;
-        font-size: 0.9em;
-        border-radius: 6px;
-        background: var(--accent-color);
-        color: var(--bg-color);
-        border: none;
-        cursor: pointer;
-        transition: filter 0.3s, transform 0.3s;
-      }
-      .box-footer button:hover {
-        filter: brightness(130%);
-        transform: scale(1.05);
-      }
-      /* Modal Styles */
-      .modal {
-        display: none;
-        position: fixed;
-        z-index: 300;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0, 0, 0, 0.7);
-        align-items: center;
-        justify-content: center;
-      }
-      .modal-content {
-        background: var(--bg-color);
-        padding: 20px 30px;
-        border-radius: 10px;
-        width: 90%;
-        max-width: 400px;
-        text-align: center;
-        color: var(--text-color);
-        position: relative;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        animation: popIn 0.3s ease-out;
-      }
-      @keyframes popIn {
-        from {
-          transform: scale(0.8);
-          opacity: 0;
-        }
-        to {
-          transform: scale(1);
-          opacity: 1;
-        }
-      }
-      .modal-content h2 {
-        margin-top: 0;
-        color: var(--accent-color);
-      }
-      .modal-content input,
-      .modal-content select {
-        width: 80%;
-        padding: 10px;
-        margin: 10px 0;
-        border-radius: 5px;
-        border: none;
-      }
-      .close-button {
-        position: absolute;
-        top: 10px;
-        right: 15px;
-        font-size: 1.5em;
-        cursor: pointer;
-      }
-      /* Pre-made Theme Options Styling */
-      #themeOptions {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        margin: 20px 0;
-      }
-      .theme-option-btn {
-        padding: 10px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 1em;
-        transition: filter 0.3s;
-      }
-      .theme-option-btn:hover {
-        filter: brightness(130%);
-      }
-    </style>
-  </head>
-  <body>
-    <!-- HEADER -->
-    <header>
-      <h1>Cura</h1>
-      <div class="header-buttons">
-        <button type="button" class="customize-btn" onclick="openCustomThemeModal(event)">Customize Theme</button>
-        <button type="button" class="add-class-btn" onclick="openClassModal(event)">➕ Add Class</button>
-        <button type="button" onclick="exportData()">Export Data</button>
-        <button type="button" onclick="document.getElementById('importInput').click()">Import Data</button>
-        <button type="button" onclick="toggleCalendarView()">Calendar View</button>
-        <button type="button" onclick="openFontSettingsModal(event)">Font Settings</button>
-        <input type="text" id="searchInput" placeholder="Search assignments...">
-        <input type="file" id="importInput" style="display:none" accept=".json" onchange="importData(event)">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cura</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  
+  <style>
+    /* Default (Dark Mode) Variables */
+    :root {
+      --bg-color: #121212;
+      --text-color: #fff;
+      --accent-color: #ffcc00;
+      --box-bg: #1e1e1e;
+      --box-bg-hover: #2a2b2e;
+      --box-shadow: none;
+    }
+    /* Light Mode Variables (if activated by theme presets) */
+    html.light {
+      --bg-color: #f0f0f0;
+      --text-color: #333;
+      --accent-color: #ffcc00;
+      --box-bg: #fff;
+      --box-bg-hover: #f9f9f9;
+      --box-shadow: none;
+    }
+    /* Apply smooth transitions to elements that use the theme colors */
+    body, header, .box, .modal-content, ul, li, .progress-indicator {
+      transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease;
+    }
+    /* Force the options button text to be white in dark mode */
+    html:not(.light) .options-btn {
+      color: #fff;
+    }
+    
+    .overdue {
+      border-left: 4px solid red;
+    }
+    .progress-indicator {
+      font-size: 0.9em;
+      margin-top: 5px;
+      color: var(--accent-color);
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    header {
+      width: 100%;
+      padding: 20px 80px;
+      background: var(--box-bg);
+      box-shadow: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2em;
+      color: var(--accent-color);
+    }
+    .customize-btn, .add-class-btn {
+      background: var(--accent-color);
+      border: none;
+      border-radius: 5px;
+      padding: 10px 15px;
+      font-size: 1em;
+      color: var(--bg-color);
+      cursor: pointer;
+      transition: filter 0.3s;
+      margin-left: 10px;
+    }
+    .customize-btn:hover, .add-class-btn:hover {
+      filter: brightness(130%);
+    }
+    
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      max-width: 1200px;
+      margin: 20px;
+    }
+    .box {
+      background: var(--box-bg);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: var(--box-shadow);
+      width: 450px;
+      min-height: 450px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+    .box-header {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+    .box-header .header-top {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .box-header h2 {
+      font-size: 1.5em;
+      border-bottom: 3px solid var(--accent-color);
+      padding-bottom: 5px;
+      margin: 0;
+    }
+    .box-header .delete-class-btn {
+      background: transparent;
+      border: none;
+      font-size: 1.2em;
+      color: red;
+      cursor: pointer;
+    }
+    
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      flex-grow: 1;
+    }
+    li {
+      background: var(--box-bg-hover);
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 12px;
+      font-size: 1em;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+    li:hover {
+      transform: scale(1.03);
+    }
+    li.completed {
+      text-decoration: line-through;
+      opacity: 0.6;
+    }
+    .options-btn {
+      background: transparent;
+      border: none;
+      font-size: 1.2em;
+      cursor: pointer;
+      margin-left: 5px;
+      padding: 6px;
+      border-radius: 8px;
+      transition: filter 0.3s, transform 0.2s;
+    }
+    .options-btn:hover {
+      filter: brightness(130%);
+      transform: scale(1.05);
+    }
+    
+    .box-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .add-assignment-btn, .sort-btn {
+      padding: 8px 14px;
+      font-size: 0.9em;
+      border-radius: 6px;
+      background: var(--accent-color);
+      color: var(--bg-color);
+      border: none;
+      cursor: pointer;
+      transition: filter 0.3s, transform 0.3s;
+    }
+    .add-assignment-btn:hover, .sort-btn:hover {
+      filter: brightness(130%);
+      transform: scale(1.05);
+    }
+    
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 200;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.7);
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-content {
+      background: var(--bg-color);
+      padding: 20px 30px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      color: var(--text-color);
+      position: relative;
+      box-shadow: none;
+      animation: popIn 0.3s ease-out;
+    }
+    @keyframes popIn {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .modal-content h2 {
+      margin-top: 0;
+      color: var(--accent-color);
+    }
+    .modal-content input,
+    .modal-content select {
+      width: 80%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: none;
+    }
+    .close-button {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 1.5em;
+      cursor: pointer;
+    }
+    .edit-btn-modal {
+      background: var(--accent-color);
+      color: var(--bg-color);
+      border: none;
+      border-radius: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+      margin: 5px;
+      transition: filter 0.3s;
+    }
+    .edit-btn-modal:hover {
+      filter: brightness(130%);
+    }
+    .delete-btn-modal {
+      background: red;
+      color: var(--bg-color);
+      border: none;
+      border-radius: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+      margin: 5px;
+      transition: filter 0.3s;
+    }
+    .delete-btn-modal:hover {
+      filter: brightness(130%);
+    }
+    .cancel-btn {
+      background: var(--accent-color);
+      color: var(--bg-color);
+      border: none;
+      border-radius: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+      margin: 5px;
+      transition: filter 0.3s;
+    }
+    .cancel-btn:hover {
+      filter: brightness(130%);
+    }
+
+    /* Pre-made Theme Options Styling */
+    #themeOptions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 20px 0;
+    }
+    .theme-option-btn {
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: filter 0.3s;
+    }
+    .theme-option-btn:hover {
+      filter: brightness(130%);
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <h1 style="padding-left: 30px;">Cura</h1>
+    <div style="padding-right: 30px;">
+      <button type="button" class="customize-btn" onclick="openCustomThemeModal(event)">Theme</button>
+      <button type="button" class="add-class-btn" onclick="openClassModal(event)">➕ Add Class</button>
+    </div>
+  </header>
+
+  <!-- Modal for Adding a New Class -->
+  <div class="modal" id="classModal">
+    <div class="modal-content">
+      <span class="close-button" onclick="closeClassModal(event)">&times;</span>
+      <h2>Add New Class</h2>
+      <input type="text" id="class-name" placeholder="Enter class name..." />
+      <br />
+      <select id="class-icon">
+        <option value="📚">📚 General</option>
+        <option value="📜">📜 History</option>
+        <option value="📖">📖 English</option>
+        <option value="✝️">✝️ Religion</option>
+        <option value="🔬">🔬 Science</option>
+        <option value="🎨">🎨 Art</option>
+        <option value="🎵">🎵 Music</option>
+        <option value="💻">💻 Computer Science</option>
+        <option value="📊">📊 Math</option>
+        <option value="🗣️">🗣️ Spanish</option>
+        <option value="🏀">🏀 PE</option>
+      </select>
+      <br />
+      <button type="button" class="add-class-btn" onclick="addClass(event)">Add Class</button>
+    </div>
+  </div>
+
+  <!-- Modal for Adding a New Assignment -->
+  <div class="modal" id="assignmentModal">
+    <div class="modal-content">
+      <span class="close-button" onclick="closeAssignmentModal(event)">&times;</span>
+      <h2>Add New Assignment</h2>
+      <input type="text" id="assignment-text" placeholder="Enter assignment details..." />
+      <br />
+      <input type="date" id="assignment-date" />
+      <br />
+      <input type="url" id="assignment-link" placeholder="Enter assignment link (optional)..." />
+      <br />
+      <button type="button" class="add-class-btn" onclick="addAssignmentFromModal(event)">Add Assignment</button>
+    </div>
+  </div>
+
+  <!-- Modal for Editing an Assignment -->
+  <div class="modal" id="editAssignmentModal">
+    <div class="modal-content">
+      <span class="close-button" onclick="closeEditAssignmentModal(event)">&times;</span>
+      <h2>Edit Assignment</h2>
+      <input type="text" id="edit-assignment-text" placeholder="Edit assignment details..." />
+      <br />
+      <input type="date" id="edit-assignment-date" />
+      <br />
+      <input type="url" id="edit-assignment-link" placeholder="Enter assignment link (optional)..." />
+      <br />
+      <button type="button" class="add-class-btn" onclick="saveEditedAssignment(event)">Save Changes</button>
+    </div>
+  </div>
+
+  <!-- Modal for Assignment Options (Edit/Delete) -->
+  <div class="modal" id="assignmentOptionsModal">
+    <div class="modal-content">
+      <span class="close-button" onclick="closeAssignmentOptionsModal(event)">&times;</span>
+      <h2>Assignment Options</h2>
+      <button type="button" class="edit-btn-modal" onclick="openEditAssignmentModal()">Edit Assignment</button>
+      <button type="button" class="delete-btn-modal" onclick="confirmDeleteAssignment()">Delete Assignment</button>
+      <button type="button" class="cancel-btn" onclick="closeAssignmentOptionsModal(event)">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Modal for Customizing Theme with Pre-made Options -->
+  <div class="modal" id="customThemeModal">
+    <div class="modal-content">
+      <span class="close-button" onclick="closeCustomThemeModal(event)">&times;</span>
+      <h2>Choose a Theme</h2>
+      <div id="themeOptions">
+        <button type="button" class="theme-option-btn" style="background: #121212; color: #fff;" onclick="applyPreMadeTheme('default')">Default</button>
+        <button type="button" class="theme-option-btn" style="background: #f0f0f0; color: #333;" onclick="applyPreMadeTheme('light')">Light</button>
+        <button type="button" class="theme-option-btn" style="background: #1B2B34; color: #C0C5CE;" onclick="applyPreMadeTheme('ocean')">Ocean</button>
+        <button type="button" class="theme-option-btn" style="background: #2C3E50; color: #ECF0F1;" onclick="applyPreMadeTheme('forest')">Forest</button>
+        <button type="button" class="theme-option-btn" style="background: #2D2D2D; color: #F2F2F2;" onclick="applyPreMadeTheme('sunset')">Sunset</button>
+        <button type="button" class="theme-option-btn" style="background: #000000; color: #E0E0E0;" onclick="applyPreMadeTheme('midnight')">Midnight</button>
+        <button type="button" class="theme-option-btn" style="background: #ffe4e1; color: #800000;" onclick="applyPreMadeTheme('rose')">Rose</button>
+        <button type="button" class="theme-option-btn" style="background: #ffefd5; color: #ff1493;" onclick="applyPreMadeTheme('candy')">Candy</button>
       </div>
-    </header>
+      <br />
+      <button type="button" class="add-class-btn" onclick="closeCustomThemeModal(event)">Close</button>
+    </div>
+  </div>
 
-    <!-- MAIN VIEWS -->
-    <div id="mainView" class="container"></div>
-    <div id="calendarView" class="container" style="display:none"></div>
-
-    <!-- MODAL: Add Class -->
-    <div class="modal" id="classModal">
-      <div class="modal-content">
-        <span class="close-button" onclick="closeClassModal(event)">&times;</span>
-        <h2>Add New Class</h2>
-        <input type="text" id="class-name" placeholder="Enter class name...">
-        <br>
-        <select id="class-icon">
-          <option value="📚">📚 General</option>
-          <option value="📜">📜 History</option>
-          <option value="📖">📖 English</option>
-          <option value="✝️">✝️ Religion</option>
-          <option value="🔬">🔬 Science</option>
-          <option value="🎨">🎨 Art</option>
-          <option value="🎵">🎵 Music</option>
-          <option value="💻">💻 Computer Science</option>
-          <option value="📊">📊 Math</option>
-          <option value="🗣️">🗣️ Spanish</option>
-          <option value="🏀">🏀 PE</option>
-        </select>
-        <br>
-        <button type="button" class="add-class-btn" onclick="addClass(event)">Add Class</button>
+  <!-- Custom Confirmation Modal -->
+  <div class="modal" id="confirmModal">
+    <div class="modal-content">
+      <span class="close-button" onclick="closeConfirmModal(event)">&times;</span>
+      <h2>Confirm Deletion</h2>
+      <p id="confirmMessage">Are you sure?</p>
+      <div>
+        <button type="button" class="delete-btn-modal" onclick="confirmAction()">Yes, Delete</button>
+        <button type="button" class="cancel-btn" onclick="closeConfirmModal(event)">Cancel</button>
       </div>
     </div>
+  </div>
 
-    <!-- MODAL: Add Assignment -->
-    <div class="modal" id="assignmentModal">
-      <div class="modal-content">
-        <span class="close-button" onclick="closeAssignmentModal(event)">&times;</span>
-        <h2>Add New Assignment</h2>
-        <input type="text" id="assignment-text" placeholder="Enter assignment details...">
-        <br>
-        <input type="date" id="assignment-date">
-        <br>
-        <input type="url" id="assignment-link" placeholder="Enter assignment link (optional)...">
-        <br>
-        <button type="button" class="add-class-btn" onclick="addAssignmentFromModal(event)">Add Assignment</button>
-      </div>
-    </div>
+  <!-- Container for Class Boxes -->
+  <div class="container" id="class-container"></div>
 
-    <!-- MODAL: Edit Assignment -->
-    <div class="modal" id="editAssignmentModal">
-      <div class="modal-content">
-        <span class="close-button" onclick="closeEditAssignmentModal(event)">&times;</span>
-        <h2>Edit Assignment</h2>
-        <input type="text" id="edit-assignment-text" placeholder="Edit assignment details...">
-        <br>
-        <input type="date" id="edit-assignment-date">
-        <br>
-        <input type="url" id="edit-assignment-link" placeholder="Enter assignment link (optional)...">
-        <br>
-        <button type="button" class="add-class-btn" onclick="saveEditedAssignment(event)">Save Changes</button>
-      </div>
-    </div>
+  <script>
+    let classesData = [];
+    let currentClassIndex = null;
+    let currentAssignmentIndex = null;
+    let confirmCallback = null;
 
-    <!-- MODAL: Assignment Options (Edit/Delete/Subtasks) -->
-    <div class="modal" id="assignmentOptionsModal">
-      <div class="modal-content">
-        <span class="close-button" onclick="closeAssignmentOptionsModal(event)">&times;</span>
-        <h2>Assignment Options</h2>
-        <button type="button" class="edit-btn-modal" onclick="openEditAssignmentModal()">Edit Assignment</button>
-        <button type="button" class="delete-btn-modal" onclick="confirmDeleteAssignment()">Delete Assignment</button>
-        <button type="button" class="add-class-btn" onclick="openSubtasksModal()">Manage Subtasks</button>
-        <button type="button" class="cancel-btn" onclick="closeAssignmentOptionsModal(event)">Cancel</button>
-      </div>
-    </div>
-
-    <!-- MODAL: Subtasks Management -->
-    <div class="modal" id="subtasksModal">
-      <div class="modal-content">
-        <span class="close-button" onclick="closeSubtasksModal(event)">&times;</span>
-        <h2>Manage Subtasks</h2>
-        <ul id="subtasksList" style="text-align:left"></ul>
-        <input type="text" id="newSubtask" placeholder="New subtask...">
-        <br>
-        <button type="button" class="add-class-btn" onclick="addSubtask()">Add Subtask</button>
-        <br>
-        <button type="button" class="cancel-btn" onclick="closeSubtasksModal(event)">Close</button>
-      </div>
-    </div>
-
-    <!-- MODAL: Font Settings -->
-    <div class="modal" id="fontSettingsModal">
-      <div class="modal-content">
-        <span class="close-button" onclick="closeFontSettingsModal(event)">&times;</span>
-        <h2>Font Settings</h2>
-        <label for="fontSizeInput">Font Size (px):</label>
-        <input type="number" id="fontSizeInput" min="12" max="30">
-        <br>
-        <button type="button" class="add-class-btn" onclick="saveFontSettings()">Save</button>
-      </div>
-    </div>
-
-    <!-- MODAL: Custom Theme Options -->
-    <div class="modal" id="customThemeModal">
-      <div class="modal-content">
-        <span class="close-button" onclick="closeCustomThemeModal(event)">&times;</span>
-        <h2>Choose a Theme</h2>
-        <div id="themeOptions">
-          <button type="button" class="theme-option-btn" style="background: #121212; color: #fff;" onclick="applyPreMadeTheme('default')">Default</button>
-          <button type="button" class="theme-option-btn" style="background: #f0f0f0; color: #333;" onclick="applyPreMadeTheme('light')">Light</button>
-          <button type="button" class="theme-option-btn" style="background: #1B2B34; color: #C0C5CE;" onclick="applyPreMadeTheme('ocean')">Ocean</button>
-          <button type="button" class="theme-option-btn" style="background: #2C3E50; color: #ECF0F1;" onclick="applyPreMadeTheme('forest')">Forest</button>
-          <button type="button" class="theme-option-btn" style="background: #2D2D2D; color: #F2F2F2;" onclick="applyPreMadeTheme('sunset')">Sunset</button>
-          <button type="button" class="theme-option-btn" style="background: #000000; color: #E0E0E0;" onclick="applyPreMadeTheme('midnight')">Midnight</button>
-          <button type="button" class="theme-option-btn" style="background: #ffe4e1; color: #800000;" onclick="applyPreMadeTheme('rose')">Rose</button>
-          <button type="button" class="theme-option-btn" style="background: #ffefd5; color: #ff1493;" onclick="applyPreMadeTheme('candy')">Candy</button>
-        </div>
-        <br>
-        <button type="button" class="add-class-btn" onclick="closeCustomThemeModal(event)">Close</button>
-      </div>
-    </div>
-
-    <!-- MODAL: Confirmation -->
-    <div class="modal" id="confirmModal">
-      <div class="modal-content">
-        <span class="close-button" onclick="closeConfirmModal(event)">&times;</span>
-        <h2>Confirm Deletion</h2>
-        <p id="confirmMessage">Are you sure?</p>
-        <div>
-          <button type="button" class="delete-btn-modal" onclick="confirmAction()">Yes, Delete</button>
-          <button type="button" class="cancel-btn" onclick="closeConfirmModal(event)">Cancel</button>
-        </div>
-      </div>
-    </div>
-
-    <script>
-      /***** Data Structures *****/
-      let classesData = [];
-      let currentClassIndex = null;
-      let currentAssignmentIndex = null;
-      let confirmCallback = null;
-      let currentSubtasks = [];
-      let calendarMode = false;
-
-      /***** Pre-made Themes *****/
-      const preMadeThemes = {
-        default: { 
-          bgColor: "#121212", 
-          textColor: "#fff", 
-          accentColor: "#ffcc00", 
-          boxBg: "#1e1e1e", 
-          boxBgHover: "#2a2a2e" 
-        },
-        light: { 
-          bgColor: "#f0f0f0", 
-          textColor: "#333", 
-          accentColor: "#ffcc00", 
-          boxBg: "#fff", 
-          boxBgHover: "#f9f9f9" 
-        },
-        ocean: { 
-          bgColor: "#1B2B34", 
-          textColor: "#C0C5CE", 
-          accentColor: "#6699CC", 
-          boxBg: "#2C3E50", 
-          boxBgHover: "#3E5367" 
-        },
-        forest: { 
-          bgColor: "#2C3E50", 
-          textColor: "#ECF0F1", 
-          accentColor: "#27AE60", 
-          boxBg: "#34495E", 
-          boxBgHover: "#3E5367" 
-        },
-        sunset: { 
-          bgColor: "#2D2D2D", 
-          textColor: "#F2F2F2", 
-          accentColor: "#FF5733", 
-          boxBg: "#3A3A3A", 
-          boxBgHover: "#4A4A4A" 
-        },
-        midnight: { 
-          bgColor: "#000000", 
-          textColor: "#E0E0E0", 
-          accentColor: "#00FFFF", 
-          boxBg: "#111111", 
-          boxBgHover: "#222222" 
-        },
-        rose: { 
-          bgColor: "#ffe4e1", 
-          textColor: "#800000", 
-          accentColor: "#ff69b4", 
-          boxBg: "#fff0f0", 
-          boxBgHover: "#fff5f5" 
-        },
-        candy: { 
-          bgColor: "#ffefd5", 
-          textColor: "#ff1493", 
-          accentColor: "#ff69b4", 
-          boxBg: "#ffefd5", 
-          boxBgHover: "#ffefd5" 
-        }
-      };
-
-      /***** Local Storage Functions *****/
-      function saveData() {
-        localStorage.setItem("classesData", JSON.stringify(classesData));
+    // Pre-made themes with distinct box backgrounds.
+    const preMadeThemes = {
+      default: { 
+        bgColor: "#121212", 
+        textColor: "#fff", 
+        accentColor: "#ffcc00", 
+        boxBg: "#1e1e1e", 
+        boxBgHover: "#2a2a2e" 
+      },
+      light: { 
+        bgColor: "#f0f0f0", 
+        textColor: "#333", 
+        accentColor: "#ffcc00", 
+        boxBg: "#fff", 
+        boxBgHover: "#f9f9f9" 
+      },
+      ocean: { 
+        bgColor: "#1B2B34", 
+        textColor: "#C0C5CE", 
+        accentColor: "#6699CC", 
+        boxBg: "#2C3E50", 
+        boxBgHover: "#3E5367" 
+      },
+      forest: { 
+        bgColor: "#2C3E50", 
+        textColor: "#ECF0F1", 
+        accentColor: "#27AE60", 
+        boxBg: "#34495E", 
+        boxBgHover: "#3E5367" 
+      },
+      sunset: { 
+        bgColor: "#2D2D2D", 
+        textColor: "#F2F2F2", 
+        accentColor: "#FF5733", 
+        boxBg: "#3A3A3A", 
+        boxBgHover: "#4A4A4A" 
+      },
+      midnight:{ 
+        bgColor: "#000000", 
+        textColor: "#E0E0E0", 
+        accentColor: "#00FFFF", 
+        boxBg: "#111111", 
+        boxBgHover: "#222222" 
+      },
+      rose: { 
+        bgColor: "#ffe4e1", 
+        textColor: "#800000", 
+        accentColor: "#ff69b4", 
+        boxBg: "#fff0f0", 
+        boxBgHover: "#fff5f5" 
+      },
+      candy: { 
+        bgColor: "#ffefd5", 
+        textColor: "#ff1493", 
+        accentColor: "#ff69b4", 
+        boxBg: "#ffefd5", 
+        boxBgHover: "#ffefd5" 
       }
-      function loadData() {
-        const storedData = localStorage.getItem("classesData");
-        if (storedData) classesData = JSON.parse(storedData);
+    };
+
+    // Save classesData to localStorage.
+    function saveData() {
+      localStorage.setItem("classesData", JSON.stringify(classesData));
+    }
+    // Load classesData from localStorage.
+    function loadData() {
+      const storedData = localStorage.getItem("classesData");
+      if (storedData) {
+        classesData = JSON.parse(storedData);
       }
-      function saveTheme(theme) {
-        localStorage.setItem("theme", theme);
+    }
+    function saveTheme(theme) {
+      localStorage.setItem("theme", theme);
+    }
+    function loadTheme() {
+      const savedTheme = localStorage.getItem("theme");
+      if (savedTheme === "light") {
+        document.documentElement.classList.add("light");
+      } else {
+        document.documentElement.classList.remove("light");
       }
-      function loadTheme() {
-        const savedTheme = localStorage.getItem("theme");
-        if (savedTheme === "light") {
-          document.documentElement.classList.add("light");
-        } else {
-          document.documentElement.classList.remove("light");
-        }
-      }
-      function loadCustomTheme() {
-        const savedCustom = localStorage.getItem("customTheme");
-        if (savedCustom) {
-          const themeObj = JSON.parse(savedCustom);
-          if (themeObj.themeKey && preMadeThemes[themeObj.themeKey]) {
-            applyPreMadeTheme(themeObj.themeKey);
-          }
+    }
+    // Load custom theme if saved.
+    function loadCustomTheme() {
+      const savedCustom = localStorage.getItem("customTheme");
+      if (savedCustom) {
+        const themeObj = JSON.parse(savedCustom);
+        if (themeObj.themeKey && preMadeThemes[themeObj.themeKey]) {
+          applyPreMadeTheme(themeObj.themeKey);
         }
       }
-
-      /***** Theme Functions *****/
-      function applyPreMadeTheme(themeKey) {
-        const theme = preMadeThemes[themeKey];
-        if (theme) {
-          document.documentElement.style.setProperty("--bg-color", theme.bgColor);
-          document.documentElement.style.setProperty("--text-color", theme.textColor);
-          document.documentElement.style.setProperty("--accent-color", theme.accentColor);
-          document.documentElement.style.setProperty("--box-bg", theme.boxBg);
-          document.documentElement.style.setProperty("--box-bg-hover", theme.boxBgHover);
-          localStorage.setItem("customTheme", JSON.stringify({ themeKey: themeKey }));
-        }
+    }
+    // Apply a pre-made theme by updating CSS variables.
+    function applyPreMadeTheme(themeKey) {
+      const theme = preMadeThemes[themeKey];
+      if (theme) {
+        document.documentElement.style.setProperty("--bg-color", theme.bgColor);
+        document.documentElement.style.setProperty("--text-color", theme.textColor);
+        document.documentElement.style.setProperty("--accent-color", theme.accentColor);
+        document.documentElement.style.setProperty("--box-bg", theme.boxBg);
+        document.documentElement.style.setProperty("--box-bg-hover", theme.boxBgHover);
+        localStorage.setItem("customTheme", JSON.stringify({themeKey: themeKey}));
       }
-
-      /***** Font Settings *****/
-      function openFontSettingsModal(e) {
-        if (e) e.preventDefault();
-        document.getElementById("fontSettingsModal").style.display = "flex";
-        document.getElementById("fontSizeInput").value = parseInt(getComputedStyle(document.body).fontSize);
-      }
-      function closeFontSettingsModal(e) {
-        if (e) e.preventDefault();
-        document.getElementById("fontSettingsModal").style.display = "none";
-      }
-      function saveFontSettings() {
-        const newSize = document.getElementById("fontSizeInput").value;
-        document.body.style.fontSize = newSize + "px";
-        localStorage.setItem("fontSize", newSize);
-        closeFontSettingsModal();
-      }
-      function loadFontSettings() {
-        const savedSize = localStorage.getItem("fontSize");
-        if (savedSize) document.body.style.fontSize = savedSize + "px";
-      }
-
-      /***** Search Filter *****/
-      function getSearchTerm() {
-        return document.getElementById("searchInput").value.toLowerCase();
-      }
-      function filterAssignments(term) {
-        term = term.toLowerCase();
-        // Re-render classes then hide assignments not matching
-        renderClasses();
-        const ulLists = document.querySelectorAll("#mainView ul");
-        ulLists.forEach(ul => {
-          Array.from(ul.children).forEach(li => {
-            const text = li.innerText.toLowerCase();
-            li.style.display = text.indexOf(term) === -1 ? "none" : "";
+    }
+    // Format a date string.
+    function formatDate(dateString) {
+      const [year, month, day] = dateString.split('-');
+      const localDate = new Date(year, month - 1, day);
+      const options = { weekday: 'short', month: 'numeric', day: 'numeric' };
+      return localDate.toLocaleDateString('en-US', options);
+    }
+    // Check if due date is overdue.
+    function isOverdue(dueDateValue) {
+      if (!dueDateValue) return false;
+      let dueDate = new Date(dueDateValue);
+      dueDate.setHours(23, 59, 59, 999);
+      return dueDate < new Date();
+    }
+    // Render classes and assignments.
+    function renderClasses() {
+      const container = document.getElementById('class-container');
+      container.innerHTML = "";
+      classesData.forEach((cls, classIndex) => {
+        const box = document.createElement('div');
+        box.classList.add('box');
+        // Header
+        const headerDiv = document.createElement('div');
+        headerDiv.classList.add('box-header');
+        const headerTop = document.createElement('div');
+        headerTop.classList.add('header-top');
+        const title = document.createElement('h2');
+        title.textContent = `${cls.icon} ${cls.name}`;
+        const deleteClassBtn = document.createElement('button');
+        deleteClassBtn.type = "button";
+        deleteClassBtn.classList.add('delete-class-btn');
+        deleteClassBtn.textContent = "🗑️";
+        deleteClassBtn.title = "Delete Class";
+        deleteClassBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          openConfirmModal(`Are you sure you want to delete the ${cls.name} class?`, function() {
+            classesData.splice(classIndex, 1);
+            saveData();
+            renderClasses();
           });
         });
-      }
-      document.getElementById("searchInput").addEventListener("input", function () {
-        filterAssignments(this.value);
-      });
-
-      /***** Due Date Reminders *****/
-      function checkDueDates() {
-        if (!("Notification" in window)) return;
-        if (Notification.permission !== "granted") {
-          Notification.requestPermission();
-          return;
-        }
-        classesData.forEach(cls => {
-          cls.assignments.forEach(assignment => {
-            if (assignment.dueDate && !assignment.notified) {
-              const due = new Date(assignment.dueDate);
-              const now = new Date();
-              if (due < now || (due - now) < 86400000) {
-                new Notification("Assignment Reminder", {
-                  body:
-                    assignment.text +
-                    " is " +
-                    (due < now ? "overdue!" : "due soon!")
-                });
-                assignment.notified = true;
-                saveData();
-              }
+        headerTop.appendChild(title);
+        headerTop.appendChild(deleteClassBtn);
+        const total = cls.assignments.length;
+        const completed = cls.assignments.filter(a => a.completed).length;
+        const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+        const progress = document.createElement('p');
+        progress.classList.add('progress-indicator');
+        progress.textContent = `${completed}/${total} Completed (${percent}%)`;
+        headerDiv.appendChild(headerTop);
+        headerDiv.appendChild(progress);
+        box.appendChild(headerDiv);
+        // List assignments.
+        const ul = document.createElement('ul');
+        cls.assignments.forEach((assignment, assignmentIndex) => {
+          const li = document.createElement('li');
+          const assignmentContainer = document.createElement('div');
+          assignmentContainer.style.display = 'flex';
+          assignmentContainer.style.flexDirection = 'column';
+          const assignmentText = document.createElement('span');
+          assignmentText.textContent = assignment.text + (assignment.dueDate ? " → " + formatDate(assignment.dueDate) : "");
+          assignmentContainer.appendChild(assignmentText);
+          if (assignment.link) {
+            const linkAnchor = document.createElement('a');
+            linkAnchor.href = assignment.link;
+            linkAnchor.target = "_blank";
+            linkAnchor.textContent = "link";
+            linkAnchor.style.color = "lightgray";
+            linkAnchor.style.fontSize = "0.8em";
+            linkAnchor.style.textDecoration = "underline";
+            linkAnchor.addEventListener('click', function(e) {
+              e.stopPropagation();
+            });
+            assignmentContainer.appendChild(linkAnchor);
+          }
+          li.appendChild(assignmentContainer);
+          if (assignment.completed) li.classList.add('completed');
+          if (assignment.dueDate && isOverdue(assignment.dueDate)) li.classList.add('overdue');
+          li.addEventListener('click', function(e) {
+            if (e.target.tagName !== 'BUTTON') {
+              assignment.completed = !assignment.completed;
+              saveData();
+              renderClasses();
             }
           });
-        });
-      }
-
-      /***** Export/Import *****/
-      function exportData() {
-        const dataStr = JSON.stringify(classesData, null, 2);
-        const blob = new Blob([dataStr], { type: "application/json" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "classesData.json";
-        a.click();
-        URL.revokeObjectURL(url);
-      }
-      function importData(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          try {
-            classesData = JSON.parse(e.target.result);
-            saveData();
-            renderView();
-          } catch (err) {
-            alert("Invalid file format.");
-          }
-        };
-        reader.readAsText(file);
-      }
-
-      /***** Drag-and-Drop Reordering *****/
-      let dragSrcEl = null;
-      function handleDragStart(e) {
-        dragSrcEl = this;
-        e.dataTransfer.effectAllowed = "move";
-        e.dataTransfer.setData("text/plain", "");
-        this.classList.add("dragElem");
-      }
-      function handleDragOver(e) {
-        if (e.preventDefault) e.preventDefault();
-        this.classList.add("over");
-        e.dataTransfer.dropEffect = "move";
-        return false;
-      }
-      function handleDragLeave(e) {
-        this.classList.remove("over");
-      }
-      function handleDrop(e) {
-        if (e.stopPropagation) e.stopPropagation();
-        if (dragSrcEl !== this) {
-          const parent = this.parentNode;
-          const nodes = Array.from(parent.children);
-          const srcIndex = nodes.indexOf(dragSrcEl);
-          const destIndex = nodes.indexOf(this);
-          const assignments = classesData[currentClassIndex].assignments;
-          const moved = assignments.splice(srcIndex, 1)[0];
-          assignments.splice(destIndex, 0, moved);
-          saveData();
-          renderView();
-        }
-        return false;
-      }
-      function addDnDHandlers(li) {
-        li.setAttribute("draggable", "true");
-        li.addEventListener("dragstart", handleDragStart, false);
-        li.addEventListener("dragover", handleDragOver, false);
-        li.addEventListener("dragleave", handleDragLeave, false);
-        li.addEventListener("drop", handleDrop, false);
-      }
-
-      /***** Subtasks Management *****/
-      function openSubtasksModal() {
-        closeAssignmentOptionsModal();
-        const assignment = classesData[currentClassIndex].assignments[currentAssignmentIndex];
-        if (!assignment.subtasks) assignment.subtasks = [];
-        currentSubtasks = assignment.subtasks;
-        renderSubtasks();
-        document.getElementById("subtasksModal").style.display = "flex";
-      }
-      function closeSubtasksModal(e) {
-        if (e) e.preventDefault();
-        document.getElementById("subtasksModal").style.display = "none";
-        saveData();
-        renderView();
-      }
-      function renderSubtasks() {
-        const ul = document.getElementById("subtasksList");
-        ul.innerHTML = "";
-        currentSubtasks.forEach((subtask, idx) => {
-          const li = document.createElement("li");
-          li.style.listStyle = "disc";
-          li.style.marginLeft = "20px";
-          li.textContent = subtask.text;
-          if (subtask.completed) {
-            li.style.textDecoration = "line-through";
-            li.style.opacity = "0.7";
-          }
-          li.addEventListener("click", function (e) {
+          const btnContainer = document.createElement('div');
+          const optionsBtn = document.createElement('button');
+          optionsBtn.type = "button";
+          optionsBtn.classList.add('options-btn');
+          optionsBtn.textContent = "⋮";
+          optionsBtn.title = "Options";
+          optionsBtn.addEventListener('click', function(e) {
             e.stopPropagation();
-            subtask.completed = !subtask.completed;
-            renderSubtasks();
+            openAssignmentOptionsModal(classIndex, assignmentIndex);
           });
-          const delBtn = document.createElement("button");
-          delBtn.textContent = "✖";
-          delBtn.style.marginLeft = "10px";
-          delBtn.addEventListener("click", function (e) {
-            e.stopPropagation();
-            currentSubtasks.splice(idx, 1);
-            renderSubtasks();
-          });
-          li.appendChild(delBtn);
+          btnContainer.appendChild(optionsBtn);
+          li.appendChild(btnContainer);
           ul.appendChild(li);
         });
-      }
-      function addSubtask() {
-        const input = document.getElementById("newSubtask");
-        const text = input.value.trim();
-        if (text) {
-          currentSubtasks.push({ text: text, completed: false });
-          input.value = "";
-          renderSubtasks();
-        }
-      }
-
-      /***** Calendar View *****/
-      function toggleCalendarView() {
-        calendarMode = !calendarMode;
-        renderView();
-      }
-      function renderCalendar() {
-        const container = document.getElementById("calendarView");
-        container.innerHTML = "";
-        const dateMap = {};
-        classesData.forEach(cls => {
-          cls.assignments.forEach(assignment => {
-            if (assignment.dueDate) {
-              const dateStr = assignment.dueDate;
-              if (!dateMap[dateStr]) dateMap[dateStr] = [];
-              dateMap[dateStr].push({
-                class: cls.name,
-                text: assignment.text,
-                link: assignment.link,
-                completed: assignment.completed
-              });
-            }
-          });
+        box.appendChild(ul);
+        // Footer with buttons.
+        const footerDiv = document.createElement('div');
+        footerDiv.classList.add('box-footer');
+        const addAssignmentBtn = document.createElement('button');
+        addAssignmentBtn.type = "button";
+        addAssignmentBtn.classList.add('add-assignment-btn');
+        addAssignmentBtn.textContent = "➕ Add Assignment";
+        addAssignmentBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          currentClassIndex = classIndex;
+          document.getElementById("assignmentModal").style.display = "flex";
         });
-        const dates = Object.keys(dateMap).sort((a, b) => new Date(a) - new Date(b));
-        dates.forEach(dateStr => {
-          const dateHeader = document.createElement("h3");
-          dateHeader.textContent = new Date(dateStr).toLocaleDateString();
-          container.appendChild(dateHeader);
-          const ul = document.createElement("ul");
-          dateMap[dateStr].forEach(item => {
-            const li = document.createElement("li");
-            li.textContent = `[${item.class}] ${item.text}` + (item.link ? " (link)" : "");
-            if (item.completed) li.style.textDecoration = "line-through";
-            ul.appendChild(li);
+        const sortBtn = document.createElement('button');
+        sortBtn.type = "button";
+        sortBtn.classList.add('sort-btn');
+        sortBtn.textContent = "Sort by Date";
+        sortBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          classesData[classIndex].assignments.sort((a, b) => {
+            if (!a.dueDate && !b.dueDate) return 0;
+            if (!a.dueDate) return 1;
+            if (!b.dueDate) return -1;
+            return new Date(a.dueDate) - new Date(b.dueDate);
           });
-          container.appendChild(ul);
-        });
-      }
-
-      /***** Rendering Views *****/
-      function renderView() {
-        if (calendarMode) {
-          document.getElementById("mainView").style.display = "none";
-          renderCalendar();
-          document.getElementById("calendarView").style.display = "flex";
-        } else {
-          document.getElementById("calendarView").style.display = "none";
+          saveData();
           renderClasses();
-          document.getElementById("mainView").style.display = "flex";
-        }
-        const searchTerm = getSearchTerm();
-        if (searchTerm) filterAssignments(searchTerm);
-      }
-
-      /***** Render List View (Classes) *****/
-      function renderClasses() {
-        const container = document.getElementById("mainView");
-        container.innerHTML = "";
-        classesData.forEach((cls, classIndex) => {
-          const box = document.createElement("div");
-          box.classList.add("box");
-          // Header
-          const headerDiv = document.createElement("div");
-          headerDiv.classList.add("box-header");
-          const headerTop = document.createElement("div");
-          headerTop.classList.add("header-top");
-          const title = document.createElement("h2");
-          title.textContent = `${cls.icon} ${cls.name}`;
-          const deleteClassBtn = document.createElement("button");
-          deleteClassBtn.type = "button";
-          deleteClassBtn.classList.add("delete-class-btn");
-          deleteClassBtn.textContent = "🗑️";
-          deleteClassBtn.title = "Delete Class";
-          deleteClassBtn.addEventListener("click", function (e) {
-            e.stopPropagation();
-            openConfirmModal(`Are you sure you want to delete the ${cls.name} class?`, function () {
-              classesData.splice(classIndex, 1);
-              saveData();
-              renderView();
-            });
-          });
-          headerTop.appendChild(title);
-          headerTop.appendChild(deleteClassBtn);
-          const total = cls.assignments.length;
-          const completed = cls.assignments.filter(a => a.completed).length;
-          const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
-          const progress = document.createElement("p");
-          progress.classList.add("progress-indicator");
-          progress.textContent = `${completed}/${total} Completed (${percent}%)`;
-          headerDiv.appendChild(headerTop);
-          headerDiv.appendChild(progress);
-          box.appendChild(headerDiv);
-          // List assignments
-          const ul = document.createElement("ul");
-          cls.assignments.forEach((assignment, assignmentIndex) => {
-            const li = document.createElement("li");
-            addDnDHandlers(li);
-            const assignmentContainer = document.createElement("div");
-            assignmentContainer.style.display = "flex";
-            assignmentContainer.style.flexDirection = "column";
-            const assignmentText = document.createElement("span");
-            assignmentText.textContent =
-              assignment.text +
-              (assignment.dueDate ? " → " + new Date(assignment.dueDate).toLocaleDateString() : "");
-            assignmentContainer.appendChild(assignmentText);
-            if (assignment.link) {
-              const linkAnchor = document.createElement("a");
-              linkAnchor.href = assignment.link;
-              linkAnchor.target = "_blank";
-              linkAnchor.textContent = "link";
-              linkAnchor.style.color = "lightgray";
-              linkAnchor.style.fontSize = "0.8em";
-              linkAnchor.style.textDecoration = "underline";
-              linkAnchor.addEventListener("click", function (e) {
-                e.stopPropagation();
-              });
-              assignmentContainer.appendChild(linkAnchor);
-            }
-            li.appendChild(assignmentContainer);
-            if (assignment.completed) li.classList.add("completed");
-            if (assignment.dueDate && isOverdue(assignment.dueDate)) li.classList.add("overdue");
-            li.addEventListener("click", function (e) {
-              if (e.target.tagName !== "BUTTON") {
-                assignment.completed = !assignment.completed;
-                saveData();
-                renderView();
-              }
-            });
-            const btnContainer = document.createElement("div");
-            const optionsBtn = document.createElement("button");
-            optionsBtn.type = "button";
-            optionsBtn.classList.add("options-btn");
-            optionsBtn.textContent = "⋮";
-            optionsBtn.title = "Options";
-            optionsBtn.addEventListener("click", function (e) {
-              e.stopPropagation();
-              currentClassIndex = classIndex;
-              currentAssignmentIndex = assignmentIndex;
-              document.getElementById("assignmentOptionsModal").style.display = "flex";
-            });
-            btnContainer.appendChild(optionsBtn);
-            li.appendChild(btnContainer);
-            ul.appendChild(li);
-          });
-          box.appendChild(ul);
-          // Footer
-          const footerDiv = document.createElement("div");
-          footerDiv.classList.add("box-footer");
-          const addAssignmentBtn = document.createElement("button");
-          addAssignmentBtn.type = "button";
-          addAssignmentBtn.classList.add("add-assignment-btn");
-          addAssignmentBtn.textContent = "➕ Add Assignment";
-          addAssignmentBtn.addEventListener("click", function (e) {
-            e.stopPropagation();
-            currentClassIndex = classIndex;
-            document.getElementById("assignmentModal").style.display = "flex";
-          });
-          const sortBtn = document.createElement("button");
-          sortBtn.type = "button";
-          sortBtn.classList.add("sort-btn");
-          sortBtn.textContent = "Sort by Date";
-          sortBtn.addEventListener("click", function (e) {
-            e.stopPropagation();
-            classesData[classIndex].assignments.sort((a, b) => {
-              if (!a.dueDate && !b.dueDate) return 0;
-              if (!a.dueDate) return 1;
-              if (!b.dueDate) return -1;
-              return new Date(a.dueDate) - new Date(b.dueDate);
-            });
-            saveData();
-            renderView();
-          });
-          footerDiv.appendChild(addAssignmentBtn);
-          footerDiv.appendChild(sortBtn);
-          box.appendChild(footerDiv);
-          container.appendChild(box);
         });
-        checkDueDates();
-      }
-
-      /***** Modal Close Functions *****/
-      function closeClassModal(e) { if (e) e.preventDefault(); document.getElementById("classModal").style.display = "none"; }
-      function closeAssignmentModal(e) { 
-        if (e) e.preventDefault();
-        document.getElementById("assignmentModal").style.display = "none"; 
-        document.getElementById("assignment-text").value = "";
-        document.getElementById("assignment-date").value = "";
-        document.getElementById("assignment-link").value = "";
-      }
-      function closeEditAssignmentModal(e) { if (e) e.preventDefault(); document.getElementById("editAssignmentModal").style.display = "none"; }
-      function closeAssignmentOptionsModal(e) { if (e) e.preventDefault(); document.getElementById("assignmentOptionsModal").style.display = "none"; }
-      function closeCustomThemeModal(e) { if (e) e.preventDefault(); document.getElementById("customThemeModal").style.display = "none"; }
-      function closeConfirmModal(e) { if (e) e.preventDefault(); document.getElementById("confirmModal").style.display = "none"; confirmCallback = null; }
-      function closeSubtasksModal(e) { if (e) e.preventDefault(); document.getElementById("subtasksModal").style.display = "none"; saveData(); renderView(); }
-      function closeFontSettingsModal(e) { if (e) e.preventDefault(); document.getElementById("fontSettingsModal").style.display = "none"; }
-
-      /***** Add / Save Functions *****/
-      function addClass(e) {
-        if (e) e.preventDefault();
-        const name = document.getElementById("class-name").value.trim();
-        const icon = document.getElementById("class-icon").value;
-        if (name !== "") {
-          classesData.push({ icon: icon, name: name, assignments: [] });
-          saveData();
-          renderView();
-          closeClassModal();
-          document.getElementById("class-name").value = "";
-        }
-      }
-      function addAssignmentFromModal(e) {
-        if (e) e.preventDefault();
-        const text = document.getElementById("assignment-text").value.trim();
-        const date = document.getElementById("assignment-date").value;
-        const link = document.getElementById("assignment-link").value.trim();
-        if (text !== "") {
-          classesData[currentClassIndex].assignments.push({ text: text, dueDate: date || "", link: link, completed: false });
-          saveData();
-          renderView();
-          closeAssignmentModal();
-        }
-      }
-      function saveEditedAssignment(e) {
-        if (e) e.preventDefault();
-        const newText = document.getElementById("edit-assignment-text").value.trim();
-        const newDate = document.getElementById("edit-assignment-date").value;
-        const newLink = document.getElementById("edit-assignment-link").value.trim();
-        if (newText !== "") {
-          classesData[currentClassIndex].assignments[currentAssignmentIndex].text = newText;
-          classesData[currentClassIndex].assignments[currentAssignmentIndex].dueDate = newDate;
-          classesData[currentClassIndex].assignments[currentAssignmentIndex].link = newLink;
-          saveData();
-          renderView();
-          closeEditAssignmentModal();
-        }
-      }
-      function confirmDeleteAssignment() {
-        closeAssignmentOptionsModal();
-        openConfirmModal("Are you sure you want to delete this assignment?", function () {
-          classesData[currentClassIndex].assignments.splice(currentAssignmentIndex, 1);
-          saveData();
-          renderView();
+        footerDiv.appendChild(addAssignmentBtn);
+        footerDiv.appendChild(sortBtn);
+        box.appendChild(footerDiv);
+        container.appendChild(box);
+      });
+    }
+    function openClassModal(e) {
+      if (e) e.preventDefault();
+      document.getElementById("classModal").style.display = "flex";
+    }
+    function closeClassModal(e) {
+      if (e) e.preventDefault();
+      document.getElementById("classModal").style.display = "none";
+    }
+    function addClass(e) {
+      if (e) e.preventDefault();
+      const classNameInput = document.getElementById("class-name");
+      const classIconInput = document.getElementById("class-icon");
+      const className = classNameInput.value.trim();
+      if (className !== "") {
+        classesData.push({
+          icon: classIconInput.value,
+          name: className,
+          assignments: []
         });
+        saveData();
+        renderClasses();
+        closeClassModal();
+        classNameInput.value = "";
       }
-
-      /***** Font Settings *****/
-      function openFontSettingsModal(e) {
-        if (e) e.preventDefault();
-        document.getElementById("fontSettingsModal").style.display = "flex";
-        document.getElementById("fontSizeInput").value = parseInt(getComputedStyle(document.body).fontSize);
-      }
-      function saveFontSettings() {
-        const newSize = document.getElementById("fontSizeInput").value;
-        document.body.style.fontSize = newSize + "px";
-        localStorage.setItem("fontSize", newSize);
-        closeFontSettingsModal();
-      }
-      function loadFontSettings() {
-        const savedSize = localStorage.getItem("fontSize");
-        if (savedSize) document.body.style.fontSize = savedSize + "px";
-      }
-
-      /***** Drag-and-Drop Functions *****/
-      // (Already defined above in addDnDHandlers and related functions)
-
-      /***** Due Date Reminders *****/
-      function checkDueDates() {
-        if (!("Notification" in window)) return;
-        if (Notification.permission !== "granted") {
-          Notification.requestPermission();
-          return;
-        }
-        classesData.forEach(cls => {
-          cls.assignments.forEach(assignment => {
-            if (assignment.dueDate && !assignment.notified) {
-              const due = new Date(assignment.dueDate);
-              const now = new Date();
-              if (due < now || (due - now) < 86400000) {
-                new Notification("Assignment Reminder", {
-                  body: assignment.text + " is " + (due < now ? "overdue!" : "due soon!")
-                });
-                assignment.notified = true;
-                saveData();
-              }
-            }
-          });
+    }
+    function closeAssignmentModal(e) {
+      if (e) e.preventDefault();
+      document.getElementById("assignmentModal").style.display = "none";
+      document.getElementById("assignment-text").value = "";
+      document.getElementById("assignment-date").value = "";
+      document.getElementById("assignment-link").value = "";
+    }
+    function addAssignmentFromModal(e) {
+      if (e) e.preventDefault();
+      const assignmentInput = document.getElementById("assignment-text");
+      const dateInput = document.getElementById("assignment-date");
+      const linkInput = document.getElementById("assignment-link");
+      const assignmentText = assignmentInput.value.trim();
+      const assignmentLink = linkInput.value.trim();
+      if (assignmentText !== "") {
+        classesData[currentClassIndex].assignments.push({ 
+          text: assignmentText, 
+          dueDate: dateInput.value || "", 
+          link: assignmentLink,
+          completed: false 
         });
+        saveData();
+        renderClasses();
+        closeAssignmentModal();
       }
-
-      /***** Calendar View *****/
-      function renderCalendar() {
-        const container = document.getElementById("calendarView");
-        container.innerHTML = "";
-        const dateMap = {};
-        classesData.forEach(cls => {
-          cls.assignments.forEach(assignment => {
-            if (assignment.dueDate) {
-              const dateStr = assignment.dueDate;
-              if (!dateMap[dateStr]) dateMap[dateStr] = [];
-              dateMap[dateStr].push({
-                class: cls.name,
-                text: assignment.text,
-                link: assignment.link,
-                completed: assignment.completed
-              });
-            }
-          });
-        });
-        const dates = Object.keys(dateMap).sort((a, b) => new Date(a) - new Date(b));
-        dates.forEach(dateStr => {
-          const dateHeader = document.createElement("h3");
-          dateHeader.textContent = new Date(dateStr).toLocaleDateString();
-          container.appendChild(dateHeader);
-          const ul = document.createElement("ul");
-          dateMap[dateStr].forEach(item => {
-            const li = document.createElement("li");
-            li.textContent = `[${item.class}] ${item.text}` + (item.link ? " (link)" : "");
-            if (item.completed) li.style.textDecoration = "line-through";
-            ul.appendChild(li);
-          });
-          container.appendChild(ul);
-        });
+    }
+    function openAssignmentOptionsModal(classIndex, assignmentIndex) {
+      currentClassIndex = classIndex;
+      currentAssignmentIndex = assignmentIndex;
+      document.getElementById("assignmentOptionsModal").style.display = "flex";
+    }
+    function closeAssignmentOptionsModal(e) {
+      if (e) e.preventDefault();
+      document.getElementById("assignmentOptionsModal").style.display = "none";
+    }
+    function openEditAssignmentModal() {
+      closeAssignmentOptionsModal(null);
+      const assignment = classesData[currentClassIndex].assignments[currentAssignmentIndex];
+      document.getElementById("edit-assignment-text").value = assignment.text;
+      document.getElementById("edit-assignment-date").value = assignment.dueDate;
+      document.getElementById("edit-assignment-link").value = assignment.link || "";
+      document.getElementById("editAssignmentModal").style.display = "flex";
+    }
+    function closeEditAssignmentModal(e) {
+      if (e) e.preventDefault();
+      document.getElementById("editAssignmentModal").style.display = "none";
+    }
+    function saveEditedAssignment(e) {
+      if (e) e.preventDefault();
+      const newText = document.getElementById("edit-assignment-text").value.trim();
+      const newDate = document.getElementById("edit-assignment-date").value;
+      const newLink = document.getElementById("edit-assignment-link").value.trim();
+      if (newText !== "") {
+        classesData[currentClassIndex].assignments[currentAssignmentIndex].text = newText;
+        classesData[currentClassIndex].assignments[currentAssignmentIndex].dueDate = newDate;
+        classesData[currentClassIndex].assignments[currentAssignmentIndex].link = newLink;
+        saveData();
+        renderClasses();
+        closeEditAssignmentModal();
       }
-      function toggleCalendarView() {
-        calendarMode = !calendarMode;
-        renderView();
+    }
+    function confirmDeleteAssignment() {
+      closeAssignmentOptionsModal(null);
+      openConfirmModal("Are you sure you want to delete this assignment?", function() {
+        classesData[currentClassIndex].assignments.splice(currentAssignmentIndex, 1);
+        saveData();
+        renderClasses();
+      });
+    }
+    function openConfirmModal(message, callback) {
+      document.getElementById("confirmMessage").textContent = message;
+      confirmCallback = callback;
+      document.getElementById("confirmModal").style.display = "flex";
+    }
+    function closeConfirmModal(e) {
+      if (e) e.preventDefault();
+      document.getElementById("confirmModal").style.display = "none";
+      confirmCallback = null;
+    }
+    function confirmAction() {
+      if (confirmCallback) {
+        confirmCallback();
       }
-
-      /***** Rendering Views *****/
-      function renderView() {
-        if (calendarMode) {
-          document.getElementById("mainView").style.display = "none";
-          renderCalendar();
-          document.getElementById("calendarView").style.display = "flex";
-        } else {
-          document.getElementById("calendarView").style.display = "none";
-          renderClasses();
-          document.getElementById("mainView").style.display = "flex";
-        }
-        const searchTerm = getSearchTerm();
-        if (searchTerm) filterAssignments(searchTerm);
-      }
-
-      /***** Initialization *****/
-      loadData();
-      loadTheme();
-      loadCustomTheme();
-      loadFontSettings();
-      renderView();
-      checkDueDates();
-      setInterval(checkDueDates, 600000); // Check every 10 minutes
-    </script>
-  </body>
+      closeConfirmModal(null);
+    }
+    // Custom Theme Modal Controls
+    function openCustomThemeModal(e) {
+      if (e) e.preventDefault();
+      document.getElementById("customThemeModal").style.display = "flex";
+    }
+    function closeCustomThemeModal(e) {
+      if (e) e.preventDefault();
+      document.getElementById("customThemeModal").style.display = "none";
+    }
+    // Load saved data, theme, and custom theme on startup, then render classes.
+    loadData();
+    loadTheme();
+    loadCustomTheme();
+    renderClasses();
+  </script>
+</body>
 </html>
