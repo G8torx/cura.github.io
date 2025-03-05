@@ -13,7 +13,7 @@
       --bg-color: #121212;
       --text-color: #fff;
       --accent-color: #ffcc00;
-      --box-bg: #121212; /* Now matches the overall background */
+      --box-bg: #121212; /* Matches the overall background */
       --box-bg-hover: #121212;
       --box-shadow: none;
     }
@@ -69,7 +69,7 @@
       font-size: 2em;
       color: var(--accent-color);
     }
-    .theme-toggle, .add-class-btn, .customize-btn {
+    .customize-btn, .add-class-btn {
       background: var(--accent-color);
       border: none;
       border-radius: 5px;
@@ -80,7 +80,7 @@
       transition: background 0.3s;
       margin-left: 10px;
     }
-    .theme-toggle:hover, .add-class-btn:hover, .customize-btn:hover {
+    .customize-btn:hover, .add-class-btn:hover {
       background: #ffdb4d;
     }
     
@@ -305,7 +305,6 @@
   <header>
     <h1 style="padding-left: 30px;">Cura</h1>
     <div style="padding-right: 30px;">
-      <button type="button" class="theme-toggle" onclick="toggleTheme(event)">Toggle Theme</button>
       <button type="button" class="customize-btn" onclick="openCustomThemeModal(event)">Customize Theme</button>
       <button type="button" class="add-class-btn" onclick="openClassModal(event)">➕ Add Class</button>
     </div>
@@ -419,7 +418,7 @@
     let currentAssignmentIndex = null;
     let confirmCallback = null;
 
-    // Pre-made themes with updated values: box backgrounds now match the overall background.
+    // Pre-made themes with updated values.
     const preMadeThemes = {
       default: { bgColor: "#121212", textColor: "#fff", accentColor: "#ffcc00", boxBg: "#121212", boxBgHover: "#121212" },
       light:   { bgColor: "#f0f0f0", textColor: "#333", accentColor: "#ffcc00", boxBg: "#f0f0f0", boxBgHover: "#f0f0f0" },
@@ -607,12 +606,6 @@
         box.appendChild(footerDiv);
         container.appendChild(box);
       });
-    }
-    function toggleTheme(e) {
-      if (e) e.preventDefault();
-      document.documentElement.classList.toggle("light");
-      const theme = document.documentElement.classList.contains("light") ? "light" : "dark";
-      saveTheme(theme);
     }
     function openClassModal(e) {
       if (e) e.preventDefault();
