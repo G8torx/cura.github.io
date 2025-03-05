@@ -26,7 +26,7 @@
       --box-bg-hover: #f9f9f9;
       --box-shadow: none;
     }
-    /* Apply smooth transitions to elements that use the theme colors */
+    /* Apply smooth transitions */
     body, header, .box, .modal-content, ul, li, .progress-indicator {
       transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease;
     }
@@ -72,7 +72,12 @@
       font-size: 2em;
       color: var(--accent-color);
     }
-    .customize-btn, .add-class-btn {
+    /* Header buttons */
+    .header-buttons {
+      display: flex;
+      gap: 10px;
+    }
+    .header-buttons button {
       background: var(--accent-color);
       border: none;
       border-radius: 5px;
@@ -81,9 +86,8 @@
       color: var(--bg-color);
       cursor: pointer;
       transition: filter 0.3s;
-      margin-left: 10px;
     }
-    .customize-btn:hover, .add-class-btn:hover {
+    .header-buttons button:hover {
       filter: brightness(130%);
     }
     
@@ -178,7 +182,7 @@
       gap: 10px;
       margin-top: 10px;
     }
-    .add-assignment-btn, .sort-btn {
+    .box-footer button {
       padding: 8px 14px;
       font-size: 0.9em;
       border-radius: 6px;
@@ -188,7 +192,7 @@
       cursor: pointer;
       transition: filter 0.3s, transform 0.3s;
     }
-    .add-assignment-btn:hover, .sort-btn:hover {
+    .box-footer button:hover {
       filter: brightness(130%);
       transform: scale(1.05);
     }
@@ -242,46 +246,7 @@
       font-size: 1.5em;
       cursor: pointer;
     }
-    .edit-btn-modal {
-      background: var(--accent-color);
-      color: var(--bg-color);
-      border: none;
-      border-radius: 10px;
-      padding: 10px 20px;
-      cursor: pointer;
-      margin: 5px;
-      transition: filter 0.3s;
-    }
-    .edit-btn-modal:hover {
-      filter: brightness(130%);
-    }
-    .delete-btn-modal {
-      background: red;
-      color: var(--bg-color);
-      border: none;
-      border-radius: 10px;
-      padding: 10px 20px;
-      cursor: pointer;
-      margin: 5px;
-      transition: filter 0.3s;
-    }
-    .delete-btn-modal:hover {
-      filter: brightness(130%);
-    }
-    .cancel-btn {
-      background: var(--accent-color);
-      color: var(--bg-color);
-      border: none;
-      border-radius: 10px;
-      padding: 10px 20px;
-      cursor: pointer;
-      margin: 5px;
-      transition: filter 0.3s;
-    }
-    .cancel-btn:hover {
-      filter: brightness(130%);
-    }
-
+    
     /* Pre-made Theme Options Styling */
     #themeOptions {
       display: flex;
@@ -303,15 +268,22 @@
   </style>
 </head>
 <body>
-  <!-- Header -->
+  <!-- HEADER with an added Calendar View toggle button -->
   <header>
     <h1 style="padding-left: 30px;">Cura</h1>
-    <div style="padding-right: 30px;">
-      <button type="button" class="customize-btn" onclick="openCustomThemeModal(event)">Theme</button>
+    <div class="header-buttons" style="padding-right: 30px;">
+      <button type="button" class="customize-btn" onclick="openCustomThemeModal(event)">Customize Theme</button>
       <button type="button" class="add-class-btn" onclick="openClassModal(event)">➕ Add Class</button>
+      <button type="button" onclick="toggleCalendarView()">Calendar View</button>
     </div>
   </header>
 
+  <!-- Container for Class Boxes (List View) -->
+  <div class="container" id="class-container"></div>
+  <!-- Container for Calendar View; hidden by default -->
+  <div class="container" id="calendar-container" style="display: none;"></div>
+
+  <!-- (Keep your modals unchanged) -->
   <!-- Modal for Adding a New Class -->
   <div class="modal" id="classModal">
     <div class="modal-content">
@@ -398,7 +370,7 @@
     </div>
   </div>
 
-  <!-- Custom Confirmation Modal -->
+  <!-- Modal for Custom Confirmation -->
   <div class="modal" id="confirmModal">
     <div class="modal-content">
       <span class="close-button" onclick="closeConfirmModal(event)">&times;</span>
@@ -411,16 +383,18 @@
     </div>
   </div>
 
-  <!-- Container for Class Boxes -->
+  <!-- Containers for Views -->
   <div class="container" id="class-container"></div>
+  <div class="container" id="calendar-container" style="display:none;"></div>
 
   <script>
     let classesData = [];
     let currentClassIndex = null;
     let currentAssignmentIndex = null;
     let confirmCallback = null;
+    let calendarMode = false;
 
-    // Pre-made themes with distinct box backgrounds.
+    // Pre-made themes.
     const preMadeThemes = {
       default: { 
         bgColor: "#121212", 
@@ -480,16 +454,13 @@
       }
     };
 
-    // Save classesData to localStorage.
+    /* --- Local Storage Functions --- */
     function saveData() {
       localStorage.setItem("classesData", JSON.stringify(classesData));
     }
-    // Load classesData from localStorage.
     function loadData() {
       const storedData = localStorage.getItem("classesData");
-      if (storedData) {
-        classesData = JSON.parse(storedData);
-      }
+      if (storedData) classesData = JSON.parse(storedData);
     }
     function saveTheme(theme) {
       localStorage.setItem("theme", theme);
@@ -502,7 +473,6 @@
         document.documentElement.classList.remove("light");
       }
     }
-    // Load custom theme if saved.
     function loadCustomTheme() {
       const savedCustom = localStorage.getItem("customTheme");
       if (savedCustom) {
@@ -512,7 +482,8 @@
         }
       }
     }
-    // Apply a pre-made theme by updating CSS variables.
+
+    /* --- Theme Functions --- */
     function applyPreMadeTheme(themeKey) {
       const theme = preMadeThemes[themeKey];
       if (theme) {
@@ -521,48 +492,35 @@
         document.documentElement.style.setProperty("--accent-color", theme.accentColor);
         document.documentElement.style.setProperty("--box-bg", theme.boxBg);
         document.documentElement.style.setProperty("--box-bg-hover", theme.boxBgHover);
-        localStorage.setItem("customTheme", JSON.stringify({themeKey: themeKey}));
+        localStorage.setItem("customTheme", JSON.stringify({ themeKey: themeKey }));
       }
     }
-    // Format a date string.
-    function formatDate(dateString) {
-      const [year, month, day] = dateString.split('-');
-      const localDate = new Date(year, month - 1, day);
-      const options = { weekday: 'short', month: 'numeric', day: 'numeric' };
-      return localDate.toLocaleDateString('en-US', options);
-    }
-    // Check if due date is overdue.
-    function isOverdue(dueDateValue) {
-      if (!dueDateValue) return false;
-      let dueDate = new Date(dueDateValue);
-      dueDate.setHours(23, 59, 59, 999);
-      return dueDate < new Date();
-    }
-    // Render classes and assignments.
+
+    /* --- Rendering Functions --- */
     function renderClasses() {
-      const container = document.getElementById('class-container');
+      const container = document.getElementById("class-container");
       container.innerHTML = "";
       classesData.forEach((cls, classIndex) => {
-        const box = document.createElement('div');
-        box.classList.add('box');
+        const box = document.createElement("div");
+        box.classList.add("box");
         // Header
-        const headerDiv = document.createElement('div');
-        headerDiv.classList.add('box-header');
-        const headerTop = document.createElement('div');
-        headerTop.classList.add('header-top');
-        const title = document.createElement('h2');
+        const headerDiv = document.createElement("div");
+        headerDiv.classList.add("box-header");
+        const headerTop = document.createElement("div");
+        headerTop.classList.add("header-top");
+        const title = document.createElement("h2");
         title.textContent = `${cls.icon} ${cls.name}`;
-        const deleteClassBtn = document.createElement('button');
+        const deleteClassBtn = document.createElement("button");
         deleteClassBtn.type = "button";
-        deleteClassBtn.classList.add('delete-class-btn');
+        deleteClassBtn.classList.add("delete-class-btn");
         deleteClassBtn.textContent = "🗑️";
         deleteClassBtn.title = "Delete Class";
-        deleteClassBtn.addEventListener('click', function(e) {
+        deleteClassBtn.addEventListener("click", function(e) {
           e.stopPropagation();
           openConfirmModal(`Are you sure you want to delete the ${cls.name} class?`, function() {
             classesData.splice(classIndex, 1);
             saveData();
-            renderClasses();
+            renderView();
           });
         });
         headerTop.appendChild(title);
@@ -570,77 +528,79 @@
         const total = cls.assignments.length;
         const completed = cls.assignments.filter(a => a.completed).length;
         const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
-        const progress = document.createElement('p');
-        progress.classList.add('progress-indicator');
+        const progress = document.createElement("p");
+        progress.classList.add("progress-indicator");
         progress.textContent = `${completed}/${total} Completed (${percent}%)`;
         headerDiv.appendChild(headerTop);
         headerDiv.appendChild(progress);
         box.appendChild(headerDiv);
-        // List assignments.
-        const ul = document.createElement('ul');
+        // List assignments
+        const ul = document.createElement("ul");
         cls.assignments.forEach((assignment, assignmentIndex) => {
-          const li = document.createElement('li');
-          const assignmentContainer = document.createElement('div');
-          assignmentContainer.style.display = 'flex';
-          assignmentContainer.style.flexDirection = 'column';
-          const assignmentText = document.createElement('span');
+          const li = document.createElement("li");
+          const assignmentContainer = document.createElement("div");
+          assignmentContainer.style.display = "flex";
+          assignmentContainer.style.flexDirection = "column";
+          const assignmentText = document.createElement("span");
           assignmentText.textContent = assignment.text + (assignment.dueDate ? " → " + formatDate(assignment.dueDate) : "");
           assignmentContainer.appendChild(assignmentText);
           if (assignment.link) {
-            const linkAnchor = document.createElement('a');
+            const linkAnchor = document.createElement("a");
             linkAnchor.href = assignment.link;
             linkAnchor.target = "_blank";
             linkAnchor.textContent = "link";
             linkAnchor.style.color = "lightgray";
             linkAnchor.style.fontSize = "0.8em";
             linkAnchor.style.textDecoration = "underline";
-            linkAnchor.addEventListener('click', function(e) {
+            linkAnchor.addEventListener("click", function(e) {
               e.stopPropagation();
             });
             assignmentContainer.appendChild(linkAnchor);
           }
           li.appendChild(assignmentContainer);
-          if (assignment.completed) li.classList.add('completed');
-          if (assignment.dueDate && isOverdue(assignment.dueDate)) li.classList.add('overdue');
-          li.addEventListener('click', function(e) {
-            if (e.target.tagName !== 'BUTTON') {
+          if (assignment.completed) li.classList.add("completed");
+          if (assignment.dueDate && isOverdue(assignment.dueDate)) li.classList.add("overdue");
+          li.addEventListener("click", function(e) {
+            if (e.target.tagName !== "BUTTON") {
               assignment.completed = !assignment.completed;
               saveData();
-              renderClasses();
+              renderView();
             }
           });
-          const btnContainer = document.createElement('div');
-          const optionsBtn = document.createElement('button');
+          const btnContainer = document.createElement("div");
+          const optionsBtn = document.createElement("button");
           optionsBtn.type = "button";
-          optionsBtn.classList.add('options-btn');
+          optionsBtn.classList.add("options-btn");
           optionsBtn.textContent = "⋮";
           optionsBtn.title = "Options";
-          optionsBtn.addEventListener('click', function(e) {
+          optionsBtn.addEventListener("click", function(e) {
             e.stopPropagation();
-            openAssignmentOptionsModal(classIndex, assignmentIndex);
+            currentClassIndex = classIndex;
+            currentAssignmentIndex = assignmentIndex;
+            document.getElementById("assignmentOptionsModal").style.display = "flex";
           });
           btnContainer.appendChild(optionsBtn);
           li.appendChild(btnContainer);
           ul.appendChild(li);
         });
         box.appendChild(ul);
-        // Footer with buttons.
-        const footerDiv = document.createElement('div');
-        footerDiv.classList.add('box-footer');
-        const addAssignmentBtn = document.createElement('button');
+        // Footer
+        const footerDiv = document.createElement("div");
+        footerDiv.classList.add("box-footer");
+        const addAssignmentBtn = document.createElement("button");
         addAssignmentBtn.type = "button";
-        addAssignmentBtn.classList.add('add-assignment-btn');
+        addAssignmentBtn.classList.add("add-assignment-btn");
         addAssignmentBtn.textContent = "➕ Add Assignment";
-        addAssignmentBtn.addEventListener('click', function(e) {
+        addAssignmentBtn.addEventListener("click", function(e) {
           e.stopPropagation();
           currentClassIndex = classIndex;
           document.getElementById("assignmentModal").style.display = "flex";
         });
-        const sortBtn = document.createElement('button');
+        const sortBtn = document.createElement("button");
         sortBtn.type = "button";
-        sortBtn.classList.add('sort-btn');
+        sortBtn.classList.add("sort-btn");
         sortBtn.textContent = "Sort by Date";
-        sortBtn.addEventListener('click', function(e) {
+        sortBtn.addEventListener("click", function(e) {
           e.stopPropagation();
           classesData[classIndex].assignments.sort((a, b) => {
             if (!a.dueDate && !b.dueDate) return 0;
@@ -649,138 +609,297 @@
             return new Date(a.dueDate) - new Date(b.dueDate);
           });
           saveData();
-          renderClasses();
+          renderView();
         });
         footerDiv.appendChild(addAssignmentBtn);
         footerDiv.appendChild(sortBtn);
         box.appendChild(footerDiv);
         container.appendChild(box);
       });
+      checkDueDates();
     }
-    function openClassModal(e) {
-      if (e) e.preventDefault();
-      document.getElementById("classModal").style.display = "flex";
-    }
-    function closeClassModal(e) {
-      if (e) e.preventDefault();
-      document.getElementById("classModal").style.display = "none";
-    }
-    function addClass(e) {
-      if (e) e.preventDefault();
-      const classNameInput = document.getElementById("class-name");
-      const classIconInput = document.getElementById("class-icon");
-      const className = classNameInput.value.trim();
-      if (className !== "") {
-        classesData.push({
-          icon: classIconInput.value,
-          name: className,
-          assignments: []
+
+    function renderCalendar() {
+      const container = document.getElementById("calendar-container");
+      container.innerHTML = "";
+      const dateMap = {};
+      classesData.forEach(cls => {
+        cls.assignments.forEach(assignment => {
+          if (assignment.dueDate) {
+            if (!dateMap[assignment.dueDate]) dateMap[assignment.dueDate] = [];
+            dateMap[assignment.dueDate].push({
+              className: cls.name,
+              text: assignment.text,
+              completed: assignment.completed
+            });
+          }
         });
-        saveData();
-        renderClasses();
-        closeClassModal();
-        classNameInput.value = "";
-      }
+      });
+      const dates = Object.keys(dateMap).sort((a, b) => new Date(a) - new Date(b));
+      dates.forEach(dateStr => {
+        const header = document.createElement("h3");
+        header.textContent = new Date(dateStr).toLocaleDateString();
+        container.appendChild(header);
+        const ul = document.createElement("ul");
+        dateMap[dateStr].forEach(item => {
+          const li = document.createElement("li");
+          li.textContent = `[${item.className}] ${item.text}`;
+          if (item.completed) li.style.textDecoration = "line-through";
+          ul.appendChild(li);
+        });
+        container.appendChild(ul);
+      });
     }
-    function closeAssignmentModal(e) {
-      if (e) e.preventDefault();
-      document.getElementById("assignmentModal").style.display = "none";
+
+    function toggleCalendarView() {
+      calendarMode = !calendarMode;
+      renderView();
+    }
+
+    function renderView() {
+      if (calendarMode) {
+        document.getElementById("class-container").style.display = "none";
+        renderCalendar();
+        document.getElementById("calendar-container").style.display = "flex";
+      } else {
+        document.getElementById("calendar-container").style.display = "none";
+        renderClasses();
+        document.getElementById("class-container").style.display = "flex";
+      }
+      const term = getSearchTerm();
+      if (term) filterAssignments(term);
+    }
+
+    /* --- Modal Close Functions --- */
+    function closeClassModal(e) { if(e) e.preventDefault(); document.getElementById("classModal").style.display = "none"; }
+    function closeAssignmentModal(e) { 
+      if(e) e.preventDefault();
+      document.getElementById("assignmentModal").style.display = "none"; 
       document.getElementById("assignment-text").value = "";
       document.getElementById("assignment-date").value = "";
       document.getElementById("assignment-link").value = "";
     }
-    function addAssignmentFromModal(e) {
-      if (e) e.preventDefault();
-      const assignmentInput = document.getElementById("assignment-text");
-      const dateInput = document.getElementById("assignment-date");
-      const linkInput = document.getElementById("assignment-link");
-      const assignmentText = assignmentInput.value.trim();
-      const assignmentLink = linkInput.value.trim();
-      if (assignmentText !== "") {
-        classesData[currentClassIndex].assignments.push({ 
-          text: assignmentText, 
-          dueDate: dateInput.value || "", 
-          link: assignmentLink,
-          completed: false 
-        });
+    function closeEditAssignmentModal(e) { if(e) e.preventDefault(); document.getElementById("editAssignmentModal").style.display = "none"; }
+    function closeAssignmentOptionsModal(e) { if(e) e.preventDefault(); document.getElementById("assignmentOptionsModal").style.display = "none"; }
+    function closeCustomThemeModal(e) { if(e) e.preventDefault(); document.getElementById("customThemeModal").style.display = "none"; }
+    function closeConfirmModal(e) { if(e) e.preventDefault(); document.getElementById("confirmModal").style.display = "none"; confirmCallback = null; }
+
+    /* --- Modal Add/Save Functions --- */
+    function addClass(e) {
+      if(e) e.preventDefault();
+      const name = document.getElementById("class-name").value.trim();
+      const icon = document.getElementById("class-icon").value;
+      if(name !== "") {
+        classesData.push({ icon: icon, name: name, assignments: [] });
         saveData();
-        renderClasses();
+        renderView();
+        closeClassModal();
+        document.getElementById("class-name").value = "";
+      }
+    }
+    function addAssignmentFromModal(e) {
+      if(e) e.preventDefault();
+      const text = document.getElementById("assignment-text").value.trim();
+      const date = document.getElementById("assignment-date").value;
+      const link = document.getElementById("assignment-link").value.trim();
+      if(text !== "") {
+        classesData[currentClassIndex].assignments.push({ text: text, dueDate: date || "", link: link, completed: false });
+        saveData();
+        renderView();
         closeAssignmentModal();
       }
     }
-    function openAssignmentOptionsModal(classIndex, assignmentIndex) {
-      currentClassIndex = classIndex;
-      currentAssignmentIndex = assignmentIndex;
-      document.getElementById("assignmentOptionsModal").style.display = "flex";
-    }
-    function closeAssignmentOptionsModal(e) {
-      if (e) e.preventDefault();
-      document.getElementById("assignmentOptionsModal").style.display = "none";
-    }
-    function openEditAssignmentModal() {
-      closeAssignmentOptionsModal(null);
-      const assignment = classesData[currentClassIndex].assignments[currentAssignmentIndex];
-      document.getElementById("edit-assignment-text").value = assignment.text;
-      document.getElementById("edit-assignment-date").value = assignment.dueDate;
-      document.getElementById("edit-assignment-link").value = assignment.link || "";
-      document.getElementById("editAssignmentModal").style.display = "flex";
-    }
-    function closeEditAssignmentModal(e) {
-      if (e) e.preventDefault();
-      document.getElementById("editAssignmentModal").style.display = "none";
-    }
     function saveEditedAssignment(e) {
-      if (e) e.preventDefault();
+      if(e) e.preventDefault();
       const newText = document.getElementById("edit-assignment-text").value.trim();
       const newDate = document.getElementById("edit-assignment-date").value;
       const newLink = document.getElementById("edit-assignment-link").value.trim();
-      if (newText !== "") {
+      if(newText !== "") {
         classesData[currentClassIndex].assignments[currentAssignmentIndex].text = newText;
         classesData[currentClassIndex].assignments[currentAssignmentIndex].dueDate = newDate;
         classesData[currentClassIndex].assignments[currentAssignmentIndex].link = newLink;
         saveData();
-        renderClasses();
+        renderView();
         closeEditAssignmentModal();
       }
     }
     function confirmDeleteAssignment() {
-      closeAssignmentOptionsModal(null);
+      closeAssignmentOptionsModal();
       openConfirmModal("Are you sure you want to delete this assignment?", function() {
         classesData[currentClassIndex].assignments.splice(currentAssignmentIndex, 1);
         saveData();
-        renderClasses();
+        renderView();
       });
     }
-    function openConfirmModal(message, callback) {
-      document.getElementById("confirmMessage").textContent = message;
-      confirmCallback = callback;
-      document.getElementById("confirmModal").style.display = "flex";
+
+    /* --- Search Functions --- */
+    function getSearchTerm() {
+      return document.getElementById("searchInput").value.toLowerCase();
     }
-    function closeConfirmModal(e) {
-      if (e) e.preventDefault();
-      document.getElementById("confirmModal").style.display = "none";
-      confirmCallback = null;
+    function filterAssignments(term) {
+      term = term.toLowerCase();
+      renderClasses();
+      const ulLists = document.querySelectorAll("#class-container ul");
+      ulLists.forEach(ul => {
+        Array.from(ul.children).forEach(li => {
+          const text = li.innerText.toLowerCase();
+          li.style.display = text.indexOf(term) === -1 ? "none" : "";
+        });
+      });
     }
-    function confirmAction() {
-      if (confirmCallback) {
-        confirmCallback();
+    document.getElementById("searchInput").addEventListener("input", function() {
+      filterAssignments(this.value);
+    });
+
+    /* --- Export/Import Functions --- */
+    function exportData() {
+      const dataStr = JSON.stringify(classesData, null, 2);
+      const blob = new Blob([dataStr], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "classesData.json";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+    function importData(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          classesData = JSON.parse(e.target.result);
+          saveData();
+          renderView();
+        } catch (err) {
+          alert("Invalid file format.");
+        }
       }
-      closeConfirmModal(null);
+      reader.readAsText(file);
     }
-    // Custom Theme Modal Controls
-    function openCustomThemeModal(e) {
-      if (e) e.preventDefault();
-      document.getElementById("customThemeModal").style.display = "flex";
+
+    /* --- Drag-and-Drop Reordering --- */
+    let dragSrcEl = null;
+    function handleDragStart(e) {
+      dragSrcEl = this;
+      e.dataTransfer.effectAllowed = "move";
+      e.dataTransfer.setData("text/plain", "");
+      this.classList.add("dragElem");
     }
-    function closeCustomThemeModal(e) {
-      if (e) e.preventDefault();
-      document.getElementById("customThemeModal").style.display = "none";
+    function handleDragOver(e) {
+      if (e.preventDefault) e.preventDefault();
+      this.classList.add("over");
+      e.dataTransfer.dropEffect = "move";
+      return false;
     }
-    // Load saved data, theme, and custom theme on startup, then render classes.
+    function handleDragLeave(e) {
+      this.classList.remove("over");
+    }
+    function handleDrop(e) {
+      if (e.stopPropagation) e.stopPropagation();
+      if (dragSrcEl !== this) {
+        const parent = this.parentNode;
+        const nodes = Array.from(parent.children);
+        const srcIndex = nodes.indexOf(dragSrcEl);
+        const destIndex = nodes.indexOf(this);
+        const assignments = classesData[currentClassIndex].assignments;
+        const moved = assignments.splice(srcIndex, 1)[0];
+        assignments.splice(destIndex, 0, moved);
+        saveData();
+        renderView();
+      }
+      return false;
+    }
+    function addDnDHandlers(li) {
+      li.setAttribute("draggable", "true");
+      li.addEventListener("dragstart", handleDragStart, false);
+      li.addEventListener("dragover", handleDragOver, false);
+      li.addEventListener("dragleave", handleDragLeave, false);
+      li.addEventListener("drop", handleDrop, false);
+    }
+
+    /* --- Due Date Reminders --- */
+    function checkDueDates() {
+      if (!("Notification" in window)) return;
+      if (Notification.permission !== "granted") {
+        Notification.requestPermission();
+        return;
+      }
+      classesData.forEach(cls => {
+        cls.assignments.forEach(assignment => {
+          if (assignment.dueDate && !assignment.notified) {
+            const due = new Date(assignment.dueDate);
+            const now = new Date();
+            if (due < now || (due - now) < 86400000) {
+              new Notification("Assignment Reminder", {
+                body: assignment.text + " is " + (due < now ? "overdue!" : "due soon!")
+              });
+              assignment.notified = true;
+              saveData();
+            }
+          }
+        });
+      });
+    }
+
+    /* --- Calendar View --- */
+    function renderCalendar() {
+      const container = document.getElementById("calendar-container");
+      container.innerHTML = "";
+      const dateMap = {};
+      classesData.forEach(cls => {
+        cls.assignments.forEach(assignment => {
+          if (assignment.dueDate) {
+            if (!dateMap[assignment.dueDate]) dateMap[assignment.dueDate] = [];
+            dateMap[assignment.dueDate].push({
+              className: cls.name,
+              text: assignment.text,
+              completed: assignment.completed
+            });
+          }
+        });
+      });
+      const dates = Object.keys(dateMap).sort((a, b) => new Date(a) - new Date(b));
+      dates.forEach(dateStr => {
+        const header = document.createElement("h3");
+        header.textContent = new Date(dateStr).toLocaleDateString();
+        container.appendChild(header);
+        const ul = document.createElement("ul");
+        dateMap[dateStr].forEach(item => {
+          const li = document.createElement("li");
+          li.textContent = `[${item.className}] ${item.text}`;
+          if (item.completed) li.style.textDecoration = "line-through";
+          ul.appendChild(li);
+        });
+        container.appendChild(ul);
+      });
+    }
+    function toggleCalendarView() {
+      calendarMode = !calendarMode;
+      renderView();
+    }
+
+    /* --- Rendering Views --- */
+    function renderView() {
+      if (calendarMode) {
+        document.getElementById("class-container").style.display = "none";
+        renderCalendar();
+        document.getElementById("calendar-container").style.display = "flex";
+      } else {
+        document.getElementById("calendar-container").style.display = "none";
+        renderClasses();
+        document.getElementById("class-container").style.display = "flex";
+      }
+      const term = getSearchTerm();
+      if (term) filterAssignments(term);
+    }
+
+    /* --- Initialization --- */
     loadData();
     loadTheme();
     loadCustomTheme();
-    renderClasses();
+    renderView();
+    checkDueDates();
   </script>
 </body>
 </html>
