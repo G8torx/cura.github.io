@@ -342,6 +342,9 @@
       <br />
       <input type="date" id="assignment-date" />
       <br />
+      <!-- New input for assignment link -->
+      <input type="url" id="assignment-link" placeholder="Enter assignment link (optional)..." />
+      <br />
       <button type="button" class="add-class-btn" onclick="addAssignmentFromModal(event)">Add Assignment</button>
     </div>
   </div>
@@ -354,6 +357,9 @@
       <input type="text" id="edit-assignment-text" placeholder="Edit assignment details..." />
       <br />
       <input type="date" id="edit-assignment-date" />
+      <br />
+      <!-- New input for editing assignment link -->
+      <input type="url" id="edit-assignment-link" placeholder="Enter assignment link (optional)..." />
       <br />
       <button type="button" class="add-class-btn" onclick="saveEditedAssignment(event)">Save Changes</button>
     </div>
@@ -489,11 +495,27 @@
         const ul = document.createElement('ul');
         cls.assignments.forEach((assignment, assignmentIndex) => {
           const li = document.createElement('li');
-          let displayText = assignment.text;
-          if (assignment.dueDate) {
-            displayText += " → " + formatDate(assignment.dueDate);
+          
+          // Create a container for assignment text/link
+          const assignmentContainer = document.createElement('span');
+          if (assignment.link) {
+              const anchor = document.createElement('a');
+              anchor.href = assignment.link;
+              anchor.target = "_blank";
+              anchor.textContent = assignment.text;
+              // Prevent toggling completion when clicking the link
+              anchor.addEventListener('click', function(e) {
+                e.stopPropagation();
+              });
+              assignmentContainer.appendChild(anchor);
+          } else {
+              assignmentContainer.textContent = assignment.text;
           }
-          li.innerHTML = displayText;
+          if (assignment.dueDate) {
+              assignmentContainer.appendChild(document.createTextNode(" → " + formatDate(assignment.dueDate)));
+          }
+          li.appendChild(assignmentContainer);
+
           if (assignment.completed) li.classList.add('completed');
           if (assignment.dueDate && isOverdue(assignment.dueDate)) li.classList.add('overdue');
 
@@ -616,16 +638,20 @@
       document.getElementById("assignmentModal").style.display = "none";
       document.getElementById("assignment-text").value = "";
       document.getElementById("assignment-date").value = "";
+      document.getElementById("assignment-link").value = "";
     }
     function addAssignmentFromModal(e) {
       if (e) e.preventDefault();
       const assignmentInput = document.getElementById("assignment-text");
       const dateInput = document.getElementById("assignment-date");
+      const linkInput = document.getElementById("assignment-link");
       const assignmentText = assignmentInput.value.trim();
+      const assignmentLink = linkInput.value.trim();
       if (assignmentText !== "") {
         classesData[currentClassIndex].assignments.push({ 
           text: assignmentText, 
           dueDate: dateInput.value || "", 
+          link: assignmentLink,
           completed: false 
         });
         saveData();
@@ -651,6 +677,7 @@
       const assignment = classesData[currentClassIndex].assignments[currentAssignmentIndex];
       document.getElementById("edit-assignment-text").value = assignment.text;
       document.getElementById("edit-assignment-date").value = assignment.dueDate;
+      document.getElementById("edit-assignment-link").value = assignment.link || "";
       document.getElementById("editAssignmentModal").style.display = "flex";
     }
     function closeEditAssignmentModal(e) {
@@ -661,9 +688,12 @@
       if (e) e.preventDefault();
       const newText = document.getElementById("edit-assignment-text").value.trim();
       const newDate = document.getElementById("edit-assignment-date").value;
+      const editLinkInput = document.getElementById("edit-assignment-link");
+      const newLink = editLinkInput.value.trim();
       if (newText !== "") {
         classesData[currentClassIndex].assignments[currentAssignmentIndex].text = newText;
         classesData[currentClassIndex].assignments[currentAssignmentIndex].dueDate = newDate;
+        classesData[currentClassIndex].assignments[currentAssignmentIndex].link = newLink;
         saveData();
         renderClasses();
         closeEditAssignmentModal();
@@ -705,4 +735,3 @@
   </script>
 </body>
 </html>
-
