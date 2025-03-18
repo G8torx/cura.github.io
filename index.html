@@ -14,7 +14,7 @@
       --text-color: #fff;
       --accent-color: #ffcc00;
       --box-bg: #1e1e1e;
-      --box-bg-hover: #2a2b2e;
+      --box-bg-hover: #2a2a2e;
       --box-shadow: none;
     }
     /* Light Mode Variables (if activated by theme presets) */
@@ -26,11 +26,11 @@
       --box-bg-hover: #f9f9f9;
       --box-shadow: none;
     }
-    /* Apply smooth transitions to elements that use the theme colors */
+    /* Smooth transitions */
     body, header, .box, .modal-content, ul, li, .progress-indicator {
       transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease;
     }
-    /* Force the options button text to be white in dark mode */
+    /* Force options button text to be white in dark mode */
     html:not(.light) .options-btn {
       color: #fff;
     }
@@ -242,52 +242,16 @@
       font-size: 1.5em;
       cursor: pointer;
     }
-    .edit-btn-modal {
-      background: var(--accent-color);
-      color: var(--bg-color);
-      border: none;
-      border-radius: 10px;
-      padding: 10px 20px;
-      cursor: pointer;
-      margin: 5px;
-      transition: filter 0.3s;
-    }
-    .edit-btn-modal:hover {
-      filter: brightness(130%);
-    }
-    .delete-btn-modal {
-      background: red;
-      color: var(--bg-color);
-      border: none;
-      border-radius: 10px;
-      padding: 10px 20px;
-      cursor: pointer;
-      margin: 5px;
-      transition: filter 0.3s;
-    }
-    .delete-btn-modal:hover {
-      filter: brightness(130%);
-    }
-    .cancel-btn {
-      background: var(--accent-color);
-      color: var(--bg-color);
-      border: none;
-      border-radius: 10px;
-      padding: 10px 20px;
-      cursor: pointer;
-      margin: 5px;
-      transition: filter 0.3s;
-    }
-    .cancel-btn:hover {
-      filter: brightness(130%);
-    }
-
-    /* Pre-made Theme Options Styling */
+    
+    /* Pre-made Theme Options Styling (with scrollable container) */
     #themeOptions {
       display: flex;
       flex-direction: column;
       gap: 10px;
       margin: 20px 0;
+      max-height: 300px;
+      overflow-y: auto;
+      padding-right: 10px;
     }
     .theme-option-btn {
       padding: 10px;
@@ -384,6 +348,7 @@
       <span class="close-button" onclick="closeCustomThemeModal(event)">&times;</span>
       <h2>Choose a Theme</h2>
       <div id="themeOptions">
+        <!-- Original Themes -->
         <button type="button" class="theme-option-btn" style="background: #121212; color: #fff;" onclick="applyPreMadeTheme('default')">Default</button>
         <button type="button" class="theme-option-btn" style="background: #f0f0f0; color: #333;" onclick="applyPreMadeTheme('light')">Light</button>
         <button type="button" class="theme-option-btn" style="background: #1B2B34; color: #C0C5CE;" onclick="applyPreMadeTheme('ocean')">Ocean</button>
@@ -392,6 +357,15 @@
         <button type="button" class="theme-option-btn" style="background: #000000; color: #E0E0E0;" onclick="applyPreMadeTheme('midnight')">Midnight</button>
         <button type="button" class="theme-option-btn" style="background: #ffe4e1; color: #800000;" onclick="applyPreMadeTheme('rose')">Rose</button>
         <button type="button" class="theme-option-btn" style="background: #ffefd5; color: #ff1493;" onclick="applyPreMadeTheme('candy')">Candy</button>
+        <!-- Additional Themes -->
+        <button type="button" class="theme-option-btn" style="background: #002b36; color: #839496;" onclick="applyPreMadeTheme('solarizedDark')">Solarized Dark</button>
+        <button type="button" class="theme-option-btn" style="background: #fdf6e3; color: #657b83;" onclick="applyPreMadeTheme('solarizedLight')">Solarized Light</button>
+        <button type="button" class="theme-option-btn" style="background: #282a36; color: #f8f8f2;" onclick="applyPreMadeTheme('dracula')">Dracula</button>
+        <button type="button" class="theme-option-btn" style="background: #272822; color: #f8f8f2;" onclick="applyPreMadeTheme('monokai')">Monokai</button>
+        <button type="button" class="theme-option-btn" style="background: #ffd1dc; color: #5d576b;" onclick="applyPreMadeTheme('pastel')">Pastel</button>
+        <button type="button" class="theme-option-btn" style="background: #0f0f0f; color: #ffffff;" onclick="applyPreMadeTheme('neon')">Neon</button>
+        <button type="button" class="theme-option-btn" style="background: #f5f5dc; color: #4b4b4b;" onclick="applyPreMadeTheme('vintage')">Vintage</button>
+        <button type="button" class="theme-option-btn" style="background: #000000; color: #00ff00;" onclick="applyPreMadeTheme('matrix')">Matrix</button>
       </div>
       <br />
       <button type="button" class="add-class-btn" onclick="closeCustomThemeModal(event)">Close</button>
@@ -420,7 +394,7 @@
     let currentAssignmentIndex = null;
     let confirmCallback = null;
 
-    // Pre-made themes with distinct box backgrounds.
+    // Pre-made themes with additional options.
     const preMadeThemes = {
       default: { 
         bgColor: "#121212", 
@@ -477,19 +451,71 @@
         accentColor: "#ff69b4", 
         boxBg: "#ffefd5", 
         boxBgHover: "#ffefd5" 
+      },
+      solarizedDark: {
+        bgColor: "#002b36",
+        textColor: "#839496",
+        accentColor: "#b58900",
+        boxBg: "#073642",
+        boxBgHover: "#586e75"
+      },
+      solarizedLight: {
+        bgColor: "#fdf6e3",
+        textColor: "#657b83",
+        accentColor: "#b58900",
+        boxBg: "#eee8d5",
+        boxBgHover: "#93a1a1"
+      },
+      dracula: {
+        bgColor: "#282a36",
+        textColor: "#f8f8f2",
+        accentColor: "#ff79c6",
+        boxBg: "#44475a",
+        boxBgHover: "#6272a4"
+      },
+      monokai: {
+        bgColor: "#272822",
+        textColor: "#f8f8f2",
+        accentColor: "#f92672",
+        boxBg: "#3e3d32",
+        boxBgHover: "#75715e"
+      },
+      pastel: {
+        bgColor: "#ffd1dc",
+        textColor: "#5d576b",
+        accentColor: "#ff9a76",
+        boxBg: "#ffe3e0",
+        boxBgHover: "#ffc6c7"
+      },
+      neon: {
+        bgColor: "#0f0f0f",
+        textColor: "#ffffff",
+        accentColor: "#39ff14",
+        boxBg: "#1c1c1c",
+        boxBgHover: "#2a2a2a"
+      },
+      vintage: {
+        bgColor: "#f5f5dc",
+        textColor: "#4b4b4b",
+        accentColor: "#cd5c5c",
+        boxBg: "#fffacd",
+        boxBgHover: "#f0e68c"
+      },
+      matrix: {
+        bgColor: "#000000",
+        textColor: "#00ff00",
+        accentColor: "#008000",
+        boxBg: "#0a0a0a",
+        boxBgHover: "#0a0a0a"
       }
     };
 
-    // Save classesData to localStorage.
     function saveData() {
       localStorage.setItem("classesData", JSON.stringify(classesData));
     }
-    // Load classesData from localStorage.
     function loadData() {
       const storedData = localStorage.getItem("classesData");
-      if (storedData) {
-        classesData = JSON.parse(storedData);
-      }
+      if (storedData) classesData = JSON.parse(storedData);
     }
     function saveTheme(theme) {
       localStorage.setItem("theme", theme);
@@ -502,7 +528,6 @@
         document.documentElement.classList.remove("light");
       }
     }
-    // Load custom theme if saved.
     function loadCustomTheme() {
       const savedCustom = localStorage.getItem("customTheme");
       if (savedCustom) {
@@ -512,7 +537,7 @@
         }
       }
     }
-    // Apply a pre-made theme by updating CSS variables.
+
     function applyPreMadeTheme(themeKey) {
       const theme = preMadeThemes[themeKey];
       if (theme) {
@@ -524,42 +549,39 @@
         localStorage.setItem("customTheme", JSON.stringify({themeKey: themeKey}));
       }
     }
-    // Format a date string.
+
     function formatDate(dateString) {
       const [year, month, day] = dateString.split('-');
       const localDate = new Date(year, month - 1, day);
       const options = { weekday: 'short', month: 'numeric', day: 'numeric' };
       return localDate.toLocaleDateString('en-US', options);
     }
-    // Check if due date is overdue.
     function isOverdue(dueDateValue) {
       if (!dueDateValue) return false;
       let dueDate = new Date(dueDateValue);
       dueDate.setHours(23, 59, 59, 999);
       return dueDate < new Date();
     }
-    // Render classes and assignments.
     function renderClasses() {
-      const container = document.getElementById('class-container');
+      const container = document.getElementById("class-container");
       container.innerHTML = "";
       classesData.forEach((cls, classIndex) => {
-        const box = document.createElement('div');
-        box.classList.add('box');
-        // Header
-        const headerDiv = document.createElement('div');
-        headerDiv.classList.add('box-header');
-        const headerTop = document.createElement('div');
-        headerTop.classList.add('header-top');
-        const title = document.createElement('h2');
-        title.textContent = ${cls.icon} ${cls.name};
-        const deleteClassBtn = document.createElement('button');
+        const box = document.createElement("div");
+        box.classList.add("box");
+        const headerDiv = document.createElement("div");
+        headerDiv.classList.add("box-header");
+        const headerTop = document.createElement("div");
+        headerTop.classList.add("header-top");
+        const title = document.createElement("h2");
+        title.textContent = `${cls.icon} ${cls.name}`;
+        const deleteClassBtn = document.createElement("button");
         deleteClassBtn.type = "button";
-        deleteClassBtn.classList.add('delete-class-btn');
+        deleteClassBtn.classList.add("delete-class-btn");
         deleteClassBtn.textContent = "🗑️";
         deleteClassBtn.title = "Delete Class";
-        deleteClassBtn.addEventListener('click', function(e) {
+        deleteClassBtn.addEventListener("click", function(e) {
           e.stopPropagation();
-          openConfirmModal(Are you sure you want to delete the ${cls.name} class?, function() {
+          openConfirmModal(`Are you sure you want to delete the ${cls.name} class?`, function() {
             classesData.splice(classIndex, 1);
             saveData();
             renderClasses();
@@ -570,52 +592,51 @@
         const total = cls.assignments.length;
         const completed = cls.assignments.filter(a => a.completed).length;
         const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
-        const progress = document.createElement('p');
-        progress.classList.add('progress-indicator');
-        progress.textContent = ${completed}/${total} Completed (${percent}%);
+        const progress = document.createElement("p");
+        progress.classList.add("progress-indicator");
+        progress.textContent = `${completed}/${total} Completed (${percent}%)`;
         headerDiv.appendChild(headerTop);
         headerDiv.appendChild(progress);
         box.appendChild(headerDiv);
-        // List assignments.
-        const ul = document.createElement('ul');
+        const ul = document.createElement("ul");
         cls.assignments.forEach((assignment, assignmentIndex) => {
-          const li = document.createElement('li');
-          const assignmentContainer = document.createElement('div');
-          assignmentContainer.style.display = 'flex';
-          assignmentContainer.style.flexDirection = 'column';
-          const assignmentText = document.createElement('span');
+          const li = document.createElement("li");
+          const assignmentContainer = document.createElement("div");
+          assignmentContainer.style.display = "flex";
+          assignmentContainer.style.flexDirection = "column";
+          const assignmentText = document.createElement("span");
           assignmentText.textContent = assignment.text + (assignment.dueDate ? " → " + formatDate(assignment.dueDate) : "");
           assignmentContainer.appendChild(assignmentText);
           if (assignment.link) {
-            const linkAnchor = document.createElement('a');
+            const linkAnchor = document.createElement("a");
             linkAnchor.href = assignment.link;
             linkAnchor.target = "_blank";
             linkAnchor.textContent = "link";
             linkAnchor.style.color = "lightgray";
             linkAnchor.style.fontSize = "0.8em";
             linkAnchor.style.textDecoration = "underline";
-            linkAnchor.addEventListener('click', function(e) {
+            linkAnchor.addEventListener("click", function(e) {
               e.stopPropagation();
             });
             assignmentContainer.appendChild(linkAnchor);
           }
           li.appendChild(assignmentContainer);
-          if (assignment.completed) li.classList.add('completed');
-          if (assignment.dueDate && isOverdue(assignment.dueDate)) li.classList.add('overdue');
-          li.addEventListener('click', function(e) {
-            if (e.target.tagName !== 'BUTTON') {
+          if (assignment.completed) li.classList.add("completed");
+          if (assignment.dueDate && isOverdue(assignment.dueDate)) li.classList.add("overdue");
+          li.addEventListener("click", function(e) {
+            if (e.target.tagName !== "BUTTON") {
               assignment.completed = !assignment.completed;
               saveData();
               renderClasses();
             }
           });
-          const btnContainer = document.createElement('div');
-          const optionsBtn = document.createElement('button');
+          const btnContainer = document.createElement("div");
+          const optionsBtn = document.createElement("button");
           optionsBtn.type = "button";
-          optionsBtn.classList.add('options-btn');
+          optionsBtn.classList.add("options-btn");
           optionsBtn.textContent = "⋮";
           optionsBtn.title = "Options";
-          optionsBtn.addEventListener('click', function(e) {
+          optionsBtn.addEventListener("click", function(e) {
             e.stopPropagation();
             openAssignmentOptionsModal(classIndex, assignmentIndex);
           });
@@ -624,23 +645,22 @@
           ul.appendChild(li);
         });
         box.appendChild(ul);
-        // Footer with buttons.
-        const footerDiv = document.createElement('div');
-        footerDiv.classList.add('box-footer');
-        const addAssignmentBtn = document.createElement('button');
+        const footerDiv = document.createElement("div");
+        footerDiv.classList.add("box-footer");
+        const addAssignmentBtn = document.createElement("button");
         addAssignmentBtn.type = "button";
-        addAssignmentBtn.classList.add('add-assignment-btn');
+        addAssignmentBtn.classList.add("add-assignment-btn");
         addAssignmentBtn.textContent = "➕ Add Assignment";
-        addAssignmentBtn.addEventListener('click', function(e) {
+        addAssignmentBtn.addEventListener("click", function(e) {
           e.stopPropagation();
           currentClassIndex = classIndex;
           document.getElementById("assignmentModal").style.display = "flex";
         });
-        const sortBtn = document.createElement('button');
+        const sortBtn = document.createElement("button");
         sortBtn.type = "button";
-        sortBtn.classList.add('sort-btn');
+        sortBtn.classList.add("sort-btn");
         sortBtn.textContent = "Sort by Date";
-        sortBtn.addEventListener('click', function(e) {
+        sortBtn.addEventListener("click", function(e) {
           e.stopPropagation();
           classesData[classIndex].assignments.sort((a, b) => {
             if (!a.dueDate && !b.dueDate) return 0;
@@ -655,6 +675,157 @@
         footerDiv.appendChild(sortBtn);
         box.appendChild(footerDiv);
         container.appendChild(box);
+      });
+      checkDueDates();
+    }
+    function renderCalendar() {
+      const container = document.getElementById("calendar-container");
+      container.innerHTML = "";
+      const dateMap = {};
+      classesData.forEach(cls => {
+        cls.assignments.forEach(assignment => {
+          if (assignment.dueDate) {
+            if (!dateMap[assignment.dueDate]) dateMap[assignment.dueDate] = [];
+            dateMap[assignment.dueDate].push({
+              className: cls.name,
+              text: assignment.text,
+              completed: assignment.completed
+            });
+          }
+        });
+      });
+      const dates = Object.keys(dateMap).sort((a, b) => new Date(a) - new Date(b));
+      dates.forEach(dateStr => {
+        const header = document.createElement("h3");
+        header.textContent = new Date(dateStr).toLocaleDateString();
+        container.appendChild(header);
+        const ul = document.createElement("ul");
+        dateMap[dateStr].forEach(item => {
+          const li = document.createElement("li");
+          li.textContent = `[${item.className}] ${item.text}`;
+          if (item.completed) li.style.textDecoration = "line-through";
+          ul.appendChild(li);
+        });
+        container.appendChild(ul);
+      });
+    }
+    function toggleCalendarView() {
+      calendarMode = !calendarMode;
+      renderView();
+    }
+    function renderView() {
+      if (calendarMode) {
+        document.getElementById("class-container").style.display = "none";
+        renderCalendar();
+        document.getElementById("calendar-container").style.display = "flex";
+      } else {
+        document.getElementById("calendar-container").style.display = "none";
+        renderClasses();
+        document.getElementById("class-container").style.display = "flex";
+      }
+      const term = getSearchTerm();
+      if (term) filterAssignments(term);
+    }
+    function getSearchTerm() {
+      return document.getElementById("searchInput") ? document.getElementById("searchInput").value.toLowerCase() : "";
+    }
+    function filterAssignments(term) {
+      term = term.toLowerCase();
+      renderClasses();
+      const ulLists = document.querySelectorAll("#class-container ul");
+      ulLists.forEach(ul => {
+        Array.from(ul.children).forEach(li => {
+          const text = li.innerText.toLowerCase();
+          li.style.display = text.indexOf(term) === -1 ? "none" : "";
+        });
+      });
+    }
+    document.getElementById("searchInput")?.addEventListener("input", function() {
+      filterAssignments(this.value);
+    });
+    function exportData() {
+      const dataStr = JSON.stringify(classesData, null, 2);
+      const blob = new Blob([dataStr], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "classesData.json";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+    function importData(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          classesData = JSON.parse(e.target.result);
+          saveData();
+          renderView();
+        } catch (err) {
+          alert("Invalid file format.");
+        }
+      }
+      reader.readAsText(file);
+    }
+    let dragSrcEl = null;
+    function handleDragStart(e) {
+      dragSrcEl = this;
+      e.dataTransfer.effectAllowed = "move";
+      e.dataTransfer.setData("text/plain", "");
+      this.classList.add("dragElem");
+    }
+    function handleDragOver(e) {
+      if (e.preventDefault) e.preventDefault();
+      this.classList.add("over");
+      e.dataTransfer.dropEffect = "move";
+      return false;
+    }
+    function handleDragLeave(e) {
+      this.classList.remove("over");
+    }
+    function handleDrop(e) {
+      if (e.stopPropagation) e.stopPropagation();
+      if (dragSrcEl !== this) {
+        const parent = this.parentNode;
+        const nodes = Array.from(parent.children);
+        const srcIndex = nodes.indexOf(dragSrcEl);
+        const destIndex = nodes.indexOf(this);
+        const assignments = classesData[currentClassIndex].assignments;
+        const moved = assignments.splice(srcIndex, 1)[0];
+        assignments.splice(destIndex, 0, moved);
+        saveData();
+        renderView();
+      }
+      return false;
+    }
+    function addDnDHandlers(li) {
+      li.setAttribute("draggable", "true");
+      li.addEventListener("dragstart", handleDragStart, false);
+      li.addEventListener("dragover", handleDragOver, false);
+      li.addEventListener("dragleave", handleDragLeave, false);
+      li.addEventListener("drop", handleDrop, false);
+    }
+    function checkDueDates() {
+      if (!("Notification" in window)) return;
+      if (Notification.permission !== "granted") {
+        Notification.requestPermission();
+        return;
+      }
+      classesData.forEach(cls => {
+        cls.assignments.forEach(assignment => {
+          if (assignment.dueDate && !assignment.notified) {
+            const due = new Date(assignment.dueDate);
+            const now = new Date();
+            if (due < now || (due - now) < 86400000) {
+              new Notification("Assignment Reminder", {
+                body: assignment.text + " is " + (due < now ? "overdue!" : "due soon!")
+              });
+              assignment.notified = true;
+              saveData();
+            }
+          }
+        });
       });
     }
     function openClassModal(e) {
@@ -744,7 +915,7 @@
       }
     }
     function confirmDeleteAssignment() {
-      closeAssignmentOptionsModal(null);
+      closeAssignmentOptionsModal();
       openConfirmModal("Are you sure you want to delete this assignment?", function() {
         classesData[currentClassIndex].assignments.splice(currentAssignmentIndex, 1);
         saveData();
@@ -767,7 +938,6 @@
       }
       closeConfirmModal(null);
     }
-    // Custom Theme Modal Controls
     function openCustomThemeModal(e) {
       if (e) e.preventDefault();
       document.getElementById("customThemeModal").style.display = "flex";
@@ -776,11 +946,11 @@
       if (e) e.preventDefault();
       document.getElementById("customThemeModal").style.display = "none";
     }
-    // Load saved data, theme, and custom theme on startup, then render classes.
     loadData();
     loadTheme();
     loadCustomTheme();
     renderClasses();
+    checkDueDates();
   </script>
 </body>
 </html>
